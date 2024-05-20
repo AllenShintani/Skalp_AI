@@ -1,0 +1,10 @@
+{
+  "recommendations": [
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode",
+    "stylelint.vscode-stylelint",
+    "Code formatter using prettier.prettier-Code formatter",
+    "stylelint.stylelint",
+    "Integrates ESLint JavaScript into VS Code.ESLint"
+  ]
+}

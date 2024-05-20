@@ -1,0 +1,18 @@
+{
+  "eslint.run": "onSave",
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit",
+    "source.fixAll.stylelint": "explicit"
+  },
+  "debug.openDebug": "openOnSessionStart",
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "files.eol": "\n",
+  "stylelint.validate": ["css", "less", "postcss", "typescriptreact"],
+  "[log]": {
+    // 行の折り返し表示
+    "editor.wordWrap": "off",
+    "files.insertFinalNewline": true
+  }
+}
