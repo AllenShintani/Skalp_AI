@@ -1,0 +1,20 @@
+.sidebar {
+  width: 200px;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid #ddd;
+  padding: 10px;
+}
+
+.slideLink {
+  margin-bottom: 10px;
+  text-decoration: none;
+  color: black;
+}
+
+.thumbnail {
+  width: 100%;
+  height: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}

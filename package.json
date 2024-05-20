@@ -31,12 +31,15 @@
     "react-hooks": "^1.0.1",
     "react-query": "^3.39.3",
     "recharts": "^2.12.5",
+    "recoil": "^0.7.7",
+    "uuid": "^9.0.1",
     "zod": "^3.22.4"
   },
   "devDependencies": {
     "@types/axios": "^0.14.0",
     "@types/node": "^20.11.30",
     "@types/react": "^18.2.67",
+    "@types/uuid": "^9.0.8",
     "@typescript-eslint/eslint-plugin": "^5.62.0",
     "@typescript-eslint/parser": "^5.62.0",
     "dotenv": "^16.4.5",

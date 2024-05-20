@@ -2,9 +2,15 @@
   display: flex;
 }
 
-.content {
+.editor {
   margin-left: 220px;
   padding: 20px;
+}
+
+.textarea {
+  width: 100%;
+  height: 200px;
+  margin-bottom: 10px;
 }
 
 .button {
