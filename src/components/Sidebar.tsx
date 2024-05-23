@@ -1,27 +1,30 @@
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 import { useRecoilValue } from 'recoil'
 import { slidesState } from '../recoil/atoms'
 import styles from '../styles/Sidebar.module.css'
 
 const Sidebar = () => {
   const slides = useRecoilValue(slidesState)
+  const router = useRouter()
+  const { id } = router.query
 
   return (
     <div className={styles.sidebar}>
-      {slides.map((slide) => (
+      {slides.map((slide, index) => (
         <Link
           key={slide.id}
           href={`/slide/${slide.id}`}
           passHref
           legacyBehavior
         >
-          <a className={styles.slideLink}>
-            <img
-              src={slide.thumbnail}
-              alt={slide.title}
-              className={styles.thumbnail}
-            />
-            <p>{slide.title}</p>
+          <a
+            className={`${styles.slideLink} ${
+              slide.id === id ? styles.selected : ''
+            }`}
+          >
+            <div className={styles.slideNumber}>{index + 1}</div>
+            <div className={styles.thumbnailContainer} />
           </a>
         </Link>
       ))}

@@ -1,12 +1,12 @@
 import { atom } from 'recoil'
-
-export type Slide = {
-  id: string
-  title: string
-  thumbnail: string
-}
+import type { Slide } from '../types/Slide'
 
 export const slidesState = atom<Slide[]>({
   key: 'slidesState',
   default: [],
+})
+
+export const textToolState = atom({
+  key: 'textToolState',
+  default: false,
 })

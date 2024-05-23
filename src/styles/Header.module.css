@@ -1,0 +1,90 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap');
+
+.leftSection {
+  display: flex;
+  align-items: center;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  margin-right: 20px;
+}
+
+.documentTitle {
+  display: flex;
+  flex-direction: column;
+}
+
+.documentTitle h1 {
+  font-size: 20px;
+  margin: 0;
+  font-weight: 700;
+}
+
+.menu {
+  display: flex;
+  gap: 15px;
+}
+
+.menu span {
+  cursor: pointer;
+  color: #333;
+}
+
+.rightSection {
+  display: flex;
+  align-items: center;
+}
+
+.toolbar {
+  display: flex;
+  gap: 15px;
+  margin-right: 20px;
+}
+
+.toolbarButton {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  color: #333;
+}
+
+.toolbarButton span {
+  margin-top: 5px;
+}
+
+.themeButton {
+  padding: 10px 20px;
+  background-color: #0070f3;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-right: 10px;
+}
+
+.themeButton:hover {
+  background-color: #005bb5;
+}
+
+.shareButton {
+  padding: 10px 20px;
+  background-color: #00c853;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.shareButton:hover {
+  background-color: #009624;
+}
+
+.activeButton {
+  background-color: grey;
+}

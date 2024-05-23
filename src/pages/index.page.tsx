@@ -13,8 +13,7 @@ const Home = () => {
     const newSlideId = uuidv4()
     const newSlide = {
       id: newSlideId,
-      title: `スライド${slides.length + 1}`,
-      thumbnail: '/thumbnails/default.jpg',
+      title: `${slides.length + 1}`,
     }
     setSlides([...slides, newSlide])
     router.push(`/slide/${newSlideId}`)

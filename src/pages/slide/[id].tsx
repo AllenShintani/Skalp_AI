@@ -1,29 +1,16 @@
+// [id].tsx
 import type { GetStaticPaths, GetStaticProps } from 'next'
-import { useRouter } from 'next/router'
-import { v4 as uuidv4 } from 'uuid'
 import Sidebar from '../../components/Sidebar'
-import { useRecoilState } from 'recoil'
-import { slidesState } from '../../recoil/atoms'
-import styles from '../../styles/SlideEditor.module.css'
+import SlideEditor from '@/components/SlideEditor/SlideEditor'
+import styles from '../../styles/SlideEditorPage.module.css'
+import { useRouter } from 'next/router'
 
 type SlideProps = {
   id: string
 }
 
-const SlideEditor = ({ id }: SlideProps) => {
+const SlideEditorPage: React.FC<SlideProps> = ({ id }) => {
   const router = useRouter()
-  const [slides, setSlides] = useRecoilState(slidesState)
-
-  const createNewSlide = () => {
-    const newSlideId = uuidv4()
-    const newSlide = {
-      id: newSlideId,
-      title: `スライド${slides.length + 1}`,
-      thumbnail: '/thumbnails/default.jpg',
-    }
-    setSlides([...slides, newSlide])
-    router.push(`/slide/${newSlideId}`)
-  }
 
   if (router.isFallback) {
     return <div>Loading...</div>
@@ -32,18 +19,8 @@ const SlideEditor = ({ id }: SlideProps) => {
   return (
     <div className={styles.container}>
       <Sidebar />
-      <div className={styles.editor}>
-        <h1>Editing Slide {id}</h1>
-        <textarea
-          placeholder="Enter slide content"
-          className={styles.textarea}
-        />
-        <button
-          onClick={createNewSlide}
-          className={styles.button}
-        >
-          Create New Slide
-        </button>
+      <div className={styles.editorContainer}>
+        <SlideEditor id={id} />
       </div>
     </div>
   )
@@ -60,11 +37,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
 }
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
-  if (!params || !params.id) {
-    return {
-      notFound: true,
-    }
-  }
+  if (!params || !params.id) return { notFound: true }
 
   const id = params.id as string
 
@@ -75,4 +48,4 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
   }
 }
 
-export default SlideEditor
+export default SlideEditorPage

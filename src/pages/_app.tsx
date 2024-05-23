@@ -1,8 +1,9 @@
 import { useEffect } from 'react'
-import { useRouter } from 'next/router'
 import type { AppProps } from 'next/app'
 import { getCookie } from 'cookies-next'
 import { RecoilRoot } from 'recoil'
+import Header from '@/utils/Header'
+import { useRouter } from 'next/router'
 
 function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter()
@@ -35,6 +36,7 @@ function MyApp({ Component, pageProps }: AppProps) {
 
   return (
     <RecoilRoot>
+      <Header />
       <Component {...pageProps} />
     </RecoilRoot>
   )

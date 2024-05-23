@@ -1,0 +1,28 @@
+.container {
+  display: flex;
+  flex-direction: row;
+  height: 100vh; /* Full height of the viewport */
+}
+
+.editorContainer {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  padding: 20px;
+  overflow: auto; /* Allow scrolling if content overflows */
+}
+
+.button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  background-color: #0070f3;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  align-self: center; /* Center the button horizontally */
+}
+
+.button:hover {
+  background-color: #005bb5;
+}
