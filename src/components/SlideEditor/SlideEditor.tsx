@@ -11,6 +11,12 @@ import { restrictToParentElement } from '@dnd-kit/modifiers'
 import { v4 as uuidv4 } from 'uuid'
 import { useRouter } from 'next/router'
 import TextBox from './TextBox'
+import { useEditor } from '@tiptap/react'
+import StarterKit from '@tiptap/starter-kit'
+import TextStyle from '@tiptap/extension-text-style'
+import FontFamily from '@tiptap/extension-font-family'
+import Underline from '@tiptap/extension-underline'
+import { FontSize } from '../extensions/Fontsize'
 
 const SlideEditor: React.FC<{ id: string }> = ({ id }) => {
   const [slides, setSlides] = useRecoilState(slidesState)
@@ -22,6 +28,17 @@ const SlideEditor: React.FC<{ id: string }> = ({ id }) => {
   const [startY, setStartY] = useState(0)
   const [drawnElement, setDrawnElement] = useState<SlideElement | null>(null)
   const router = useRouter()
+
+  const editor = useEditor({
+    extensions: [
+      StarterKit,
+      TextStyle,
+      Underline,
+      FontFamily.configure({ types: ['textStyle'] }),
+      FontSize,
+    ],
+    content: '<p>ここに初期テキストが追加されます</p>',
+  })
 
   const handleMouseDown = (e: React.MouseEvent) => {
     if (!isTextToolActive) return
@@ -118,7 +135,12 @@ const SlideEditor: React.FC<{ id: string }> = ({ id }) => {
 
   return (
     <div className={styles.editorContainer}>
-      <Toolbar onCreateNewSlide={createNewSlide} />
+      {editor && (
+        <Toolbar
+          editor={editor}
+          onCreateNewSlide={createNewSlide}
+        />
+      )}
       <div className={styles.slideContainer}>
         <DndContext modifiers={[restrictToParentElement]}>
           <div
@@ -151,7 +173,7 @@ const SlideEditor: React.FC<{ id: string }> = ({ id }) => {
                 }}
               />
             )}
-            <TextBox />
+            {currentTextBoxId && editor && <TextBox editor={editor} />}
           </div>
         </DndContext>
       </div>

@@ -3,7 +3,6 @@ import { useState, useRef } from 'react'
 import { useDraggable } from '@dnd-kit/core'
 import type { SlideElement } from '../../types/Slide'
 import styles from '../../styles/DraggableElement.module.css'
-import TextBox from './TextBox'
 
 type DraggableElementProps = {
   element: SlideElement
@@ -72,27 +71,7 @@ const DraggableElement: React.FC<DraggableElementProps> = ({
     height: `${height}px`,
   }
 
-  return (
-    <div
-      ref={setNodeRef}
-      style={style}
-      {...attributes}
-      {...listeners}
-      className={`${styles.textBox} ${isResizing ? styles.resizing : ''}`}
-      onClick={handleEditorClick}
-    >
-      <div
-        ref={editorRef}
-        className={styles.editorWrapper}
-      >
-        <TextBox />
-      </div>
-      <div
-        className={styles.resizeHandle}
-        onMouseDown={handleResize}
-      />
-    </div>
-  )
+  return <></>
 }
 
 export default DraggableElement

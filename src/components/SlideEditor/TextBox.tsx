@@ -1,18 +1,14 @@
-import React, { useRef, useEffect } from 'react'
-import Document from '@tiptap/extension-document'
-import Paragraph from '@tiptap/extension-paragraph'
-import Text from '@tiptap/extension-text'
-import { EditorContent, useEditor } from '@tiptap/react'
+import type React from 'react'
+import { useRef, useEffect } from 'react'
+import type { Editor } from '@tiptap/react'
+import { EditorContent } from '@tiptap/react'
 import styles from '../../styles/TextBox.module.css'
 
-const TextBox = () => {
-  const editor = useEditor({
-    extensions: [Document, Paragraph, Text],
-    content: `
-        <p>ここにテキストが追加されていく</p>
-      `,
-  })
+type TextBoxProps = {
+  editor: Editor
+}
 
+const TextBox: React.FC<TextBoxProps> = ({ editor }) => {
   const resizeHandleRef = useRef<HTMLDivElement>(null)
   const textBoxRef = useRef<HTMLDivElement>(null)
 
@@ -52,10 +48,6 @@ const TextBox = () => {
     }
   }, [])
 
-  if (!editor) {
-    return null
-  }
-
   return (
     <div
       className={styles.textBox}
@@ -64,6 +56,10 @@ const TextBox = () => {
       <EditorContent
         editor={editor}
         className={styles.editorContent}
+      />
+      <div
+        ref={resizeHandleRef}
+        className={styles.resizeHandle}
       />
     </div>
   )
