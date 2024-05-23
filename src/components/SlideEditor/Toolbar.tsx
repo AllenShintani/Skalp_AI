@@ -5,9 +5,14 @@ import styles from '../../styles/Toolbar.module.css'
 type ToolbarProps = {
   editor: Editor | null
   onCreateNewSlide: () => void
+  onAddTextBox: () => void // テキストボックスを追加する関数を受け取る
 }
 
-const Toolbar: React.FC<ToolbarProps> = ({ editor, onCreateNewSlide }) => {
+const Toolbar: React.FC<ToolbarProps> = ({
+  editor,
+  onCreateNewSlide,
+  onAddTextBox,
+}) => {
   if (!editor) {
     return null
   }
@@ -60,6 +65,12 @@ const Toolbar: React.FC<ToolbarProps> = ({ editor, onCreateNewSlide }) => {
         <option value="24">24px</option>
         <option value="32">32px</option>
       </select>
+      <button
+        onClick={onAddTextBox}
+        className={`${styles.button} ${styles.addTextBoxButton}`}
+      >
+        Add Text Box
+      </button>
     </div>
   )
 }

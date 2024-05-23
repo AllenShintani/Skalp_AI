@@ -6,9 +6,15 @@ import styles from '../../styles/TextBox.module.css'
 
 type TextBoxProps = {
   editor: Editor
+  width?: number // 追加: 幅を受け取るプロパティ
+  height?: number // 追加: 高さを受け取るプロパティ
 }
 
-const TextBox: React.FC<TextBoxProps> = ({ editor }) => {
+const TextBox: React.FC<TextBoxProps> = ({
+  editor,
+  width = 200,
+  height = 100,
+}) => {
   const resizeHandleRef = useRef<HTMLDivElement>(null)
   const textBoxRef = useRef<HTMLDivElement>(null)
 
@@ -52,6 +58,7 @@ const TextBox: React.FC<TextBoxProps> = ({ editor }) => {
     <div
       className={styles.textBox}
       ref={textBoxRef}
+      style={{ width, height }}
     >
       <EditorContent
         editor={editor}

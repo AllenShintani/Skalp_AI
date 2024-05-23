@@ -1,42 +1,44 @@
 .textBox {
   position: relative;
-  border: 1px solid #000;
-  overflow: hidden;
-  resize: both;
-  min-width: 20px;
-  min-height: 20px;
-  display: flex;
-  flex-direction: column;
-  cursor: text;
+  box-sizing: border-box;
+  border: 2px solid #007bff; /* テキストボックス全体の青い枠線 */
+  border-radius: 4px; /* 角を丸くする */
+  padding: 0px; /* パディングを追加して内部のエディタにスペースを確保 */
 }
 
-.toolbarContainer {
-  display: flex;
-  gap: 8px;
-  padding: 4px;
-  background: #f1f1f1;
-  border-bottom: 1px solid #ddd;
+.textBox:focus-within {
+  border: 2px solid #007bff; /* フォーカス時の青い枠線 */
+  padding: 0;
 }
 
 .editorContent {
-  flex: 1;
-  width: 100%;
   height: 100%;
-  padding: 8px;
-  box-sizing: border-box;
+  width: 100%;
+  outline: none; /* デフォルトのアウトラインを削除 */
+  padding: 0; /* パディングをリセット */
+  margin: 0; /* マージンをリセット */
+  padding: 0;
+  box-sizing: border-box; /* ボックスサイズを境界内に収める */
+}
+
+.editorContent [contenteditable='true'] {
+  outline: none; /* 内部のcontentEditable要素のアウトラインをカスタマイズ */
+  border: 3px; /* 内部のcontentEditable要素の枠線を削除 */
+  padding: 0; /* 内部のcontentEditable要素のパディングを削除 */
+  margin: 0; /* 内部のcontentEditable要素のマージンを削除 */
+  box-sizing: border-box; /* ボックスサイズを境界内に収める */
+}
+
+.editorContent p {
+  margin: 0; /* pタグのマージンをリセット */
 }
 
 .resizeHandle {
-  width: 10px;
-  height: 10px;
-  background-color: blue;
   position: absolute;
   bottom: 0;
   right: 0;
+  width: 10px;
+  height: 10px;
+  background: #007bff; /* 青いハンドル */
   cursor: se-resize;
-  z-index: 10;
-}
-
-.isActive {
-  background: #d4d4d4;
 }
