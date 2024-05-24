@@ -1,26 +1,61 @@
 import type React from 'react'
-import type { Editor } from '@tiptap/react'
+import { v4 as uuidv4 } from 'uuid'
+import { useRouter } from 'next/router'
+import { useRecoilState } from 'recoil'
+import { slidesState } from '../../recoil/atoms'
 import styles from '../../styles/Toolbar.module.css'
+import type { Editor } from '@tiptap/react'
+import type { SlideElement } from '../../types/Slide'
 
 type ToolbarProps = {
   editor: Editor | null
-  onCreateNewSlide: () => void
-  onAddTextBox: () => void // テキストボックスを追加する関数を受け取る
 }
 
-const Toolbar: React.FC<ToolbarProps> = ({
-  editor,
-  onCreateNewSlide,
-  onAddTextBox,
-}) => {
-  if (!editor) {
-    return null
+const Toolbar: React.FC<ToolbarProps> = ({ editor }) => {
+  const [slides, setSlides] = useRecoilState(slidesState)
+  const router = useRouter()
+
+  const createNewSlide = () => {
+    const newSlideId = uuidv4()
+    const newSlide = {
+      id: newSlideId,
+      title: '',
+      thumbnail: '/thumbnails/default.jpg',
+      content: '',
+      elements: [],
+    }
+    setSlides([...slides, newSlide])
+    router.push(`/slide/${newSlideId}`)
   }
+
+  const addTextBox = () => {
+    const newTextBox: SlideElement = {
+      id: uuidv4(),
+      type: 'text',
+      content: 'サンプルテキスト',
+      x: 10,
+      y: 10,
+      width: 150,
+      height: 40,
+    }
+    const currentSlideId = router.query.id as string
+    const updatedSlides = slides.map((s) =>
+      s.id === currentSlideId
+        ? { ...s, elements: [...(s.elements || []), newTextBox] }
+        : s,
+    )
+    setSlides(updatedSlides)
+    if (editor) {
+      editor.commands.setContent(newTextBox.content)
+    }
+  }
+
+  if (!editor) return null
 
   return (
     <div className={styles.toolbar}>
       <button
-        onClick={onCreateNewSlide}
+        onClick={createNewSlide}
         className={`${styles.button} ${styles.createNewSlideButton}`}
       >
         Create New Slide
@@ -66,7 +101,7 @@ const Toolbar: React.FC<ToolbarProps> = ({
         <option value="32">32px</option>
       </select>
       <button
-        onClick={onAddTextBox}
+        onClick={addTextBox}
         className={`${styles.button} ${styles.addTextBoxButton}`}
       >
         Add Text Box

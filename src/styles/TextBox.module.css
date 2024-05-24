@@ -1,36 +1,36 @@
 .textBox {
   position: relative;
   box-sizing: border-box;
-  border: 2px solid #007bff; /* テキストボックス全体の青い枠線 */
-  border-radius: 4px; /* 角を丸くする */
-  padding: 0px; /* パディングを追加して内部のエディタにスペースを確保 */
+  border: 2px solid #007bff;
+  border-radius: 4px;
+  padding: 0;
+  cursor: text; /* テキスト入力カーソル */
 }
 
 .textBox:focus-within {
-  border: 2px solid #007bff; /* フォーカス時の青い枠線 */
+  border: 2px solid #007bff;
   padding: 0;
 }
 
 .editorContent {
   height: 100%;
   width: 100%;
-  outline: none; /* デフォルトのアウトラインを削除 */
-  padding: 0; /* パディングをリセット */
-  margin: 0; /* マージンをリセット */
+  outline: none;
   padding: 0;
-  box-sizing: border-box; /* ボックスサイズを境界内に収める */
+  margin: 0;
+  box-sizing: border-box;
 }
 
 .editorContent [contenteditable='true'] {
-  outline: none; /* 内部のcontentEditable要素のアウトラインをカスタマイズ */
-  border: 3px; /* 内部のcontentEditable要素の枠線を削除 */
-  padding: 0; /* 内部のcontentEditable要素のパディングを削除 */
-  margin: 0; /* 内部のcontentEditable要素のマージンを削除 */
-  box-sizing: border-box; /* ボックスサイズを境界内に収める */
+  outline: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
 }
 
 .editorContent p {
-  margin: 0; /* pタグのマージンをリセット */
+  margin: 0;
 }
 
 .resizeHandle {
@@ -39,6 +39,6 @@
   right: 0;
   width: 10px;
   height: 10px;
-  background: #007bff; /* 青いハンドル */
+  background: #007bff;
   cursor: se-resize;
 }

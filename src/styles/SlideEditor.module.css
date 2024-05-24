@@ -15,17 +15,3 @@
   position: relative;
   border: 1px solid black;
 }
-
-.defaultCursor {
-  cursor: default;
-}
-
-.drawingCursor {
-  cursor: crosshair;
-}
-
-.textBox {
-  position: absolute;
-  border: 1px solid black;
-  background: white;
-}

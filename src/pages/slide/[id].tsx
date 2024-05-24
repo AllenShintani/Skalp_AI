@@ -1,9 +1,10 @@
-// [id].tsx
-import type { GetStaticPaths, GetStaticProps } from 'next'
+import type React from 'react'
 import Sidebar from '../../components/Sidebar'
-import SlideEditor from '@/components/SlideEditor/SlideEditor'
 import styles from '../../styles/SlideEditorPage.module.css'
 import { useRouter } from 'next/router'
+import { getStaticPaths } from '@/components/SlideEditorPage/getStaticPaths'
+import { getStaticProps } from '@/components/SlideEditorPage/getStaticProps'
+import SlideEditor from '@/components/SlideEditorPage/SlideEditor'
 
 type SlideProps = {
   id: string
@@ -26,26 +27,5 @@ const SlideEditorPage: React.FC<SlideProps> = ({ id }) => {
   )
 }
 
-export const getStaticPaths: GetStaticPaths = async () => {
-  const slides = [{ id: '1' }]
-
-  const paths = slides.map((slide) => ({
-    params: { id: slide.id },
-  }))
-
-  return { paths, fallback: true }
-}
-
-export const getStaticProps: GetStaticProps = async ({ params }) => {
-  if (!params || !params.id) return { notFound: true }
-
-  const id = params.id as string
-
-  return {
-    props: {
-      id,
-    },
-  }
-}
-
+export { getStaticPaths, getStaticProps }
 export default SlideEditorPage
