@@ -1,17 +1,48 @@
 .editorContainer {
+  background-color: #e0e0e0; /* 明るいグレーの背景色 */
+  padding: 20px;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  align-items: center;
+}
+
+.toolbarContainer {
+  width: 100%;
+  max-width: 1200px;
+  margin-bottom: 20px;
 }
 
 .slideContainer {
-  flex-grow: 1;
+  background-color: white; /* 白い編集ページ */
+  width: 100%; /* 画面幅の90%を使用 */
+  max-width: 1200px; /* 最大幅を設定 */
+  aspect-ratio: 16 / 9; /* スライドのアスペクト比を設定 */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* 柔らかい影を追加 */
+  border-radius: 12px; /* 角を少し丸める */
   position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .slide {
+  position: relative;
   width: 100%;
   height: 100%;
-  position: relative;
-  border: 1px solid black;
+}
+
+@media (max-width: 768px) {
+  .editorContainer {
+    padding: 10px;
+  }
+
+  .toolbarContainer,
+  .slideContainer {
+    width: 100%;
+  }
+
+  .slideContainer {
+    aspect-ratio: auto;
+  }
 }

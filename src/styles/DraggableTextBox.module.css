@@ -1,0 +1,16 @@
+/* DraggableTextBox.module.css */
+.draggableTextBox {
+  position: relative;
+  box-sizing: border-box;
+}
+
+.draggableTextBox.active {
+  border: 2px solid #007bff;
+  cursor: text;
+}
+
+.draggableTextBox.inactive {
+  border: 1px solid #000;
+  background-color: rgba(255, 255, 255, 0.5);
+  cursor: move;
+}

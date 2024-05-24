@@ -77,17 +77,47 @@ const SlideEditor: React.FC<{ id: string }> = ({ id }) => {
     setSlides(updatedSlides)
   }
 
-  const handleTextBoxClick = (elementId: string) => {
+  const handleTextBoxClick = (elementId: string, event: React.MouseEvent) => {
+    event.stopPropagation() // イベントのバブリングを防ぐ
     const selectedElement = slide?.elements?.find((el) => el.id === elementId)
     if (!editor || !selectedElement) return
     setCurrentTextBoxId(elementId)
   }
 
+  const handleSlideClick = () => {
+    if (currentTextBoxId && editor) {
+      const selectedElement = slide?.elements?.find(
+        (el) => el.id === currentTextBoxId,
+      )
+      if (selectedElement) {
+        handleElementChange(
+          selectedElement.id,
+          editor.getText(), // 現在のエディタの内容をプレーンテキストとして取得
+          selectedElement.width,
+          selectedElement.height,
+          selectedElement.x,
+          selectedElement.y,
+        )
+      }
+    }
+    setCurrentTextBoxId(null)
+  }
+
   if (!slide) return <div>Loading...</div>
 
   return (
-    <div className={styles.editorContainer}>
-      {editor && <Toolbar editor={editor} />}
+    <div
+      className={styles.editorContainer}
+      onClick={handleSlideClick}
+    >
+      {editor && (
+        <div
+          className={styles.toolbarContainer}
+          onClick={(e) => e.stopPropagation()}
+        >
+          <Toolbar editor={editor} />
+        </div>
+      )}
       <DndContext
         onDragEnd={({ delta }) => {
           const activeElement = slides
@@ -106,25 +136,27 @@ const SlideEditor: React.FC<{ id: string }> = ({ id }) => {
         }}
       >
         <div className={styles.slideContainer}>
-          {slide.elements?.map((element) => (
-            <DraggableTextBox
-              key={element.id}
-              element={element}
-              onClick={() => handleTextBoxClick(element.id)}
-              onUpdate={(x, y) =>
-                handleElementChange(
-                  element.id,
-                  element.content,
-                  element.width,
-                  element.height,
-                  x,
-                  y,
-                )
-              }
-              editor={editor}
-              isActive={currentTextBoxId === element.id}
-            />
-          ))}
+          <div className={styles.slide}>
+            {slide.elements?.map((element) => (
+              <DraggableTextBox
+                key={element.id}
+                element={element}
+                onClick={(event) => handleTextBoxClick(element.id, event)}
+                onUpdate={(x, y) =>
+                  handleElementChange(
+                    element.id,
+                    element.content,
+                    element.width,
+                    element.height,
+                    x,
+                    y,
+                  )
+                }
+                editor={editor}
+                isActive={currentTextBoxId === element.id}
+              />
+            ))}
+          </div>
         </div>
       </DndContext>
     </div>
