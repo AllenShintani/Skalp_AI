@@ -36,7 +36,6 @@ function MyApp({ Component, pageProps }: AppProps) {
 
   return (
     <RecoilRoot>
-      <Header />
       <Component {...pageProps} />
     </RecoilRoot>
   )
