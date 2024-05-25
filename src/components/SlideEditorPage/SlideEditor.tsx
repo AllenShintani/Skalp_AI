@@ -10,16 +10,22 @@ import Underline from '@tiptap/extension-underline'
 import Document from '@tiptap/extension-document'
 import Paragraph from '@tiptap/extension-paragraph'
 import Text from '@tiptap/extension-text'
-
 import { slidesState } from '../../recoil/atoms'
 import { FontSize } from '../extensions/FontsSize'
-import Toolbar from './Toolbar'
 import DraggableTextBox from './DraggableTextBox'
 import styles from '../../styles/SlideEditor.module.css'
+import Toolbar from './Toolbar'
+import { v4 as uuidv4 } from 'uuid'
+import { useRouter } from 'next/router'
+import Header from './Header'
 
 const SlideEditor: React.FC<{ id: string }> = ({ id }) => {
   const [slides, setSlides] = useRecoilState(slidesState)
   const [currentTextBoxId, setCurrentTextBoxId] = useState<string | null>(null)
+  const [activeEditor, setActiveEditor] = useState<ReturnType<
+    typeof useEditor
+  > | null>(null)
+  const router = useRouter()
 
   const slide = slides.find((slide) => slide.id === id)
   const editor = useEditor({
@@ -82,6 +88,7 @@ const SlideEditor: React.FC<{ id: string }> = ({ id }) => {
     const selectedElement = slide?.elements?.find((el) => el.id === elementId)
     if (!editor || !selectedElement) return
     setCurrentTextBoxId(elementId)
+    setActiveEditor(editor)
   }
 
   const handleSlideClick = () => {
@@ -93,7 +100,7 @@ const SlideEditor: React.FC<{ id: string }> = ({ id }) => {
     if (!selectedElement) return
     handleElementChange(
       selectedElement.id,
-      editor.getText(),
+      editor.getHTML(),
       selectedElement.width,
       selectedElement.height,
       selectedElement.x,
@@ -101,64 +108,106 @@ const SlideEditor: React.FC<{ id: string }> = ({ id }) => {
     )
 
     setCurrentTextBoxId(null)
+    setActiveEditor(null)
+  }
+
+  const createNewSlide = () => {
+    const newSlideId = uuidv4()
+    const newSlide = {
+      id: newSlideId,
+      title: '',
+      thumbnail: '/thumbnails/default.jpg',
+      content: '',
+      elements: [],
+    }
+    setSlides([...slides, newSlide])
+    router.push(`/slide/${newSlideId}`)
+  }
+
+  const addTextBox = () => {
+    const newTextBox = {
+      id: uuidv4(),
+      type: 'text' as const,
+      content: 'サンプルテキスト',
+      x: 10,
+      y: 10,
+      width: 150,
+      height: 40,
+    }
+    const updatedSlides = slides.map((s) =>
+      s.id === id ? { ...s, elements: [...(s.elements || []), newTextBox] } : s,
+    )
+    setSlides(updatedSlides)
+    if (editor) {
+      editor.commands.setContent(newTextBox.content)
+    }
   }
 
   if (!slide) return <div>Loading...</div>
 
   return (
-    <div
-      className={styles.editorContainer}
-      onClick={handleSlideClick}
-    >
-      {editor && (
-        <div
-          className={styles.toolbarContainer}
-          onClick={(e) => e.stopPropagation()}
-        >
-          <Toolbar editor={editor} />
-        </div>
-      )}
-      <DndContext
-        onDragEnd={({ delta }) => {
-          const activeElement = slides
-            .flatMap((slide) => slide.elements || [])
-            .find((e) => e.id === currentTextBoxId)
-          if (activeElement) {
-            handleElementChange(
-              activeElement.id,
-              activeElement.content,
-              activeElement.width,
-              activeElement.height,
-              activeElement.x + delta.x,
-              activeElement.y + delta.y,
-            )
-          }
-        }}
+    <>
+      <Header
+        onAddTextBox={addTextBox}
+        onCreateNewSlide={createNewSlide}
+      />
+      <div
+        className={styles.editorContainer}
+        onClick={handleSlideClick}
       >
-        <div className={styles.slideContainer}>
-          <div className={styles.slide}>
-            {slide.elements?.map((element) => (
-              <DraggableTextBox
-                key={element.id}
-                element={element}
-                onClick={(event) => handleTextBoxClick(element.id, event)}
-                onUpdate={(x, y) =>
-                  handleElementChange(
-                    element.id,
-                    element.content,
-                    element.width,
-                    element.height,
-                    x,
-                    y,
-                  )
-                }
-                isActive={currentTextBoxId === element.id}
-              />
-            ))}
+        {activeEditor && (
+          <div
+            className={styles.toolbarContainer}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <Toolbar editor={activeEditor} />
           </div>
-        </div>
-      </DndContext>
-    </div>
+        )}
+        <DndContext
+          onDragEnd={({ delta }) => {
+            const activeElement = slides
+              .flatMap((slide) => slide.elements || [])
+              .find((e) => e.id === currentTextBoxId)
+            if (activeElement) {
+              handleElementChange(
+                activeElement.id,
+                activeElement.content,
+                activeElement.width,
+                activeElement.height,
+                activeElement.x + delta.x,
+                activeElement.y + delta.y,
+              )
+            }
+          }}
+        >
+          <div className={styles.slideContainer}>
+            <div className={styles.slide}>
+              {slide.elements?.map((element) => (
+                <DraggableTextBox
+                  key={element.id}
+                  element={element}
+                  onClick={(event) => handleTextBoxClick(element.id, event)}
+                  onUpdate={(x, y) =>
+                    handleElementChange(
+                      element.id,
+                      element.content,
+                      element.width,
+                      element.height,
+                      x,
+                      y,
+                    )
+                  }
+                  isActive={currentTextBoxId === element.id}
+                  onContentChange={(content: string) =>
+                    handleElementChange(element.id, content)
+                  }
+                />
+              ))}
+            </div>
+          </div>
+        </DndContext>
+      </div>
+    </>
   )
 }
 

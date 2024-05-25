@@ -18,6 +18,7 @@ type DraggableTextBoxProps = {
   onClick: (event: React.MouseEvent) => void
   onUpdate: (x: number, y: number) => void
   isActive: boolean
+  onContentChange: (content: string) => void
 }
 
 const DraggableTextBox: React.FC<DraggableTextBoxProps> = ({
@@ -25,6 +26,7 @@ const DraggableTextBox: React.FC<DraggableTextBoxProps> = ({
   onClick,
   onUpdate,
   isActive,
+  onContentChange,
 }) => {
   const [isDragging, setIsDragging] = useState(false)
   const [dragStart, setDragStart] = useState<{ x: number; y: number } | null>(
@@ -47,6 +49,9 @@ const DraggableTextBox: React.FC<DraggableTextBoxProps> = ({
       FontFamily.configure({ types: ['textStyle'] }),
     ],
     content: element.content,
+    onUpdate: ({ editor }) => {
+      onContentChange(editor.getHTML())
+    },
   })
 
   const style: React.CSSProperties = {
