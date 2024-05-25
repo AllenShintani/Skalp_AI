@@ -85,21 +85,21 @@ const SlideEditor: React.FC<{ id: string }> = ({ id }) => {
   }
 
   const handleSlideClick = () => {
-    if (currentTextBoxId && editor) {
-      const selectedElement = slide?.elements?.find(
-        (el) => el.id === currentTextBoxId,
-      )
-      if (selectedElement) {
-        handleElementChange(
-          selectedElement.id,
-          editor.getText(), // 現在のエディタの内容をプレーンテキストとして取得
-          selectedElement.width,
-          selectedElement.height,
-          selectedElement.x,
-          selectedElement.y,
-        )
-      }
-    }
+    if (!currentTextBoxId || !editor) return
+
+    const selectedElement = slide?.elements?.find(
+      (el) => el.id === currentTextBoxId,
+    )
+    if (!selectedElement) return
+    handleElementChange(
+      selectedElement.id,
+      editor.getText(),
+      selectedElement.width,
+      selectedElement.height,
+      selectedElement.x,
+      selectedElement.y,
+    )
+
     setCurrentTextBoxId(null)
   }
 
@@ -152,7 +152,6 @@ const SlideEditor: React.FC<{ id: string }> = ({ id }) => {
                     y,
                   )
                 }
-                editor={editor}
                 isActive={currentTextBoxId === element.id}
               />
             ))}

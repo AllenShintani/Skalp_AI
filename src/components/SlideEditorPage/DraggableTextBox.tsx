@@ -1,14 +1,22 @@
 import type React from 'react'
 import { useState } from 'react'
-import TextBox from './TextBox'
+import { useEditor } from '@tiptap/react'
+import StarterKit from '@tiptap/starter-kit'
+import TextStyle from '@tiptap/extension-text-style'
+import FontFamily from '@tiptap/extension-font-family'
+import Underline from '@tiptap/extension-underline'
+import Document from '@tiptap/extension-document'
+import Paragraph from '@tiptap/extension-paragraph'
+import Text from '@tiptap/extension-text'
+
 import type { SlideElement } from '../../types/Slide'
+import TextBox from './TextBox'
 import styles from '../../styles/DraggableTextBox.module.css'
 
 type DraggableTextBoxProps = {
   element: SlideElement
   onClick: (event: React.MouseEvent) => void
   onUpdate: (x: number, y: number) => void
-  editor: any
   isActive: boolean
 }
 
@@ -16,7 +24,6 @@ const DraggableTextBox: React.FC<DraggableTextBoxProps> = ({
   element,
   onClick,
   onUpdate,
-  editor,
   isActive,
 }) => {
   const [isDragging, setIsDragging] = useState(false)
@@ -27,6 +34,19 @@ const DraggableTextBox: React.FC<DraggableTextBoxProps> = ({
   const [size, setSize] = useState({
     width: element.width,
     height: element.height,
+  })
+
+  const editor = useEditor({
+    extensions: [
+      Text,
+      Document,
+      Paragraph,
+      StarterKit,
+      TextStyle,
+      Underline,
+      FontFamily.configure({ types: ['textStyle'] }),
+    ],
+    content: element.content,
   })
 
   const style: React.CSSProperties = {
@@ -74,13 +94,15 @@ const DraggableTextBox: React.FC<DraggableTextBoxProps> = ({
       onMouseUp={handleMouseUp}
       onClick={(event) => onClick(event)} // event引数を渡す
     >
-      <TextBox
-        editor={editor}
-        width={size.width}
-        height={size.height}
-        onResize={handleResize}
-        isActive={isActive}
-      />
+      {editor && (
+        <TextBox
+          editor={editor}
+          width={size.width}
+          height={size.height}
+          onResize={handleResize}
+          isActive={isActive}
+        />
+      )}
     </div>
   )
 }
