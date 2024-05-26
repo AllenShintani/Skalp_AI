@@ -35,29 +35,27 @@ const TextBox: React.FC<TextBoxProps> = ({
 
   const handleMouseMove = useCallback(
     (e: MouseEvent) => {
-      if (isResizing) {
-        const newWidth = startSize.width + (e.clientX - startPosition.x)
-        const newHeight = startSize.height + (e.clientY - startPosition.y)
-        setSize({ width: newWidth, height: newHeight })
-      }
+      if (!isResizing) return
+      const newWidth = startSize.width + (e.clientX - startPosition.x)
+      const newHeight = startSize.height + (e.clientY - startPosition.y)
+      setSize({ width: newWidth, height: newHeight })
     },
     [isResizing, startSize, startPosition],
   )
 
   const handleMouseUp = useCallback(() => {
-    if (isResizing) {
-      setIsResizing(false)
-      if (onResize) {
-        onResize(size.width, size.height)
-      }
-    }
+    if (!isResizing) return
+    setIsResizing(false)
+    if (!onResize) return
+    onResize(size.width, size.height)
   }, [isResizing, onResize, size.width, size.height])
 
   useEffect(() => {
     if (isResizing) {
       document.addEventListener('mousemove', handleMouseMove)
       document.addEventListener('mouseup', handleMouseUp)
-    } else {
+    }
+    if (!isResizing) {
       document.removeEventListener('mousemove', handleMouseMove)
       document.removeEventListener('mouseup', handleMouseUp)
     }

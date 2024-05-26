@@ -78,12 +78,10 @@ const DraggableTextBox: React.FC<DraggableTextBoxProps> = ({
   }
 
   const handleMouseUp = () => {
-    if (isDragging) {
-      setIsDragging(false)
-      if (dragStart) {
-        onUpdate(position.x, position.y)
-      }
-    }
+    if (!isDragging) return
+    setIsDragging(false)
+    if (!dragStart) return
+    onUpdate(position.x, position.y)
   }
 
   const handleResize = (width: number, height: number) => {

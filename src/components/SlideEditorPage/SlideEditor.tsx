@@ -43,14 +43,12 @@ const SlideEditor: React.FC<{ id: string }> = ({ id }) => {
   })
 
   useEffect(() => {
-    if (currentTextBoxId && editor) {
-      const selectedElement = slide?.elements?.find(
-        (el) => el.id === currentTextBoxId,
-      )
-      if (selectedElement) {
-        editor.commands.setContent(selectedElement.content)
-      }
-    }
+    if (!currentTextBoxId || !editor) return
+    const selectedElement = slide?.elements?.find(
+      (element) => element.id === currentTextBoxId,
+    )
+    if (!selectedElement) return
+    editor.commands.setContent(selectedElement.content)
   }, [currentTextBoxId, editor, slide])
 
   const handleElementChange = (
@@ -138,9 +136,8 @@ const SlideEditor: React.FC<{ id: string }> = ({ id }) => {
       s.id === id ? { ...s, elements: [...(s.elements || []), newTextBox] } : s,
     )
     setSlides(updatedSlides)
-    if (editor) {
-      editor.commands.setContent(newTextBox.content)
-    }
+    if (!editor) return
+    editor.commands.setContent(newTextBox.content)
   }
 
   if (!slide) return <div>Loading...</div>
@@ -168,16 +165,15 @@ const SlideEditor: React.FC<{ id: string }> = ({ id }) => {
             const activeElement = slides
               .flatMap((slide) => slide.elements || [])
               .find((e) => e.id === currentTextBoxId)
-            if (activeElement) {
-              handleElementChange(
-                activeElement.id,
-                activeElement.content,
-                activeElement.width,
-                activeElement.height,
-                activeElement.x + delta.x,
-                activeElement.y + delta.y,
-              )
-            }
+            if (!activeElement) return
+            handleElementChange(
+              activeElement.id,
+              activeElement.content,
+              activeElement.width,
+              activeElement.height,
+              activeElement.x + delta.x,
+              activeElement.y + delta.y,
+            )
           }}
         >
           <div className={styles.slideContainer}>
