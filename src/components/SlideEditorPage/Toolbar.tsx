@@ -15,19 +15,6 @@ const Toolbar: React.FC<ToolbarProps> = ({ editor }) => {
   const [slides, setSlides] = useRecoilState(slidesState)
   const router = useRouter()
 
-  const createNewSlide = () => {
-    const newSlideId = uuidv4()
-    const newSlide = {
-      id: newSlideId,
-      title: '',
-      thumbnail: '/thumbnails/default.jpg',
-      content: '',
-      elements: [],
-    }
-    setSlides([...slides, newSlide])
-    router.push(`/slide/${newSlideId}`)
-  }
-
   const addTextBox = () => {
     const newTextBox: SlideElement = {
       id: uuidv4(),
@@ -45,21 +32,14 @@ const Toolbar: React.FC<ToolbarProps> = ({ editor }) => {
         : s,
     )
     setSlides(updatedSlides)
-    if (editor) {
-      editor.commands.setContent(newTextBox.content)
-    }
+    if (!editor) return
+    editor.commands.setContent(newTextBox.content)
   }
 
   if (!editor) return null
 
   return (
     <div className={styles.toolbar}>
-      <button
-        onClick={createNewSlide}
-        className={`${styles.button} ${styles.createNewSlideButton}`}
-      >
-        Create New Slide
-      </button>
       <button
         onClick={() => editor.chain().focus().toggleBold().run()}
         className={editor.isActive('bold') ? styles.isActive : ''}
