@@ -82,7 +82,7 @@ const SlideEditor: React.FC<{ id: string }> = ({ id }) => {
   }
 
   const handleTextBoxClick = (elementId: string, event: React.MouseEvent) => {
-    event.stopPropagation() // イベントのバブリングを防ぐ
+    event.stopPropagation() 
     const selectedElement = slide?.elements?.find((el) => el.id === elementId)
     if (!editor || !selectedElement) return
     setCurrentTextBoxId(elementId)

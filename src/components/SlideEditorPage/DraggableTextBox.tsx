@@ -53,6 +53,7 @@ const DraggableTextBox: React.FC<DraggableTextBoxProps> = ({
       onContentChange(editor.getHTML())
     },
   })
+  
 
   const style: React.CSSProperties = {
     transform: `translate3d(${position.x}px, ${position.y}px, 0)`,
@@ -95,7 +96,7 @@ const DraggableTextBox: React.FC<DraggableTextBoxProps> = ({
       onMouseDown={handleMouseDown}
       onMouseMove={!isActive ? handleMouseMove : undefined}
       onMouseUp={handleMouseUp}
-      onClick={(event) => onClick(event)} // event引数を渡す
+      onClick={(event) => onClick(event)} 
     >
       {editor && (
         <TextBox
