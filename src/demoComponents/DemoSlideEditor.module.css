@@ -1,0 +1,29 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100vh;
+  border: 1px solid #ccc;
+}
+
+.editSpace {
+  border: 1px solid #ccc;
+  width: 90%;
+  height: 90%;
+  position: relative;
+}
+
+.textBox {
+  position: relative;
+  border: 1px solid #ccc;
+}
+
+.resizeHandle {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 10px;
+  height: 10px;
+  background-color: blue;
+  cursor: se-resize;
+}

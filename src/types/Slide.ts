@@ -1,16 +1,18 @@
-export type SlideElement = {
-  id: string
-  type: 'text' | 'shape'
-  content: string
+import type { Editor } from '@tiptap/react'
+
+export type TextBox = {
+  editor: Editor
+  textBoxId: number
   x: number
   y: number
+  isSelected: boolean
   width: number
   height: number
 }
 
 export type Slide = {
-  id: string
+  slideId: string
   title: string
   content?: string
-  elements?: SlideElement[]
+  textBoxInSlide?: TextBox[]
 }

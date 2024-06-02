@@ -1,59 +1,32 @@
 import type React from 'react'
 import { useState } from 'react'
-import { useEditor } from '@tiptap/react'
-import StarterKit from '@tiptap/starter-kit'
-import TextStyle from '@tiptap/extension-text-style'
-import FontFamily from '@tiptap/extension-font-family'
-import Underline from '@tiptap/extension-underline'
-import Document from '@tiptap/extension-document'
-import Paragraph from '@tiptap/extension-paragraph'
-import Text from '@tiptap/extension-text'
 
-import type { SlideElement } from '../../types/Slide'
 import TextBox from './TextBox'
 import styles from '../../styles/DraggableTextBox.module.css'
+import type { TextBoxInSlide } from '@/types/Slide'
 
 type DraggableTextBoxProps = {
-  element: SlideElement
+  textBox: TextBoxInSlide
   onClick: (event: React.MouseEvent) => void
   onUpdate: (x: number, y: number) => void
   isActive: boolean
-  onContentChange: (content: string) => void
 }
 
 const DraggableTextBox: React.FC<DraggableTextBoxProps> = ({
-  element,
+  textBox,
   onClick,
   onUpdate,
   isActive,
-  onContentChange,
 }) => {
   const [isDragging, setIsDragging] = useState(false)
   const [dragStart, setDragStart] = useState<{ x: number; y: number } | null>(
     null,
   )
-  const [position, setPosition] = useState({ x: element.x, y: element.y })
+  const [position, setPosition] = useState({ x: textBox.x, y: textBox.y })
   const [size, setSize] = useState({
-    width: element.width,
-    height: element.height,
+    width: textBox.width,
+    height: textBox.height,
   })
-
-  const editor = useEditor({
-    extensions: [
-      Text,
-      Document,
-      Paragraph,
-      StarterKit,
-      TextStyle,
-      Underline,
-      FontFamily.configure({ types: ['textStyle'] }),
-    ],
-    content: element.content,
-    onUpdate: ({ editor }) => {
-      onContentChange(editor.getHTML())
-    },
-  })
-  
 
   const style: React.CSSProperties = {
     transform: `translate3d(${position.x}px, ${position.y}px, 0)`,
@@ -79,7 +52,6 @@ const DraggableTextBox: React.FC<DraggableTextBoxProps> = ({
   }
 
   const handleMouseUp = () => {
-    if (!isDragging) return
     setIsDragging(false)
     if (!dragStart) return
     onUpdate(position.x, position.y)
@@ -96,17 +68,15 @@ const DraggableTextBox: React.FC<DraggableTextBoxProps> = ({
       onMouseDown={handleMouseDown}
       onMouseMove={!isActive ? handleMouseMove : undefined}
       onMouseUp={handleMouseUp}
-      onClick={(event) => onClick(event)} 
+      onClick={(event) => onClick(event)}
     >
-      {editor && (
-        <TextBox
-          editor={editor}
-          width={size.width}
-          height={size.height}
-          onResize={handleResize}
-          isActive={isActive}
-        />
-      )}
+      <TextBox
+        editor={textBox.editor}
+        width={size.width}
+        height={size.height}
+        onResize={handleResize}
+        isActive={isActive}
+      />
     </div>
   )
 }

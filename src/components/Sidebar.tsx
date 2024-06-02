@@ -13,14 +13,14 @@ const Sidebar = () => {
     <div className={styles.sidebar}>
       {slides.map((slide, index) => (
         <Link
-          key={slide.id}
-          href={`/slide/${slide.id}`}
+          key={slide.slideId}
+          href={`/slide/${slide.slideId}`}
           passHref
           legacyBehavior
         >
           <a
             className={`${styles.slideLink} ${
-              slide.id === id ? styles.selected : ''
+              slide.slideId === id ? styles.selected : ''
             }`}
           >
             <div className={styles.slideNumber}>{index + 1}</div>
