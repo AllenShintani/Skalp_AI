@@ -6,8 +6,8 @@ export type TextBox = {
   x: number
   y: number
   isSelected: boolean
-  width?: number
-  height?: number
+  width: number
+  height: number
 }
 
 export type Slide = {

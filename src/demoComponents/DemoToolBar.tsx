@@ -11,6 +11,11 @@ import type TextBox from '@/components/SlideEditorPage/TextBox'
 type TextBox = {
   editor: Editor | null
   textBoxId: number
+  x: number
+  y: number
+  isSelected: boolean
+  width: number
+  height: number
 }
 
 type Props = {
