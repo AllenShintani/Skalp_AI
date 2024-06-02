@@ -2,7 +2,7 @@ import type React from 'react'
 import { EditorContent } from '@tiptap/react'
 import styles from './DemoSlideEditor.module.css'
 
-import { useState } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import type { TextBox } from '@/types/Slide'
 
 type Props = {
@@ -10,7 +10,7 @@ type Props = {
 }
 
 const DraggableTextBox: React.FC<Props> = ({ textbox }) => {
-  const [idDragging, setIsDragging] = useState(false)
+  const [isDragging, setIsDragging] = useState(false)
   const [dragStart, setDragStart] = useState<{ x: number; y: number } | null>(
     null,
   )
@@ -20,10 +20,10 @@ const DraggableTextBox: React.FC<Props> = ({ textbox }) => {
     height: textbox.height,
   })
   const [isResizing, setIsResizing] = useState(false)
-  const [resizeStart, setResizeStart] = useState<{
-    x: number
-    y: number
-  }>({ x: size.width, y: size.height })
+  const [resizeStart, setResizeStart] = useState<{ x: number; y: number }>({
+    x: size.width,
+    y: size.height,
+  })
 
   const style: React.CSSProperties = {
     transform: `translate3d(${position.x}px, ${position.y}px, 0)`,
@@ -35,55 +35,89 @@ const DraggableTextBox: React.FC<Props> = ({ textbox }) => {
     userSelect: 'none', // Prevent text selection(入力の無効化はtiptapにメソッドが存在する為、注意が必要)
   }
 
-  const handleMouseDown = (e: React.MouseEvent) => {
-    textbox.isSelected = true
-    setDragStart({ x: e.clientX - position.x, y: e.clientY - position.y })
-    setIsDragging(true)
-  }
+  const handleDragMouseDown = useCallback(
+    (e: React.MouseEvent) => {
+      textbox.isSelected = true
+      setDragStart({ x: e.clientX - position.x, y: e.clientY - position.y })
+      setIsDragging(true)
+    },
+    [position.x, position.y, textbox],
+  )
 
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (!dragStart) return
-    if (!textbox.isSelected) return
-    setPosition({
-      x: e.clientX - dragStart.x,
-      y: e.clientY - dragStart.y,
-    })
-  }
+  const handleDragMouseMove = useCallback(
+    (e: MouseEvent) => {
+      if (!isDragging || !dragStart) return
+      setPosition({
+        x: e.clientX - dragStart.x,
+        y: e.clientY - dragStart.y,
+      })
+    },
+    [isDragging, dragStart],
+  )
 
-  const handleMouseUp = (e: React.MouseEvent) => {
-    if (!idDragging) return
-    textbox.isSelected = false
+  const handleDragMouseUp = useCallback(() => {
+    if (!isDragging) return
     setIsDragging(false)
-    if (!dragStart) return
-  }
+    setDragStart(null)
+    textbox.isSelected = false
+  }, [isDragging, textbox])
 
-  const handleResizeMouseDown = (e: React.MouseEvent) => {
+  const handleResizeMouseDown = useCallback((e: React.MouseEvent) => {
     e.stopPropagation()
     setIsResizing(true)
     setResizeStart({ x: e.clientX, y: e.clientY })
-  }
+  }, [])
 
-  // const [preNewSize, setPreNewSize] = useState({ width: 0, height: 0 })
-  const handleResizeMouseMove = (e: React.MouseEvent) => {
+  const handleResizeMouseMove = useCallback(
+    (e: MouseEvent) => {
+      if (!isResizing) return
+      const deltaX = e.clientX - resizeStart.x
+      const deltaY = e.clientY - resizeStart.y
+      const newWidth = size.width + deltaX
+      const newHeight = size.height + deltaY
+      setSize({ width: newWidth, height: newHeight })
+      setResizeStart({ x: e.clientX, y: e.clientY })
+    },
+    [isResizing, resizeStart, size],
+  )
+
+  const handleResizeMouseUp = useCallback(() => {
     if (!isResizing) return
-    e.stopPropagation()
-    const deltaX = e.clientX - resizeStart.x
-    const deltaY = e.clientY - resizeStart.y
-    const newWidth = size.width + deltaX
-    const newHeight = size.height + deltaY
-    setSize({ width: newWidth, height: newHeight })
-    setResizeStart({ x: e.clientX, y: e.clientY })
-  }
-
-  const handleResizeMouseUp = () => {
     setIsResizing(false)
-  }
+  }, [isResizing])
+
+  const handleMouseMove = useCallback(
+    (e: MouseEvent) => {
+      handleDragMouseMove(e)
+      handleResizeMouseMove(e)
+    },
+    [handleDragMouseMove, handleResizeMouseMove],
+  )
+  const handleMouseUp = useCallback(() => {
+    handleDragMouseUp()
+    handleResizeMouseUp()
+  }, [handleDragMouseUp, handleResizeMouseUp])
+
+  useEffect(() => {
+    document.addEventListener('mousemove', handleMouseMove)
+    document.addEventListener('mouseup', handleMouseUp)
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove)
+      document.removeEventListener('mouseup', handleMouseUp)
+    }
+  }, [
+    handleDragMouseMove,
+    handleDragMouseUp,
+    handleMouseMove,
+    handleMouseUp,
+    handleResizeMouseMove,
+    handleResizeMouseUp,
+  ])
+
   return (
     <div
       style={style}
-      onMouseDown={handleMouseDown}
-      onMouseMove={handleMouseMove}
-      onMouseUp={handleMouseUp}
+      onMouseDown={handleDragMouseDown}
       className={styles.textBox}
     >
       <div onMouseDown={(e) => e.stopPropagation()}>
@@ -92,8 +126,6 @@ const DraggableTextBox: React.FC<Props> = ({ textbox }) => {
       <div
         className={styles.resizeHandle}
         onMouseDown={handleResizeMouseDown}
-        onMouseMove={handleResizeMouseMove}
-        onMouseUp={handleResizeMouseUp}
       />
     </div>
   )

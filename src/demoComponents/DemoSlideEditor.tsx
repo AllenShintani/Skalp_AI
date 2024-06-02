@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react'
+import { useState } from 'react'
 import { DndContext } from '@dnd-kit/core'
 import StarterKit from '@tiptap/starter-kit'
 import { Editor } from '@tiptap/react'

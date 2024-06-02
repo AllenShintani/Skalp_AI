@@ -1,11 +1,6 @@
 import type React from 'react'
 import { useRouter } from 'next/router'
-import StarterKit from '@tiptap/starter-kit'
 import type { Editor } from '@tiptap/react'
-import { EditorContent, useEditor } from '@tiptap/react'
-import { useState } from 'react'
-import { useRecoilState } from 'recoil'
-import { countTextBoxState, textBoxesState } from '@/recoil/atoms'
 import type TextBox from '@/components/SlideEditorPage/TextBox'
 
 type TextBox = {
