@@ -1,33 +1,62 @@
-import type React from 'react'
-import { useRouter } from 'next/router'
+import React, { useCallback, useState } from 'react'
+import { DndContext } from '@dnd-kit/core'
 import StarterKit from '@tiptap/starter-kit'
-import type { Editor } from '@tiptap/react'
-import { EditorContent, useEditor } from '@tiptap/react'
-import { useState } from 'react'
+import { Editor } from '@tiptap/react'
 import DemoToolBar from './DemoToolBar'
-import { useRecoilState } from 'recoil'
-import { countTextBoxState, textBoxesState } from '@/recoil/atoms'
-type TextBox = {
-  editor: Editor | null
-  textBoxId: number
-}
+import styles from './DemoSlideEditor.module.css'
+import DraggableTextBox from './DraggableTextBox'
+import type { TextBox } from '@/types/Slide'
+
 const DemoSlideEditor = () => {
-  const router = useRouter()
-  const [textboxes, setTextboxes] = useRecoilState(textBoxesState)
-  // const [countTextbox, setCountTextbox] = useState(0)
+  const [textboxes, setTextboxes] = useState<TextBox[]>([])
+  const [countTextbox, setCountTextbox] = useState(0)
   const [currentId, setCurrentId] = useState(0)
 
+  const createTextbox = () => {
+    console.log('create textbox')
+    const editor = new Editor({
+      content: `<p>Example Text</p>`,
+      extensions: [StarterKit],
+    })
+    setTextboxes((prev) => [
+      ...prev,
+      {
+        editor: editor,
+        textBoxId: countTextbox,
+        x: 100,
+        y: 100,
+        isSelected: false,
+      },
+    ])
+    setCountTextbox((prev) => prev + 1)
+  }
+
+  const selectTextBox = (id: number) => {
+    console.log('select textbox', id)
+    setCurrentId(id)
+  }
+
   return (
-    <div>
+    <div className={styles.container}>
       <h1>Demo Page</h1>
-      <DemoToolBar currentId={currentId} />
-      {textboxes?.map((textbox) => (
-        <EditorContent
-          key={textbox.textBoxId}
-          editor={textbox.editor}
-          onClick={() => setCurrentId(textbox.textBoxId)}
-        />
-      ))}
+      <DemoToolBar
+        currentId={currentId}
+        createTextbox={createTextbox}
+        textboxes={textboxes}
+      />
+
+      <DndContext>
+        <div className={styles.editSpace}>
+          {textboxes?.map((textbox) => (
+            <div
+              onClick={() => selectTextBox(textbox.textBoxId)}
+              key={textbox.textBoxId}
+            >
+              <DraggableTextBox textbox={textbox} />
+            </div>
+          ))}
+        </div>
+      </DndContext>
     </div>
   )
 }
