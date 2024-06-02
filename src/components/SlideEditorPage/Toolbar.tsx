@@ -7,35 +7,31 @@ type ToolbarProps = {
 }
 
 const Toolbar: React.FC<ToolbarProps> = ({ editor }) => {
-
-  if (!editor) return null
-  console.log(editor)
-
   return (
     <div className={styles.toolbar}>
       <button
-        onClick={() => editor.chain().focus().toggleBold().run()}
-        className={editor.isActive('bold') ? styles.isActive : ''}
+        onClick={() => editor?.chain().focus().toggleBold().run()}
+        className={editor?.isActive('bold') ? styles.isActive : ''}
       >
         B
       </button>
       <button
-        onClick={() => editor.chain().focus().toggleItalic().run()}
-        className={editor.isActive('italic') ? styles.isActive : ''}
+        onClick={() => editor?.chain().focus().toggleItalic().run()}
+        className={editor?.isActive('italic') ? styles.isActive : ''}
       >
         I
       </button>
       <button
-        onClick={() => editor.chain().focus().toggleUnderline().run()}
-        className={editor.isActive('underline') ? styles.isActive : ''}
+        onClick={() => editor?.chain().focus().toggleUnderline().run()}
+        className={editor?.isActive('underline') ? styles.isActive : ''}
       >
         U
       </button>
       <select
         onChange={(e) =>
-          editor.chain().focus().setFontFamily(e.target.value).run()
+          editor?.chain().focus().setFontFamily(e.target.value).run()
         }
-        value={editor.getAttributes('textStyle').fontFamily || 'Arial'}
+        value={editor?.getAttributes('textStyle').fontFamily || 'Arial'}
       >
         <option value="Arial">Arial</option>
         <option value="Noto Sans JP">Noto Sans JP</option>
@@ -43,9 +39,9 @@ const Toolbar: React.FC<ToolbarProps> = ({ editor }) => {
       </select>
       <select
         onChange={(e) =>
-          editor.chain().focus().setFontSize(e.target.value).run()
+          editor?.chain().focus().setFontSize(e.target.value).run()
         }
-        value={editor.getAttributes('fontSize').size || '16'}
+        value={editor?.getAttributes('fontSize').size || '16'}
       >
         <option value="12">12px</option>
         <option value="16">16px</option>
@@ -53,7 +49,6 @@ const Toolbar: React.FC<ToolbarProps> = ({ editor }) => {
         <option value="24">24px</option>
         <option value="32">32px</option>
       </select>
-
     </div>
   )
 }

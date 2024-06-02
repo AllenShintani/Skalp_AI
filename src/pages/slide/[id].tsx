@@ -21,7 +21,7 @@ const SlideEditorPage: React.FC<SlideProps> = ({ id }) => {
     <div className={styles.container}>
       <Sidebar />
       <div className={styles.editorContainer}>
-        <SlideEditor id={id} />
+        <SlideEditor slideId={id} />
       </div>
     </div>
   )
