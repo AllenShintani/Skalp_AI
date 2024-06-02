@@ -1,5 +1,5 @@
 import { atom } from 'recoil'
-import type { Slide, TextBoxInSlide } from '../types/Slide'
+import type { Slide, TextBox } from '../types/Slide'
 
 export const slidesState = atom<Slide[]>({
   key: 'slidesState',
@@ -11,7 +11,7 @@ export const textToolState = atom({
   default: false,
 })
 
-export const textBoxesState = atom<TextBoxInSlide[]>({
+export const textBoxesState = atom<TextBox[]>({
   key: 'textBoxesState',
   default: [],
 })
