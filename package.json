@@ -48,7 +48,6 @@
     "react-query": "^3.39.3",
     "recharts": "^2.12.5",
     "recoil": "^0.7.7",
-    "sass": "^1.77.4",
     "slate": "^0.103.0",
     "slate-history": "^0.100.0",
     "slate-react": "^0.104.0",
