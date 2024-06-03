@@ -3,17 +3,96 @@
   border: 1px solid #ccc;
 }
 
-.textBox:hover .resizeHandle {
+.textBox:hover .resizeHandles {
   display: block;
 }
 
-.resizeHandle {
+.resizeHandles {
   display: none;
   position: absolute;
-  bottom: 0;
-  right: 0;
+  inset: 0;
+}
+
+.resizeHandleSE {
+  position: absolute;
+  bottom: -5px;
+  right: -5px;
   width: 10px;
   height: 10px;
   background-color: blue;
   cursor: se-resize;
+}
+
+.resizeHandleS {
+  position: absolute;
+  bottom: -5px;
+  left: 50%;
+  width: 10px;
+  transform: translateX(-50%);
+  height: 10px;
+  background-color: blue;
+  cursor: s-resize;
+}
+
+.resizeHandleSW {
+  position: absolute;
+  bottom: -5px;
+  left: -5px;
+  width: 10px;
+  height: 10px;
+  background-color: blue;
+  cursor: sw-resize;
+}
+
+.resizeHandleW {
+  position: absolute;
+  top: 50%;
+  left: -5px;
+  width: 10px;
+  transform: translateY(-50%);
+  height: 10px;
+  background-color: blue;
+  cursor: w-resize;
+}
+
+.resizeHandleNW {
+  position: absolute;
+  top: -5px;
+  left: -5px;
+  width: 10px;
+  height: 10px;
+  background-color: blue;
+  cursor: nw-resize;
+}
+
+.resizeHandleN {
+  position: absolute;
+  top: -5px;
+  left: 50%;
+  width: 10px;
+  transform: translateX(-50%);
+  height: 10px;
+  background-color: blue;
+  cursor: n-resize;
+}
+
+.resizeHandleNE {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  width: 10px;
+  height: 10px;
+  background-color: blue;
+  cursor: ne-resize;
+}
+
+.resizeHandleE {
+  position: absolute;
+  top: 50%;
+  right: -5px;
+  width: 10px;
+  transform: translateY(-50%);
+  height: 10px;
+  background-color: blue;
+  cursor: e-resize;
 }

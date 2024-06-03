@@ -39,8 +39,8 @@ const SlideEditor: React.FC<{ slideId: string }> = ({ slideId }) => {
         {
           editor: editor,
           textBoxId: countTextbox,
-          x: 10,
-          y: 10,
+          x: 100,
+          y: 100,
           width: 150,
           height: 40,
         },
