@@ -6,6 +6,16 @@ import DemoToolBar from './DemoToolBar'
 import styles from './DemoSlideEditor.module.css'
 import DraggableTextBox from './DraggableTextBox'
 import type { TextBox } from '@/types/Slide'
+import { Text } from '@tiptap/extension-text'
+import { Bold } from '@tiptap/extension-bold'
+import { Italic } from '@tiptap/extension-italic'
+import { Underline } from '@tiptap/extension-underline'
+import { Strike } from '@tiptap/extension-strike'
+import { FontSize } from '@/components/extensions/FontsSize'
+import FontFamily from '@tiptap/extension-font-family'
+import TextStyle from '@tiptap/extension-text-style'
+import Document from '@tiptap/extension-document'
+import Paragraph from '@tiptap/extension-paragraph'
 
 const DemoSlideEditor = () => {
   const [textboxes, setTextboxes] = useState<TextBox[]>([])
@@ -13,10 +23,21 @@ const DemoSlideEditor = () => {
   const [currentId, setCurrentId] = useState(0)
 
   const createTextbox = () => {
-    console.log('create textbox')
     const editor = new Editor({
       content: `<p>Example Text</p>`,
-      extensions: [StarterKit],
+      extensions: [
+        StarterKit,
+        Text,
+        TextStyle,
+        Document,
+        Paragraph,
+        Bold,
+        Italic,
+        Underline,
+        Strike,
+        FontFamily.configure({ types: ['textStyle'] }),
+        FontSize,
+      ],
     })
     setTextboxes((prev) => [
       ...prev,
