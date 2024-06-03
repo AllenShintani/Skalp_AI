@@ -15,18 +15,3 @@
   height: 90%;
   position: relative;
 }
-
-.textBox {
-  position: relative;
-  border: 1px solid #ccc;
-}
-
-.resizeHandle {
-  position: absolute;
-  bottom: 0;
-  right: 0;
-  width: 10px;
-  height: 10px;
-  background-color: blue;
-  cursor: se-resize;
-}
