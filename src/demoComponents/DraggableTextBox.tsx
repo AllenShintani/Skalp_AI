@@ -1,6 +1,6 @@
 import type React from 'react'
 import { EditorContent } from '@tiptap/react'
-import styles from './DemoSlideEditor.module.css'
+import styles from './DraggableTextBox.module.css'
 
 import { useState, useCallback, useEffect } from 'react'
 import type { TextBox } from '@/types/Slide'
@@ -62,11 +62,15 @@ const DraggableTextBox: React.FC<Props> = ({ textbox }) => {
     textbox.isSelected = false
   }, [isDragging, textbox])
 
-  const handleResizeMouseDown = useCallback((e: React.MouseEvent) => {
-    e.stopPropagation()
-    setIsResizing(true)
-    setResizeStart({ x: e.clientX, y: e.clientY })
-  }, [])
+  const handleResizeMouseDown = useCallback(
+    (e: React.MouseEvent) => {
+      e.stopPropagation()
+      setIsResizing(true)
+      setResizeStart({ x: e.clientX, y: e.clientY })
+      textbox.isSelected = true
+    },
+    [textbox],
+  )
 
   const handleResizeMouseMove = useCallback(
     (e: MouseEvent) => {
@@ -84,7 +88,8 @@ const DraggableTextBox: React.FC<Props> = ({ textbox }) => {
   const handleResizeMouseUp = useCallback(() => {
     if (!isResizing) return
     setIsResizing(false)
-  }, [isResizing])
+    textbox.isSelected = false
+  }, [isResizing, textbox])
 
   const handleMouseMove = useCallback(
     (e: MouseEvent) => {

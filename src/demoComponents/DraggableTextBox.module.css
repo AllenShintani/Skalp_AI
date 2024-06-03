@@ -1,0 +1,19 @@
+.textBox {
+  position: relative;
+  border: 1px solid #ccc;
+}
+
+.textBox:hover .resizeHandle {
+  display: block;
+}
+
+.resizeHandle {
+  display: none;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 10px;
+  height: 10px;
+  background-color: blue;
+  cursor: se-resize;
+}
