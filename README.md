@@ -24,4 +24,4 @@ npx prisma migrate dev
 
 ・function禁止
 ・interface禁止
-・ブランチ名はリリースまでは基本feature/ISSUE番号
+・ブランチ名はリリースまでは基本feature/#ISSUE番号
