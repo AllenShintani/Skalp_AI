@@ -1,22 +1,12 @@
-import { useRecoilState } from 'recoil'
 import { useRouter } from 'next/router'
-import { v4 as uuidv4 } from 'uuid'
-import Sidebar from '../components/Sidebar'
-import { slidesState } from '../recoil/atoms'
 import styles from '../styles/Home.module.css'
+import Sidebar from '@/components/Sidebar'
 
 const Home = () => {
   const router = useRouter()
-  const [slides, setSlides] = useRecoilState(slidesState)
 
   const createNewSlide = () => {
-    const newSlideId = uuidv4()
-    const newSlide = {
-      id: newSlideId,
-      title: `${slides.length + 1}`,
-    }
-    setSlides([...slides, newSlide])
-    router.push(`/slide/${newSlideId}`)
+    router.push(`/slide/1`)
   }
 
   return (

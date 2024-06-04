@@ -2,8 +2,8 @@ import { useState } from 'react'
 import { DndContext } from '@dnd-kit/core'
 import StarterKit from '@tiptap/starter-kit'
 import { Editor } from '@tiptap/react'
-import DemoToolBar from './DemoToolBar'
-import styles from './DemoSlideEditor.module.css'
+import ToolBar from './ToolBar'
+import styles from './SlideEditor.module.css'
 import DraggableTextBox from './DraggableTextBox'
 import type { TextBox } from '@/types/Slide'
 import { Text } from '@tiptap/extension-text'
@@ -11,13 +11,13 @@ import { Bold } from '@tiptap/extension-bold'
 import { Italic } from '@tiptap/extension-italic'
 import { Underline } from '@tiptap/extension-underline'
 import { Strike } from '@tiptap/extension-strike'
-import { FontSize } from '@/components/extensions/FontsSize'
 import FontFamily from '@tiptap/extension-font-family'
 import TextStyle from '@tiptap/extension-text-style'
 import Document from '@tiptap/extension-document'
 import Paragraph from '@tiptap/extension-paragraph'
+import { FontSize } from '@/components/extensions/FontSize'
 
-const DemoSlideEditor = () => {
+const SlideEditor = () => {
   const [textboxes, setTextboxes] = useState<TextBox[]>([])
   const [countTextbox, setCountTextbox] = useState(0)
   const [currentId, setCurrentId] = useState(0)
@@ -61,8 +61,8 @@ const DemoSlideEditor = () => {
 
   return (
     <div className={styles.container}>
-      <h1>Demo Page</h1>
-      <DemoToolBar
+      <h1>Edit Page</h1>
+      <ToolBar
         currentId={currentId}
         createTextbox={createTextbox}
         textboxes={textboxes}
@@ -84,4 +84,4 @@ const DemoSlideEditor = () => {
   )
 }
 
-export default DemoSlideEditor
+export default SlideEditor
