@@ -1,5 +1,5 @@
 import { Mark, mergeAttributes } from '@tiptap/core'
-import type { CommandProps } from '@tiptap/core/dist/packages/core/src/types'
+import type { CommandProps } from '@tiptap/core'
 
 declare module '@tiptap/core' {
   interface Commands<ReturnType> {
