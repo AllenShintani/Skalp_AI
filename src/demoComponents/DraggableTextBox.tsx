@@ -168,9 +168,8 @@ const DraggableTextBox: React.FC<Props> = ({ textbox }) => {
         position,
         resizeDirection,
       )
-      if (newOptions.width < -10 || newOptions.height < -10) {
-        return
-      }
+      if (newOptions.width < -10 || newOptions.height < -10) return
+
       setPosition({ x: newOptions.x, y: newOptions.y })
       setSize({
         width: newOptions.width,
