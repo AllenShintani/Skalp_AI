@@ -8,96 +8,106 @@ import type { TextBox } from '@/types/Slide'
 type Props = {
   textbox: TextBox
 }
+type ResizeOptions = {
+  width: number
+  height: number
+  x: number
+  y: number
+}
 
+type Direction =
+  | 'north'
+  | 'northEast'
+  | 'east'
+  | 'southEast'
+  | 'south'
+  | 'southWest'
+  | 'west'
+  | 'northWest'
+  | 'default'
+
+type ResizeDivs = {
+  direction: Direction
+  className: string
+}
 const handleResize = (
   e: MouseEvent,
   resizeStart: { x: number; y: number },
   size: { width: number; height: number },
   position: { x: number; y: number },
-  direction: string,
-) => {
-  switch (direction) {
-    case 'se':
-      return {
-        width: size.width + (e.clientX - resizeStart.x),
-        height: size.height + (e.clientY - resizeStart.y),
-        x: position.x,
-        y: position.y,
-      }
+  direction: Direction,
+): ResizeOptions => {
+  const deltaX = e.clientX - resizeStart.x
+  const deltaY = e.clientY - resizeStart.y
 
-    case 's':
-      return {
-        width: size.width,
-        height: size.height + (e.clientY - resizeStart.y),
-        x: position.x,
-        y: position.y,
-      }
-    case 'sw':
-      return {
-        width: size.width - (e.clientX - resizeStart.x),
-        height: size.height + (e.clientY - resizeStart.y),
-        x: position.x + (e.clientX - resizeStart.x),
-        y: position.y,
-      }
-    case 'w': {
-      return {
-        width: size.width - (e.clientX - resizeStart.x),
-        height: size.height,
-        x: position.x + (e.clientX - resizeStart.x),
-        y: position.y,
-      }
-    }
-    case 'nw': {
-      return {
-        width: size.width - (e.clientX - resizeStart.x),
-        height: size.height - (e.clientY - resizeStart.y),
-        x: position.x + (e.clientX - resizeStart.x),
-        y: position.y + (e.clientY - resizeStart.y),
-      }
-    }
-    case 'n': {
-      return {
-        width: size.width,
-        height: size.height - (e.clientY - resizeStart.y),
-        x: position.x,
-        y: position.y + (e.clientY - resizeStart.y),
-      }
-    }
-    case 'ne': {
-      return {
-        width: size.width + (e.clientX - resizeStart.x),
-        height: size.height - (e.clientY - resizeStart.y),
-        x: position.x,
-        y: position.y + (e.clientY - resizeStart.y),
-      }
-    }
-    case 'e': {
-      return {
-        width: size.width + (e.clientX - resizeStart.x),
-        height: size.height,
-        x: position.x,
-        y: position.y,
-      }
-    }
-    default:
-      return {
-        width: size.width,
-        height: size.height,
-        x: position.x,
-        y: position.y,
-      }
+  const options: { [key in Direction]: ResizeOptions } = {
+    north: {
+      width: size.width,
+      height: size.height - deltaY,
+      x: position.x,
+      y: position.y + deltaY,
+    },
+    northEast: {
+      width: size.width + deltaX,
+      height: size.height - deltaY,
+      x: position.x,
+      y: position.y + deltaY,
+    },
+    east: {
+      width: size.width + deltaX,
+      height: size.height,
+      x: position.x,
+      y: position.y,
+    },
+    southEast: {
+      width: size.width + deltaX,
+      height: size.height + deltaY,
+      x: position.x,
+      y: position.y,
+    },
+    south: {
+      width: size.width,
+      height: size.height + deltaY,
+      x: position.x,
+      y: position.y,
+    },
+    southWest: {
+      width: size.width - deltaX,
+      height: size.height + deltaY,
+      x: position.x + deltaX,
+      y: position.y,
+    },
+    west: {
+      width: size.width - deltaX,
+      height: size.height,
+      x: position.x + deltaX,
+      y: position.y,
+    },
+    northWest: {
+      width: size.width - deltaX,
+      height: size.height - deltaY,
+      x: position.x + deltaX,
+      y: position.y + deltaY,
+    },
+    default: {
+      width: size.width,
+      height: size.height,
+      x: position.x,
+      y: position.y,
+    },
   }
-}
 
-const handleResizeDivs = [
-  { direction: 'se', className: styles.resizeHandleSE },
-  { direction: 's', className: styles.resizeHandleS },
-  { direction: 'sw', className: styles.resizeHandleSW },
-  { direction: 'w', className: styles.resizeHandleW },
-  { direction: 'nw', className: styles.resizeHandleNW },
-  { direction: 'n', className: styles.resizeHandleN },
-  { direction: 'ne', className: styles.resizeHandleNE },
-  { direction: 'e', className: styles.resizeHandleE },
+  return options[direction]
+}
+const handleResizeDivs: ResizeDivs[] = [
+  { direction: 'north', className: styles.resizeHandleNorth },
+  { direction: 'northEast', className: styles.resizeHandleNorthEast },
+  { direction: 'east', className: styles.resizeHandleEast },
+  { direction: 'southEast', className: styles.resizeHandleSouthEast },
+  { direction: 'south', className: styles.resizeHandleSouth },
+  { direction: 'southWest', className: styles.resizeHandleSouthWest },
+  { direction: 'west', className: styles.resizeHandleWest },
+  { direction: 'northWest', className: styles.resizeHandleNorthWest },
 ]
 
 const DraggableTextBox: React.FC<Props> = ({ textbox }) => {
@@ -111,7 +121,7 @@ const DraggableTextBox: React.FC<Props> = ({ textbox }) => {
     height: textbox.height,
   })
   const [isResizing, setIsResizing] = useState(false)
-  const [resizeDirection, setResizeDirection] = useState('')
+  const [resizeDirection, setResizeDirection] = useState<Direction>('default')
   const [resizeStart, setResizeStart] = useState<{ x: number; y: number }>({
     x: size.width,
     y: size.height,
@@ -155,8 +165,7 @@ const DraggableTextBox: React.FC<Props> = ({ textbox }) => {
   }, [isDragging, textbox])
 
   const handleResizeMouseDown = useCallback(
-    (e: React.MouseEvent, direction: string) => {
-      console.log('resizeMouseDown', direction)
+    (e: React.MouseEvent, direction: Direction) => {
       e.stopPropagation()
       setResizeDirection(direction)
       setIsResizing(true)
@@ -190,7 +199,7 @@ const DraggableTextBox: React.FC<Props> = ({ textbox }) => {
   const handleResizeMouseUp = useCallback(() => {
     if (!isResizing) return
     setIsResizing(false)
-    setResizeDirection('')
+    setResizeDirection('default')
     textbox.isSelected = false
   }, [isResizing, textbox])
 

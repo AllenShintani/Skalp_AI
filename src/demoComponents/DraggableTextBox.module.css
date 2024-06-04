@@ -13,7 +13,7 @@
   inset: 0;
 }
 
-.resizeHandleSE {
+.resizeHandleSouthEast {
   position: absolute;
   bottom: -5px;
   right: -5px;
@@ -23,7 +23,7 @@
   cursor: se-resize;
 }
 
-.resizeHandleS {
+.resizeHandleSouth {
   position: absolute;
   bottom: -5px;
   left: 50%;
@@ -34,7 +34,7 @@
   cursor: s-resize;
 }
 
-.resizeHandleSW {
+.resizeHandleSouthWest {
   position: absolute;
   bottom: -5px;
   left: -5px;
@@ -44,7 +44,7 @@
   cursor: sw-resize;
 }
 
-.resizeHandleW {
+.resizeHandleWest {
   position: absolute;
   top: 50%;
   left: -5px;
@@ -55,7 +55,7 @@
   cursor: w-resize;
 }
 
-.resizeHandleNW {
+.resizeHandleNorthWest {
   position: absolute;
   top: -5px;
   left: -5px;
@@ -65,7 +65,7 @@
   cursor: nw-resize;
 }
 
-.resizeHandleN {
+.resizeHandleNorth {
   position: absolute;
   top: -5px;
   left: 50%;
@@ -76,7 +76,7 @@
   cursor: n-resize;
 }
 
-.resizeHandleNE {
+.resizeHandleNorthEast {
   position: absolute;
   top: -5px;
   right: -5px;
@@ -86,7 +86,7 @@
   cursor: ne-resize;
 }
 
-.resizeHandleE {
+.resizeHandleEast {
   position: absolute;
   top: 50%;
   right: -5px;
