@@ -1,35 +1,19 @@
 import type React from 'react'
 import { EditorContent } from '@tiptap/react'
 import styles from './DraggableTextBox.module.css'
-
 import { useState, useCallback, useEffect } from 'react'
 import type { TextBox } from '@/types/Slide'
 
 type Props = {
   textbox: TextBox
 }
-type ResizeOptions = {
-  width: number
-  height: number
-  x: number
-  y: number
-}
 
-type Direction =
-  | 'north'
-  | 'northEast'
-  | 'east'
-  | 'southEast'
-  | 'south'
-  | 'southWest'
-  | 'west'
-  | 'northWest'
-  | 'default'
+import type {
+  Direction,
+  ResizeOptions,
+  ResizeDivs,
+} from '@/types/DraggableTextBox'
 
-type ResizeDivs = {
-  direction: Direction
-  className: string
-}
 const handleResize = (
   e: MouseEvent,
   resizeStart: { x: number; y: number },
