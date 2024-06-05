@@ -2,9 +2,9 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useRecoilValue } from 'recoil'
 import { slidesState } from '../recoil/atoms'
-import styles from '../styles/Sidebar.module.css'
+import styles from './Sidebar.module.css'
 
-const Sidebar = () => {
+const DemoSidebar = () => {
   const slides = useRecoilValue(slidesState)
   const router = useRouter()
   const { id } = router.query
@@ -32,4 +32,4 @@ const Sidebar = () => {
   )
 }
 
-export default Sidebar
+export default DemoSidebar

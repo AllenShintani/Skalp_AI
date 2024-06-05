@@ -26,11 +26,7 @@ type Props = {
   textboxes: TextBox[]
 }
 
-const DemoToolBar: React.FC<Props> = ({
-  currentId,
-  createTextbox,
-  textboxes,
-}) => {
+const ToolBar: React.FC<Props> = ({ currentId, createTextbox, textboxes }) => {
   const router = useRouter()
 
   return (
@@ -103,4 +99,4 @@ const DemoToolBar: React.FC<Props> = ({
   )
 }
 
-export default DemoToolBar
+export default ToolBar

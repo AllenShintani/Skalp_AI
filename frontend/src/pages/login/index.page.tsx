@@ -14,9 +14,9 @@ import type { FormEvent } from 'react'
 import 'firebase/compat/auth'
 import dotenv from 'dotenv'
 import { createTRPCProxyClient, httpBatchLink } from '@trpc/client'
-import type { AppRouter } from 'backend/src/routers'
+import type { AppRouter } from '@skalp_ai/backend/routers'
 import router from 'next/router'
-import type { LoginInput } from 'backend/src/schemas/userSchemas'
+import type { LoginInput } from '@skalp_ai/backend/schemas'
 
 dotenv.config()
 const theme = createTheme()

@@ -13,8 +13,8 @@ import { createTheme, ThemeProvider } from '@mui/material/styles'
 import type { FormEvent } from 'react'
 import 'firebase/compat/auth'
 import { createTRPCProxyClient, httpBatchLink } from '@trpc/client'
-import type { AppRouter } from 'backend/src/routers'
-import { userSchema } from '@/shemas'
+import type { AppRouter } from '@skalp_ai/backend/routers'
+import { userSchema } from '@/schemas'
 import router from 'next/router'
 
 const theme = createTheme()
