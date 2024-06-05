@@ -8,25 +8,33 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: setup Node.js
+
+      - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 'lts/*'
+          node-version: "lts/*"
+
       - uses: actions/cache@v2
         id: client-npm-cache
         with:
-          path: 'node_modules'
-          key: client-npm-${{ hashFiles('package-lock.json') }}
-      - run: npm ci
+          path: "frontend/node_modules"
+          key: client-npm-${{ hashFiles('frontend/package-lock.json') }}
+      - run: |
+          cd frontend
+          npm install
         if: steps.client-npm-cache.outputs.cache-hit != 'true'
+
       - uses: actions/cache@v2
         id: backend-npm-cache
         with:
-          path: 'backend/node_modules'
+          path: "backend/node_modules"
           key: backend-npm-${{ hashFiles('backend/package-lock.json') }}
       - run: |
           cd backend
           npm install
         if: steps.backend-npm-cache.outputs.cache-hit != 'true'
-      - run: npm run lint
-      - run: npm run typecheck
+
+      - run: |
+          cd frontend
+          npm run lint
+          npm run typecheck
