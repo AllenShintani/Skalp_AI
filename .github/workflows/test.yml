@@ -23,6 +23,9 @@ jobs:
           cd frontend
           npm install
         if: steps.client-npm-cache.outputs.cache-hit != 'true'
+      - run: |
+          npm install
+        if: steps.client-npm-cache.outputs.cache-hit != 'true'
 
       - uses: actions/cache@v2
         id: backend-npm-cache
