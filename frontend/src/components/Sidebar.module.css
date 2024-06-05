@@ -1,0 +1,57 @@
+.sidebar {
+  width: 20%;
+  padding: 10px;
+  background-color: #f4f4f4;
+  border-right: 1px solid #ddd;
+  overflow-y: auto;
+  height: 100vh;
+}
+
+.slideLink {
+  display: block;
+  position: relative;
+  text-decoration: none;
+  margin-bottom: 20px;
+  border: 2px solid transparent;
+  border-radius: 10px;
+  padding: 10px;
+  transition: border-color 0.3s;
+}
+
+.slideLink:hover {
+  border-color: #0070f3;
+}
+
+.selected {
+  border-color: #0070f3;
+  background-color: #e6f7ff;
+}
+
+.thumbnailContainer {
+  width: 100%;
+  padding-top: 56.25%;
+  position: relative;
+  background-color: white;
+}
+
+.thumbnail {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+.slideNumber {
+  position: absolute;
+  top: -10px;
+  left: -10px;
+  background-color: #f4f4f4;
+  color: #333;
+  font-size: 14px;
+  font-weight: bold;
+  padding: 2px 6px;
+  border-radius: 10px;
+}

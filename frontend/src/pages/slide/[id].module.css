@@ -1,0 +1,18 @@
+.container {
+  display: flex;
+  height: 100vh;
+}
+
+.sidebar {
+  width: 20%;
+  background-color: #f0f0f0;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+.editSpace {
+  width: 80%;
+  padding: 10px;
+  box-sizing: border-box;
+  overflow-y: auto;
+}

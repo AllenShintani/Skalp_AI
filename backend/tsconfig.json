@@ -1,11 +1,15 @@
 {
   "compilerOptions": {
+    "declaration": true,
+    "declarationMap": true,
+    "esModuleInterop": true,
     "outDir": "./dist",
     "noImplicitAny": true,
     "target": "ES6",
-    "module": "commonjs",
-    "rootDir": "../",
-    "esModuleInterop": true,
+    "module": "NodeNext",
+    "moduleDetection": "force",
+    "moduleResolution": "NodeNext",
+    "rootDir": ".",
     "sourceMap": true,
     "forceConsistentCasingInFileNames": true,
     "strict": true,

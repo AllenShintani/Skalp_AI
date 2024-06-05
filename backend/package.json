@@ -1,11 +1,18 @@
 {
+  "name": "@skalp_ai/backend",
+  "private": true,
+  "version": "0.0.0",
   "scripts": {
     "build": "tsc -p tsconfig.json",
-    "start": "node dist/backend/src/server.js",
+    "start": "node dist/src/server.js",
     "dev": "npm run build && npm run start",
     "lint": "lint",
     "typecheck": "tsc --noEmit",
     "format": "prettier --write \"./backend/**/*.{ts,tsx}\""
+  },
+  "exports": {
+    "./routers": "./dist/src/routers/index.js",
+    "./schemas": "./dist/src/schemas/index.js"
   },
   "dependencies": {
     "@fastify/cookie": "^9.3.1",
