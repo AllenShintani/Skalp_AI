@@ -35,6 +35,7 @@ jobs:
       - run: |
           cd backend
           npm install
+          npm run build
         if: steps.backend-npm-cache.outputs.cache-hit != 'true'
 
       - run: |
