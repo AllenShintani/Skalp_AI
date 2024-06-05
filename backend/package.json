@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "scripts": {
     "build": "tsc -p tsconfig.json",
-    "start": "node dist/backend/src/server.js",
+    "start": "node dist/src/server.js",
     "dev": "npm run build && npm run start",
     "lint": "lint",
     "typecheck": "tsc --noEmit",
