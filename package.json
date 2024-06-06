@@ -4,8 +4,5 @@
   "workspaces": [
     "backend",
     "frontend"
-  ],
-  "dependencies": {
-    "@tiptap/extension-text-align": "^2.4.0"
-  }
+  ]
 }
