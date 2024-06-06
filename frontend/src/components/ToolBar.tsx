@@ -103,7 +103,6 @@ const ToolBar: React.FC<Props> = ({ currentId, createTextbox, textboxes }) => {
             .setTextAlign('left')
             .run()
         }
-        // className={editor.isActive({ textAlign: 'left' }) ? 'is-active' : ''}
       >
         left
       </button>
@@ -115,7 +114,6 @@ const ToolBar: React.FC<Props> = ({ currentId, createTextbox, textboxes }) => {
             .setTextAlign('center')
             .run()
         }
-        // className={editor.isActive({ textAlign: 'center' }) ? 'is-active' : ''}
       >
         center
       </button>
@@ -127,30 +125,9 @@ const ToolBar: React.FC<Props> = ({ currentId, createTextbox, textboxes }) => {
             .setTextAlign('right')
             .run()
         }
-        // className={editor.isActive({ textAlign: 'right' }) ? 'is-active' : ''}
       >
         right
       </button>
-      <button
-        onClick={() =>
-          textboxes[currentId]?.editor
-            ?.chain()
-            .focus()
-            .setTextAlign('justify')
-            .run()
-        }
-        // className={editor.isActive({ textAlign: 'justify' }) ? 'is-active' : ''}
-      >
-        justify
-      </button>
-      <button
-        onClick={() =>
-          textboxes[currentId]?.editor?.chain().focus().unsetTextAlign().run()
-        }
-      >
-        unsetTextAlign
-      </button>
-      {/* <EditorContent editor={neweditor} /> */}
     </div>
   )
 }

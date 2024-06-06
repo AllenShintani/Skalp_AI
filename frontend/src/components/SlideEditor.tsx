@@ -28,9 +28,6 @@ const SlideEditor = () => {
     const editor = new Editor({
       content: `
         <p>Example Text</p>
-        <h2>Heading</h2>
-        <p style="text-align: center">first paragraph</p>
-        <p style="text-align: right">second paragraph</p>
       `,
       extensions: [
         StarterKit,
