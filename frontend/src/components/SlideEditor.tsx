@@ -26,9 +26,7 @@ const SlideEditor = () => {
 
   const createTextbox = () => {
     const editor = new Editor({
-      content: `
-        <p>Example Text</p>
-      `,
+      content: `<p>Example Text</p>`,
       extensions: [
         StarterKit,
         Text,
