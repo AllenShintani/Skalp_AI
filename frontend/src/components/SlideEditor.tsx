@@ -44,6 +44,10 @@ const SlideEditor = () => {
         Strike,
         FontFamily.configure({ types: ['textStyle'] }),
         FontSize,
+        Heading,
+        TextAlign.configure({
+          types: ['heading', 'paragraph'],
+        }),
       ],
     })
     setTextboxes((prev) => [

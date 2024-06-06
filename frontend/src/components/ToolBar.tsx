@@ -95,6 +95,39 @@ const ToolBar: React.FC<Props> = ({ currentId, createTextbox, textboxes }) => {
       >
         <FontAwesomeIcon icon={faStrikethrough} />
       </button>
+      <button
+        onClick={() =>
+          textboxes[currentId]?.editor
+            ?.chain()
+            .focus()
+            .setTextAlign('left')
+            .run()
+        }
+      >
+        left
+      </button>
+      <button
+        onClick={() =>
+          textboxes[currentId]?.editor
+            ?.chain()
+            .focus()
+            .setTextAlign('center')
+            .run()
+        }
+      >
+        center
+      </button>
+      <button
+        onClick={() =>
+          textboxes[currentId]?.editor
+            ?.chain()
+            .focus()
+            .setTextAlign('right')
+            .run()
+        }
+      >
+        right
+      </button>
     </div>
   )
 }
