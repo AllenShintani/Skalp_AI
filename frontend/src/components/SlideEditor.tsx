@@ -17,6 +17,8 @@ import Document from '@tiptap/extension-document'
 import Paragraph from '@tiptap/extension-paragraph'
 import { FontSize } from '@/components/extensions/FontSize'
 import Sidebar from './Sidebar'
+import Heading from '@tiptap/extension-heading'
+import TextAlign from '@tiptap/extension-text-align'
 
 const SlideEditor = () => {
   const [textboxes, setTextboxes] = useState<TextBox[]>([])
@@ -34,6 +36,10 @@ const SlideEditor = () => {
         Paragraph,
         Bold,
         Italic,
+        Heading,
+        TextAlign.configure({
+          types: ['heading', 'paragraph'],
+        }),
         Underline,
         Strike,
         FontFamily.configure({ types: ['textStyle'] }),
