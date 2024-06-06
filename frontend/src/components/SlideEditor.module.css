@@ -1,17 +1,34 @@
-.container {
-  display: flex;
-  flex-direction: column;
-  background-color: #f2f2f2;
-  padding: 10px;
+.grid {
+  display: grid;
+  grid-template-rows: 100px 10px 1fr 10px;
+  grid-template-areas:
+    'toolbar'
+    'space1'
+    'editSpace'
+    'space2';
   width: 100%;
   height: 100vh;
-  border: 1px solid #ccc;
+  background-color: #f4f4f4;
+}
+
+.toolbar {
+  grid-area: toolbar;
+}
+
+.editor {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  grid-area: editSpace;
+  overflow: scroll;
+  border: 1px solid #ddd;
+  box-sizing: border-box;
 }
 
 .editSpace {
-  border: 1px solid #ccc;
+  max-width: 1300px;
   background-color: #fff;
-  width: 90%;
-  height: 90%;
-  position: relative;
+  width: 85%;
+  height: auto;
+  aspect-ratio: 16/9;
 }

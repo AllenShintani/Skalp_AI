@@ -60,26 +60,29 @@ const SlideEditor = () => {
   }
 
   return (
-    <div className={styles.container}>
-      <h1>Edit Page</h1>
-      <ToolBar
-        currentId={currentId}
-        createTextbox={createTextbox}
-        textboxes={textboxes}
-      />
-
-      <DndContext>
-        <div className={styles.editSpace}>
-          {textboxes?.map((textbox) => (
-            <div
-              onClick={() => selectTextBox(textbox.textBoxId)}
-              key={textbox.textBoxId}
-            >
-              <DraggableTextBox textbox={textbox} />
-            </div>
-          ))}
-        </div>
-      </DndContext>
+    <div className={styles.grid}>
+      <div className={styles.toolbar}>
+        <h2>Edit Page</h2>
+        <ToolBar
+          currentId={currentId}
+          createTextbox={createTextbox}
+          textboxes={textboxes}
+        />
+      </div>
+      <div className={styles.editor}>
+        <DndContext>
+          <div className={styles.editSpace}>
+            {textboxes?.map((textbox) => (
+              <div
+                onClick={() => selectTextBox(textbox.textBoxId)}
+                key={textbox.textBoxId}
+              >
+                <DraggableTextBox textbox={textbox} />
+              </div>
+            ))}
+          </div>
+        </DndContext>
+      </div>
     </div>
   )
 }
