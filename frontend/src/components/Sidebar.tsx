@@ -4,7 +4,7 @@ import { useRecoilValue } from 'recoil'
 import { slidesState } from '../recoil/atoms'
 import styles from './Sidebar.module.css'
 
-const DemoSidebar = () => {
+const Sidebar = () => {
   const slides = useRecoilValue(slidesState)
   const router = useRouter()
   const { id } = router.query
@@ -32,4 +32,4 @@ const DemoSidebar = () => {
   )
 }
 
-export default DemoSidebar
+export default Sidebar

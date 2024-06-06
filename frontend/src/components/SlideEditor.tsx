@@ -16,6 +16,7 @@ import TextStyle from '@tiptap/extension-text-style'
 import Document from '@tiptap/extension-document'
 import Paragraph from '@tiptap/extension-paragraph'
 import { FontSize } from '@/components/extensions/FontSize'
+import Sidebar from './Sidebar'
 
 const SlideEditor = () => {
   const [textboxes, setTextboxes] = useState<TextBox[]>([])
@@ -61,25 +62,34 @@ const SlideEditor = () => {
 
   return (
     <div className={styles.container}>
-      <h1>Edit Page</h1>
-      <ToolBar
-        currentId={currentId}
-        createTextbox={createTextbox}
-        textboxes={textboxes}
-      />
-
-      <DndContext>
-        <div className={styles.editSpace}>
-          {textboxes?.map((textbox) => (
-            <div
-              onClick={() => selectTextBox(textbox.textBoxId)}
-              key={textbox.textBoxId}
-            >
-              <DraggableTextBox textbox={textbox} />
-            </div>
-          ))}
+      <div className={styles.grid}>
+        <div className={styles.sidebar}>
+          <Sidebar />
         </div>
-      </DndContext>
+        <div className={styles.toolbar}>
+          <h1>Edit</h1>
+          <ToolBar
+            currentId={currentId}
+            createTextbox={createTextbox}
+            textboxes={textboxes}
+          />
+        </div>
+
+        <div className={styles.editor}>
+          <DndContext>
+            <div className={styles.slide}>
+              {textboxes?.map((textbox) => (
+                <div
+                  onClick={() => selectTextBox(textbox.textBoxId)}
+                  key={textbox.textBoxId}
+                >
+                  <DraggableTextBox textbox={textbox} />
+                </div>
+              ))}
+            </div>
+          </DndContext>
+        </div>
+      </div>
     </div>
   )
 }
