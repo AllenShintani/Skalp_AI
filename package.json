@@ -6,6 +6,7 @@
     "frontend"
   ],
   "dependencies": {
-    "@tiptap/extension-text-align": "^2.4.0"
+    "@tiptap/extension-text-align": "^2.4.0",
+    "tiptap": "^1.32.2"
   }
 }

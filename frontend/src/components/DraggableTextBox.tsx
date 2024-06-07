@@ -220,21 +220,20 @@ const DraggableTextBox: React.FC<Props> = ({ textbox }) => {
       onMouseDown={handleDragMouseDown}
       className={styles.textBox}
     >
-      <div onMouseDown={(e) => e.stopPropagation()}>
+      <div
+        onMouseDown={(e) => e.stopPropagation()}
+        className={styles.editorContent}
+      >
         <EditorContent editor={textbox.editor} />
       </div>
-      <div
-        className={styles.resizeHandles}
-        style={{ display: isResizing ? 'block' : '' }}
-      >
-        {handleResizeDivs.map((div) => (
-          <div
-            key={div.direction}
-            className={div.className}
-            onMouseDown={(e) => handleResizeMouseDown(e, div.direction)}
-          />
-        ))}
-      </div>
+
+      {handleResizeDivs.map((div) => (
+        <div
+          key={div.direction}
+          className={div.className}
+          onMouseDown={(e) => handleResizeMouseDown(e, div.direction)}
+        />
+      ))}
     </div>
   )
 }
