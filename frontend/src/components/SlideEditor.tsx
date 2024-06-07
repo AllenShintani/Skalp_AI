@@ -78,7 +78,7 @@ const SlideEditor = () => {
 
     const editorWidth = editorElement.offsetWidth
     const editorHeight = editorElement.offsetHeight
-    const preScale = scaleRef.current // use the ref value
+    const preScale = scaleRef.current
 
     const targetWidth = 1000
     const targetHeight = 1000 * (9 / 16)
@@ -117,7 +117,7 @@ const SlideEditor = () => {
     return () => {
       window.removeEventListener('resize', handleResizeWindow)
     }
-  }, [changeScale]) // changeScaleを依存配列に追加
+  }, [changeScale])
 
   return (
     <div className={styles.container}>
