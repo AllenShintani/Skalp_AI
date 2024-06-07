@@ -125,13 +125,11 @@ const SlideEditor = () => {
 
         <div
           className={styles.editor}
-          id="editor"
           ref={editorRef}
         >
           <DndContext>
             <div
               className={styles.slide}
-              id="slide"
               ref={slideRef}
             >
               {textboxes?.map((textbox) => (
