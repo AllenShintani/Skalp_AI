@@ -17,8 +17,9 @@
 }
 
 .slide {
+  position: absolute;
   background-color: #fff;
-  width: 75%;
+  width: 1000px;
   height: auto;
   aspect-ratio: 16/9;
 }
@@ -29,6 +30,7 @@
 
 .editor {
   display: flex;
+  position: relative;
   justify-content: center;
   align-items: center;
   grid-area: editor;
