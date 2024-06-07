@@ -1,7 +1,5 @@
-// ToolBar.tsx
 import type React from 'react'
 import { useRouter } from 'next/router'
-import type { Editor } from '@tiptap/react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faHome,
