@@ -23,7 +23,6 @@ import TextAlign from '@tiptap/extension-text-align'
 const SlideEditor = () => {
   const [textboxes, setTextboxes] = useState<TextBox[]>([])
   const [countTextbox, setCountTextbox] = useState(0)
-  const [currentId, setCurrentId] = useState(0)
 
   const createTextbox = () => {
     const editor = new Editor({
@@ -66,8 +65,19 @@ const SlideEditor = () => {
   }
 
   const selectTextBox = (id: number) => {
-    console.log('select textbox', id)
-    setCurrentId(id)
+    setTextboxes((prev) => {
+      const newTextboxes = prev.map((textbox) =>
+        textbox.textBoxId === id
+          ? { ...textbox, isSelected: true }
+          : { ...textbox, isSelected: false },
+      )
+      return newTextboxes
+    })
+  }
+
+  const getSelectedTextBoxId = () => {
+    const selectedTextBox = textboxes.find((textbox) => textbox.isSelected)
+    return selectedTextBox ? selectedTextBox.textBoxId : null
   }
 
   return (
@@ -79,7 +89,7 @@ const SlideEditor = () => {
         <div className={styles.toolbar}>
           <h1>Edit</h1>
           <ToolBar
-            currentId={currentId}
+            currentId={getSelectedTextBoxId()}
             createTextbox={createTextbox}
             textboxes={textboxes}
           />
