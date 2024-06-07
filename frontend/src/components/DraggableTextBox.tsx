@@ -123,11 +123,10 @@ const DraggableTextBox: React.FC<Props> = ({ textbox }) => {
 
   const handleDragMouseDown = useCallback(
     (e: React.MouseEvent) => {
-      textbox.isSelected = true
       setDragStart({ x: e.clientX - position.x, y: e.clientY - position.y })
       setIsDragging(true)
     },
-    [position.x, position.y, textbox],
+    [position.x, position.y],
   )
 
   const handleDragMouseMove = useCallback(
@@ -145,8 +144,7 @@ const DraggableTextBox: React.FC<Props> = ({ textbox }) => {
     if (!isDragging) return
     setIsDragging(false)
     setDragStart(null)
-    textbox.isSelected = false
-  }, [isDragging, textbox])
+  }, [isDragging])
 
   const handleResizeMouseDown = useCallback(
     (e: React.MouseEvent, direction: Direction) => {
@@ -154,9 +152,8 @@ const DraggableTextBox: React.FC<Props> = ({ textbox }) => {
       setResizeDirection(direction)
       setIsResizing(true)
       setResizeStart({ x: e.clientX, y: e.clientY })
-      textbox.isSelected = true
     },
-    [textbox],
+    [],
   )
   const handleResizeMouseMove = useCallback(
     (e: MouseEvent) => {
@@ -183,8 +180,7 @@ const DraggableTextBox: React.FC<Props> = ({ textbox }) => {
     if (!isResizing) return
     setIsResizing(false)
     setResizeDirection('default')
-    textbox.isSelected = false
-  }, [isResizing, textbox])
+  }, [isResizing])
 
   const handleMouseMove = useCallback(
     (e: MouseEvent) => {

@@ -25,7 +25,6 @@ const SlideEditor = () => {
   const [countTextbox, setCountTextbox] = useState(0)
   const editorRef = useRef<HTMLDivElement>(null)
   const slideRef = useRef<HTMLDivElement>(null)
-
   const createTextbox = () => {
     const editor = new Editor({
       content: `<p>Example Text</p>`,
