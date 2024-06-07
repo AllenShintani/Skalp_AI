@@ -1,4 +1,3 @@
-// SlideEditor.tsx
 import { useState } from 'react'
 import { DndContext } from '@dnd-kit/core'
 import StarterKit from '@tiptap/starter-kit'
@@ -66,13 +65,14 @@ const SlideEditor = () => {
   }
 
   const selectTextBox = (id: number) => {
-    setTextboxes((prev) =>
-      prev.map((textbox) =>
+    setTextboxes((prev) => {
+      const newTextboxes = prev.map((textbox) =>
         textbox.textBoxId === id
           ? { ...textbox, isSelected: true }
           : { ...textbox, isSelected: false },
-      ),
-    )
+      )
+      return newTextboxes
+    })
   }
 
   const getSelectedTextBoxId = () => {
