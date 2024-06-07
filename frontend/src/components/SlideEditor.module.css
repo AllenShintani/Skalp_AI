@@ -21,6 +21,7 @@
   background-color: #fff;
   width: 1000px;
   height: auto;
+  transform: scale(1);
   aspect-ratio: 16/9;
 }
 

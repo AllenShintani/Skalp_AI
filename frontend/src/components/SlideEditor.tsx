@@ -24,8 +24,8 @@ const SlideEditor = () => {
   const [textboxes, setTextboxes] = useState<TextBox[]>([])
   const [countTextbox, setCountTextbox] = useState(0)
   const [currentId, setCurrentId] = useState(0)
-  const [scale, setScale] = useState(1)
-  const scaleRef = useRef(scale) // useRef to keep track of the latest scale value
+  const editorRef = useRef<HTMLDivElement>(null)
+  const slideRef = useRef<HTMLDivElement>(null)
 
   const createTextbox = () => {
     const editor = new Editor({
@@ -71,52 +71,32 @@ const SlideEditor = () => {
     setCurrentId(id)
   }
 
-  const changeScale = useCallback(() => {
-    const editorElement = document.getElementById('editor')
-    if (!editorElement) return
+  const handleResizeWindow = useCallback(() => {
+    const editorElement = editorRef.current
+    const slideElement = slideRef.current
+    if (!editorElement || !slideElement) return
 
     const editorWidth = editorElement.offsetWidth
     const editorHeight = editorElement.offsetHeight
-    const preScale = scaleRef.current
 
     const targetWidth = 1000
     const targetHeight = 1000 * (9 / 16)
 
-    let newScale = preScale
+    const widthScale = (editorWidth - 30) / targetWidth
+    const heightScale = editorHeight / targetHeight
 
-    // ウィンドウが小さくなったときの処理
-    while (
-      targetWidth * newScale > editorWidth - 10 ||
-      targetHeight * newScale > editorHeight
-    ) {
-      newScale -= 0.05
-    }
-
-    // ウィンドウが大きくなったときの処理
-    while (
-      targetWidth * newScale < editorWidth - 100 &&
-      targetHeight * newScale < editorHeight
-    ) {
-      newScale += 0.05
-    }
-
-    setScale(newScale)
-    scaleRef.current = newScale // update the ref value
+    const newScale = Math.min(widthScale, heightScale)
+    slideElement.style.transform = `scale(${newScale})`
   }, [])
 
   useEffect(() => {
-    // 初回マウント時に一度だけ実行
-    changeScale()
-
-    const handleResizeWindow = () => {
-      changeScale()
-    }
+    handleResizeWindow()
 
     window.addEventListener('resize', handleResizeWindow)
     return () => {
       window.removeEventListener('resize', handleResizeWindow)
     }
-  }, [changeScale])
+  }, [handleResizeWindow])
 
   return (
     <div className={styles.container}>
@@ -126,7 +106,6 @@ const SlideEditor = () => {
         </div>
         <div className={styles.toolbar}>
           <h1>Edit</h1>
-          <button onClick={changeScale}>scaling</button>
           <ToolBar
             currentId={currentId}
             createTextbox={createTextbox}
@@ -137,12 +116,13 @@ const SlideEditor = () => {
         <div
           className={styles.editor}
           id="editor"
+          ref={editorRef}
         >
           <DndContext>
             <div
               className={styles.slide}
               id="slide"
-              style={{ transform: `scale(${scale})` }}
+              ref={slideRef}
             >
               {textboxes?.map((textbox) => (
                 <div
