@@ -68,7 +68,6 @@ const SlideEditor = () => {
   }
 
   const selectTextBox = (id: number) => {
-    console.log('select textbox', id)
     setCurrentId(id)
   }
 
