@@ -1,0 +1,40 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  background-color: #f2f2f2;
+  width: 100%;
+  height: 100vh;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  grid-template-rows: 150px 1fr 50px;
+  grid-template-areas: 'sidebar toolbar' 'sidebar editor' 'footer footer';
+  width: 100%;
+  height: 100vh;
+  min-height: 100vh;
+}
+
+.slide {
+  background-color: #fff;
+  width: 75%;
+  height: auto;
+  aspect-ratio: 16/9;
+}
+
+.sidebar {
+  grid-area: sidebar;
+}
+
+.editor {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  grid-area: editor;
+  overflow: scroll;
+}
+
+.toolbar {
+  grid-area: toolbar;
+}
