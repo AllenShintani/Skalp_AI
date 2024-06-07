@@ -125,7 +125,6 @@ const DraggableTextBox: React.FC<Props> = ({ textbox }) => {
     (e: React.MouseEvent) => {
       setDragStart({ x: e.clientX - position.x, y: e.clientY - position.y })
       setIsDragging(true)
-      textbox.isSelected = true
     },
     [position.x, position.y],
   )
