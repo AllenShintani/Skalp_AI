@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { DndContext } from '@dnd-kit/core'
 import StarterKit from '@tiptap/starter-kit'
 import { Editor } from '@tiptap/react'
@@ -23,7 +23,8 @@ import TextAlign from '@tiptap/extension-text-align'
 const SlideEditor = () => {
   const [textboxes, setTextboxes] = useState<TextBox[]>([])
   const [countTextbox, setCountTextbox] = useState(0)
-
+  const editorRef = useRef<HTMLDivElement>(null)
+  const slideRef = useRef<HTMLDivElement>(null)
   const createTextbox = () => {
     const editor = new Editor({
       content: `<p>Example Text</p>`,
@@ -56,8 +57,8 @@ const SlideEditor = () => {
         textBoxId: countTextbox,
         x: 0,
         y: 0,
-        width: 200,
-        height: 40,
+        width: 150,
+        height: 100,
         isSelected: false,
       },
     ])
@@ -80,6 +81,33 @@ const SlideEditor = () => {
     return selectedTextBox ? selectedTextBox.textBoxId : null
   }
 
+  const handleResizeWindow = useCallback(() => {
+    const editorElement = editorRef.current
+    const slideElement = slideRef.current
+    if (!editorElement || !slideElement) return
+
+    const editorWidth = editorElement.offsetWidth
+    const editorHeight = editorElement.offsetHeight
+
+    const targetWidth = 1000
+    const targetHeight = 1000 * (9 / 16)
+
+    const widthScale = (editorWidth - 30) / targetWidth
+    const heightScale = editorHeight / targetHeight
+
+    const newScale = Math.min(widthScale, heightScale)
+    slideElement.style.transform = `scale(${newScale})`
+  }, [])
+
+  useEffect(() => {
+    handleResizeWindow()
+
+    window.addEventListener('resize', handleResizeWindow)
+    return () => {
+      window.removeEventListener('resize', handleResizeWindow)
+    }
+  }, [handleResizeWindow])
+
   return (
     <div className={styles.container}>
       <div className={styles.grid}>
@@ -95,9 +123,15 @@ const SlideEditor = () => {
           />
         </div>
 
-        <div className={styles.editor}>
+        <div
+          className={styles.editor}
+          ref={editorRef}
+        >
           <DndContext>
-            <div className={styles.slide}>
+            <div
+              className={styles.slide}
+              ref={slideRef}
+            >
               {textboxes?.map((textbox) => (
                 <div
                   onClick={() => selectTextBox(textbox.textBoxId)}
