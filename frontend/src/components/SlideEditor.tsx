@@ -1,30 +1,37 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { DndContext } from '@dnd-kit/core'
-import StarterKit from '@tiptap/starter-kit'
 import { Editor } from '@tiptap/react'
+import StarterKit from '@tiptap/starter-kit'
+import { toSvg } from 'html-to-image'
 import ToolBar from './ToolBar'
 import styles from './SlideEditor.module.css'
 import DraggableTextBox from './DraggableTextBox'
-import type { TextBox } from '@/types/Slide'
-import { Text } from '@tiptap/extension-text'
+import Sidebar from './Sidebar'
+import { useAtom } from 'jotai'
+import { slidesState, textBoxesState } from '../jotai/atoms'
+import { TextStyle } from '@tiptap/extension-text-style'
+import { Paragraph } from '@tiptap/extension-paragraph'
 import { Bold } from '@tiptap/extension-bold'
 import { Italic } from '@tiptap/extension-italic'
+import { Heading } from '@tiptap/extension-heading'
+
 import { Underline } from '@tiptap/extension-underline'
+
+import { FontFamily } from '@tiptap/extension-font-family'
+
+import { TextAlign } from '@tiptap/extension-text-align'
 import { Strike } from '@tiptap/extension-strike'
-import FontFamily from '@tiptap/extension-font-family'
-import TextStyle from '@tiptap/extension-text-style'
-import Document from '@tiptap/extension-document'
-import Paragraph from '@tiptap/extension-paragraph'
-import { FontSize } from '@/components/extensions/FontSize'
-import Sidebar from './Sidebar'
-import Heading from '@tiptap/extension-heading'
-import TextAlign from '@tiptap/extension-text-align'
+import { Text } from '@tiptap/extension-text'
+
+import { Document } from '@tiptap/extension-document'
 
 const SlideEditor = () => {
-  const [textboxes, setTextboxes] = useState<TextBox[]>([])
+  const [slides, setSlides] = useAtom(slidesState)
+  const [textboxes, setTextboxes] = useAtom(textBoxesState)
   const [countTextbox, setCountTextbox] = useState(0)
   const editorRef = useRef<HTMLDivElement>(null)
   const slideRef = useRef<HTMLDivElement>(null)
+
   const createTextbox = () => {
     const editor = new Editor({
       content: `<p>Example Text</p>`,
@@ -43,7 +50,6 @@ const SlideEditor = () => {
         Underline,
         Strike,
         FontFamily.configure({ types: ['textStyle'] }),
-        FontSize,
         Heading,
         TextAlign.configure({
           types: ['heading', 'paragraph'],
@@ -53,7 +59,7 @@ const SlideEditor = () => {
     setTextboxes((prev) => [
       ...prev,
       {
-        editor: editor,
+        editor,
         textBoxId: countTextbox,
         x: 0,
         y: 0,
@@ -66,14 +72,13 @@ const SlideEditor = () => {
   }
 
   const selectTextBox = (id: number) => {
-    setTextboxes((prev) => {
-      const newTextboxes = prev.map((textbox) =>
+    setTextboxes((prev) =>
+      prev.map((textbox) =>
         textbox.textBoxId === id
           ? { ...textbox, isSelected: true }
           : { ...textbox, isSelected: false },
-      )
-      return newTextboxes
-    })
+      ),
+    )
   }
 
   const getSelectedTextBoxId = () => {
@@ -108,6 +113,29 @@ const SlideEditor = () => {
     }
   }, [handleResizeWindow])
 
+  const exportToSvg = async () => {
+    if (!slideRef.current) return
+
+    try {
+      const svgDataUrl = await toSvg(slideRef.current)
+      const link = document.createElement('a')
+      link.href = svgDataUrl
+      link.download = 'slide.svg'
+      link.click()
+    } catch (error) {
+      console.error('Error exporting to SVG:', error)
+    }
+  }
+
+  const createNewSlide = () => {
+    const newSlide = {
+      slideId: String(slides.length + 1),
+      title: `Slide ${slides.length + 1}`,
+      textBoxInSlide: [],
+    }
+    setSlides((prev) => [...prev, newSlide])
+  }
+
   return (
     <div className={styles.container}>
       <div className={styles.grid}>
@@ -120,9 +148,10 @@ const SlideEditor = () => {
             currentId={getSelectedTextBoxId()}
             createTextbox={createTextbox}
             textboxes={textboxes}
+            createNewSlide={createNewSlide}
           />
+          <button onClick={exportToSvg}>Export to SVG</button>
         </div>
-
         <div
           className={styles.editor}
           ref={editorRef}
@@ -132,7 +161,7 @@ const SlideEditor = () => {
               className={styles.slide}
               ref={slideRef}
             >
-              {textboxes?.map((textbox) => (
+              {textboxes.map((textbox) => (
                 <div
                   onClick={() => selectTextBox(textbox.textBoxId)}
                   key={textbox.textBoxId}

@@ -13,10 +13,11 @@ import type { TextBox } from '@/types/Slide'
 type Props = {
   currentId: number | null
   createTextbox: () => void
+  createNewSlide: () => void
   textboxes: TextBox[]
 }
 
-const ToolBar: React.FC<Props> = ({ currentId, createTextbox, textboxes }) => {
+const ToolBar: React.FC<Props> = ({ currentId, createTextbox, textboxes, createNewSlide }) => {
   const router = useRouter()
 
   return (
@@ -25,6 +26,7 @@ const ToolBar: React.FC<Props> = ({ currentId, createTextbox, textboxes }) => {
         <FontAwesomeIcon icon={faHome} />
       </button>
       <button onClick={createTextbox}>Create textbox</button>
+      <button onClick={createNewSlide}>Create Slide Page</button>
       <button
         onClick={() =>
           currentId !== null &&

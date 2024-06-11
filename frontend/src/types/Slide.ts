@@ -13,6 +13,7 @@ export type TextBox = {
 export type Slide = {
   slideId: string
   title: string
+  imageURL?: string
   content?: string
   textBoxInSlide?: TextBox[]
 }
