@@ -142,29 +142,48 @@ const DraggableTextBox: React.FC<Props> = ({ textbox }) => {
   const handleDragMouseMove = useCallback(
     (e: MouseEvent) => {
       if (!isDragging || !dragStart) return
+      //変数設定
+      const halfSizeOfSlide = {
+        width: 500,
+        height: 281.5,
+      }
+      const centerPositionOfTextBox = {
+        x: position.x + size.width / 2,
+        y: position.y + size.height / 2,
+      }
+      const movingDistance = {
+        x: Math.abs(e.clientX - dragStart.x - position.x),
+        y: Math.abs(e.clientY - dragStart.y - position.y),
+      }
+      //縦の座標を中央に寄せる処理
       if (
-        size.height / 2 + position.y > 279.5 &&
-        size.height / 2 + position.y < 283.5 &&
+        centerPositionOfTextBox.y > halfSizeOfSlide.height - 2 &&
+        centerPositionOfTextBox.y < halfSizeOfSlide.height + 2 &&
         !isHorizontalCenter
       ) {
-        setPosition({ x: position.x, y: 281.5 - size.height / 2 })
+        setPosition({
+          x: position.x,
+          y: halfSizeOfSlide.height - size.height / 2,
+        })
         setIsHorizontalCenter(true)
         return
       }
+      //横の座標を中央に寄せる処理
       if (
-        size.width / 2 + position.x > 498 &&
-        size.width / 2 + position.x < 502 &&
+        centerPositionOfTextBox.x > halfSizeOfSlide.width - 2 &&
+        centerPositionOfTextBox.x < halfSizeOfSlide.width + 2 &&
         !isVerticalCenter
       ) {
-        setPosition({ x: 500 - size.width / 2, y: position.y })
+        setPosition({
+          x: halfSizeOfSlide.width - size.width / 2,
+          y: position.y,
+        })
         setIsVerticalCenter(true)
         return
       }
+      //引っ掛かりをもたせる処理
       if (isHorizontalCenter && isVerticalCenter) {
-        if (
-          Math.abs(e.clientX - dragStart.x - position.x) < 10 &&
-          Math.abs(e.clientY - dragStart.y - position.y) < 10
-        ) {
+        if (movingDistance.x < 15 && movingDistance.y < 15) {
           setPosition({
             x: position.x,
             y: position.y,
@@ -174,7 +193,7 @@ const DraggableTextBox: React.FC<Props> = ({ textbox }) => {
         setIsHorizontalCenter(false)
         setIsVerticalCenter(false)
       } else if (isHorizontalCenter && !isVerticalCenter) {
-        if (Math.abs(e.clientY - dragStart.y - position.y) < 10) {
+        if (movingDistance.y < 15) {
           setPosition({
             x: e.clientX - dragStart.x,
             y: position.y,
@@ -183,7 +202,7 @@ const DraggableTextBox: React.FC<Props> = ({ textbox }) => {
         }
         setIsHorizontalCenter(false)
       } else if (!isHorizontalCenter && isVerticalCenter) {
-        if (Math.abs(e.clientX - dragStart.x - position.x) < 10) {
+        if (movingDistance.x < 15) {
           setPosition({
             x: position.x,
             y: e.clientY - dragStart.y,
