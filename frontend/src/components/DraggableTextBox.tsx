@@ -143,7 +143,7 @@ const DraggableTextBox: React.FC<Props> = ({ textbox }) => {
     (e: MouseEvent) => {
       if (!isDragging || !dragStart) return
       //変数設定
-      const halfSizeOfSlide = {
+      const SLIDESIZE_HALF = {
         width: 500,
         height: 281.5,
       }
@@ -157,31 +157,31 @@ const DraggableTextBox: React.FC<Props> = ({ textbox }) => {
       }
       //縦の座標を中央に寄せる処理
       if (
-        centerPositionOfTextBox.y > halfSizeOfSlide.height - 2 &&
-        centerPositionOfTextBox.y < halfSizeOfSlide.height + 2 &&
+        centerPositionOfTextBox.y > SLIDESIZE_HALF.height - 2 &&
+        centerPositionOfTextBox.y < SLIDESIZE_HALF.height + 2 &&
         !isHorizontalCenter
       ) {
         setPosition({
           x: position.x,
-          y: halfSizeOfSlide.height - size.height / 2,
+          y: SLIDESIZE_HALF.height - size.height / 2,
         })
         setIsHorizontalCenter(true)
         return
       }
       //横の座標を中央に寄せる処理
       if (
-        centerPositionOfTextBox.x > halfSizeOfSlide.width - 2 &&
-        centerPositionOfTextBox.x < halfSizeOfSlide.width + 2 &&
+        centerPositionOfTextBox.x > SLIDESIZE_HALF.width - 2 &&
+        centerPositionOfTextBox.x < SLIDESIZE_HALF.width + 2 &&
         !isVerticalCenter
       ) {
         setPosition({
-          x: halfSizeOfSlide.width - size.width / 2,
+          x: SLIDESIZE_HALF.width - size.width / 2,
           y: position.y,
         })
         setIsVerticalCenter(true)
         return
       }
-      //引っ掛かりをもたせる処理
+      //引っ掛かりをもたせる処理->if-elseif-elseif
       if (isHorizontalCenter && isVerticalCenter) {
         if (movingDistance.x < 15 && movingDistance.y < 15) {
           setPosition({
