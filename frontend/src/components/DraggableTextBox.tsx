@@ -214,6 +214,7 @@ const DraggableTextBox: React.FC<Props> = ({ textbox }) => {
     <div
       style={style}
       onMouseDown={handleDragMouseDown}
+      onDoubleClick={() => textbox.editor.commands.focus()}
       className={styles.textBox}
     >
       <div
