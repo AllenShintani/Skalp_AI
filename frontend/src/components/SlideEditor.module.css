@@ -23,6 +23,7 @@
   height: auto;
   transform: scale(1);
   aspect-ratio: 16/9;
+  overflow: hidden;
 }
 
 .sidebar {
