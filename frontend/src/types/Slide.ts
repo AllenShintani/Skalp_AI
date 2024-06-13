@@ -1,13 +1,21 @@
 import type { Editor } from '@tiptap/react'
 
-export type TextBox = {
-  editor: Editor
-  textBoxId: number
+type SlideContentBase = {
   x: number
-  y: number
   isSelected: boolean
+  y: number
   width: number
   height: number
+}
+
+export type TextBox = SlideContentBase & {
+  editor: Editor
+  textBoxId: number
+}
+
+export type ImageBox = SlideContentBase & {
+  imageId: string
+  src: string
 }
 
 export type Slide = {
@@ -15,14 +23,4 @@ export type Slide = {
   title: string
   content?: string
   textBoxInSlide?: TextBox[]
-}
-
-export type Image = {
-  imageId: string
-  src: string
-  x: number
-  isSelected: boolean
-  y: number
-  width: number
-  height: number
 }

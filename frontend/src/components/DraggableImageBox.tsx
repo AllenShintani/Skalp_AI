@@ -1,10 +1,10 @@
 import type React from 'react'
 import styles from './DraggableTextBox.module.css'
 import { useState, useCallback, useEffect } from 'react'
-import type { Image } from '@/types/Slide'
+import type { ImageBox } from '@/types/Slide'
 
 type Props = {
-  image: Image
+  image: ImageBox
 }
 
 import type {
