@@ -16,3 +16,13 @@ export type Slide = {
   content?: string
   textBoxInSlide?: TextBox[]
 }
+
+export type Image = {
+  imageId: string
+  src: string
+  x: number
+  isSelected: boolean
+  y: number
+  width: number
+  height: number
+}

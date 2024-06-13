@@ -5,7 +5,7 @@ import { Editor } from '@tiptap/react'
 import ToolBar from './ToolBar'
 import styles from './SlideEditor.module.css'
 import DraggableTextBox from './DraggableTextBox'
-import type { TextBox } from '@/types/Slide'
+import type { Image, TextBox } from '@/types/Slide'
 import { Text } from '@tiptap/extension-text'
 import { Bold } from '@tiptap/extension-bold'
 import { Italic } from '@tiptap/extension-italic'
@@ -19,12 +19,15 @@ import { FontSize } from '@/components/extensions/FontSize'
 import Sidebar from './Sidebar'
 import Heading from '@tiptap/extension-heading'
 import TextAlign from '@tiptap/extension-text-align'
+import DraggableImageBox from './DraggableImageBox'
 
 const SlideEditor = () => {
   const [textboxes, setTextboxes] = useState<TextBox[]>([])
+  const [Images, setImages] = useState<Image[]>([])
   const [countTextbox, setCountTextbox] = useState(0)
   const editorRef = useRef<HTMLDivElement>(null)
   const slideRef = useRef<HTMLDivElement>(null)
+
   const createTextbox = () => {
     const editor = new Editor({
       content: `<p>Example Text</p>`,
@@ -99,14 +102,55 @@ const SlideEditor = () => {
     slideElement.style.transform = `scale(${newScale})`
   }, [])
 
+  const handlePaste = useCallback((event: ClipboardEvent) => {
+    const editorElement = editorRef.current
+    if (!editorElement) return
+    const items = event.clipboardData?.items
+    if (items) {
+      for (const item of items) {
+        if (item.type.startsWith('image/')) {
+          const file = item.getAsFile()
+          if (file) {
+            const reader = new FileReader()
+            reader.onload = (loadEvent) => {
+              const src = loadEvent.target?.result
+              if (typeof src === 'string') {
+                //画像からwidthとheightを取得
+                setImages((prev) => [
+                  ...prev,
+                  {
+                    imageId: `image-${prev.length}`,
+                    src,
+                    x: 0,
+                    y: 0,
+                    width: 150,
+                    height: 100,
+                    isSelected: false,
+                  },
+                ])
+              }
+            }
+            reader.readAsDataURL(file)
+          }
+        }
+      }
+    }
+  }, [])
+
   useEffect(() => {
     handleResizeWindow()
-
+    const editorElement = editorRef.current
+    if (editorElement) {
+      editorElement.addEventListener('paste', handlePaste)
+    }
     window.addEventListener('resize', handleResizeWindow)
     return () => {
+      if (editorElement) {
+        editorElement.removeEventListener('paste', handlePaste)
+      }
       window.removeEventListener('resize', handleResizeWindow)
     }
-  }, [handleResizeWindow])
+  }, [handleResizeWindow, handlePaste])
 
   return (
     <div className={styles.container}>
@@ -138,6 +182,11 @@ const SlideEditor = () => {
                   key={textbox.textBoxId}
                 >
                   <DraggableTextBox textbox={textbox} />
+                </div>
+              ))}
+              {Images?.map((image) => (
+                <div key={image.imageId}>
+                  <DraggableImageBox image={image} />
                 </div>
               ))}
             </div>
