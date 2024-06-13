@@ -5,7 +5,7 @@ import { Editor } from '@tiptap/react'
 import ToolBar from './ToolBar'
 import styles from './SlideEditor.module.css'
 import DraggableTextBox from './DraggableTextBox'
-import type { Image, TextBox } from '@/types/Slide'
+import type { TextBox, ImageBox } from '@/types/Slide'
 import { Text } from '@tiptap/extension-text'
 import { Bold } from '@tiptap/extension-bold'
 import { Italic } from '@tiptap/extension-italic'
@@ -23,7 +23,7 @@ import DraggableImageBox from './DraggableImageBox'
 
 const SlideEditor = () => {
   const [textboxes, setTextboxes] = useState<TextBox[]>([])
-  const [Images, setImages] = useState<Image[]>([])
+  const [Images, setImages] = useState<ImageBox[]>([])
   const [countTextbox, setCountTextbox] = useState(0)
   const editorRef = useRef<HTMLDivElement>(null)
   const slideRef = useRef<HTMLDivElement>(null)
@@ -78,6 +78,16 @@ const SlideEditor = () => {
       return newTextboxes
     })
   }
+  const selectImage = (id: string) => {
+    setImages((prev) => {
+      const newImages = prev.map((image) =>
+        image.imageId === id
+          ? { ...image, isSelected: true }
+          : { ...image, isSelected: false },
+      )
+      return newImages
+    })
+  }
 
   const getSelectedTextBoxId = () => {
     const selectedTextBox = textboxes.find((textbox) => textbox.isSelected)
@@ -102,6 +112,40 @@ const SlideEditor = () => {
     slideElement.style.transform = `scale(${newScale})`
   }, [])
 
+  const processImageFile = async (file: File, x: number, y: number) => {
+    const getImageSize = (
+      src: string,
+    ): Promise<{ width: number; height: number }> => {
+      return new Promise((resolve) => {
+        const img = new Image()
+        img.onload = () => {
+          resolve({ width: img.width, height: img.height })
+        }
+        img.src = src
+      })
+    }
+    const reader = new FileReader()
+    reader.onload = async (loadEvent) => {
+      const src = loadEvent.target?.result
+      if (typeof src === 'string') {
+        const { width, height } = await getImageSize(src)
+        setImages((prev) => [
+          ...prev,
+          {
+            imageId: `image-${prev.length}`,
+            src,
+            x,
+            y,
+            width,
+            height,
+            isSelected: false,
+          },
+        ])
+      }
+    }
+    reader.readAsDataURL(file)
+  }
+
   const handlePaste = useCallback((event: ClipboardEvent) => {
     const editorElement = editorRef.current
     if (!editorElement) return
@@ -111,30 +155,21 @@ const SlideEditor = () => {
         if (item.type.startsWith('image/')) {
           const file = item.getAsFile()
           if (file) {
-            const reader = new FileReader()
-            reader.onload = (loadEvent) => {
-              const src = loadEvent.target?.result
-              if (typeof src === 'string') {
-                //画像からwidthとheightを取得
-                setImages((prev) => [
-                  ...prev,
-                  {
-                    imageId: `image-${prev.length}`,
-                    src,
-                    x: 0,
-                    y: 0,
-                    width: 150,
-                    height: 100,
-                    isSelected: false,
-                  },
-                ])
-              }
-            }
-            reader.readAsDataURL(file)
+            processImageFile(file, 0, 0)
           }
         }
       }
     }
+  }, [])
+
+  const handleDrop = useCallback((event: React.DragEvent) => {
+    event.preventDefault()
+    const files = Array.from(event.dataTransfer.files)
+    files.map((file) => {
+      if (file.type.startsWith('image/')) {
+        processImageFile(file, event.clientX, event.clientY)
+      }
+    })
   }, [])
 
   useEffect(() => {
@@ -175,6 +210,8 @@ const SlideEditor = () => {
             <div
               className={styles.slide}
               ref={slideRef}
+              onDragOver={(e) => e.preventDefault()}
+              onDrop={handleDrop}
             >
               {textboxes?.map((textbox) => (
                 <div
@@ -185,7 +222,10 @@ const SlideEditor = () => {
                 </div>
               ))}
               {Images?.map((image) => (
-                <div key={image.imageId}>
+                <div
+                  key={image.imageId}
+                  onClick={() => selectImage(image.imageId)}
+                >
                   <DraggableImageBox image={image} />
                 </div>
               ))}
