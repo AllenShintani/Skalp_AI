@@ -1,5 +1,5 @@
 import type React from 'react'
-import styles from './DraggableTextBox.module.css'
+import styles from './DraggableImageBox.module.css'
 import { useState, useCallback, useEffect } from 'react'
 import type { ImageBox } from '@/types/Slide'
 
@@ -213,7 +213,7 @@ const DraggableImageBox: React.FC<Props> = ({ image }) => {
     <div
       style={style}
       onMouseDown={handleDragMouseDown}
-      className={styles.textBox}
+      className={styles.imageBox}
     >
       <img
         src={image.src}
