@@ -127,6 +127,7 @@ const SlideEditor = () => {
       })
     }
     const reader = new FileReader()
+    //TODO: バックエンドの保存を実装する？
     reader.onload = async (loadEvent) => {
       const src = loadEvent.target?.result
       if (typeof src === 'string') {
@@ -166,10 +167,18 @@ const SlideEditor = () => {
 
   const handleDrop = useCallback((event: React.DragEvent) => {
     event.preventDefault()
+    const slideElement = slideRef.current
+    if (!slideElement) return
+
+    //スライド要素内の座標に変換
+    const rect = slideElement.getBoundingClientRect()
+    const x = event.clientX - rect.left
+    const y = event.clientY - rect.top
+
     const files = Array.from(event.dataTransfer.files)
-    files.map((file) => {
+    files.forEach((file) => {
       if (file.type.startsWith('image/')) {
-        processImageFile(file, event.clientX, event.clientY)
+        processImageFile(file, x, y)
       }
     })
   }, [])
