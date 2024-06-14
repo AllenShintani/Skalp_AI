@@ -3,6 +3,8 @@ import { EditorContent } from '@tiptap/react'
 import styles from './DraggableTextBox.module.css'
 import { useState, useCallback, useEffect } from 'react'
 import type { TextBox } from '@/types/Slide'
+import resizeStyles from './ResizeHandles.module.css'
+
 
 type Props = {
   textbox: TextBox
@@ -83,16 +85,15 @@ const handleResize = (
   return options[direction]
 }
 const handleResizeDivs: ResizeDivs[] = [
-  { direction: 'north', className: styles.resizeHandleNorth },
-  { direction: 'northEast', className: styles.resizeHandleNorthEast },
-  { direction: 'east', className: styles.resizeHandleEast },
-  { direction: 'southEast', className: styles.resizeHandleSouthEast },
-  { direction: 'south', className: styles.resizeHandleSouth },
-  { direction: 'southWest', className: styles.resizeHandleSouthWest },
-  { direction: 'west', className: styles.resizeHandleWest },
-  { direction: 'northWest', className: styles.resizeHandleNorthWest },
+  { direction: 'north', className: resizeStyles.resizeHandleNorth },
+  { direction: 'northEast', className: resizeStyles.resizeHandleNorthEast },
+  { direction: 'east', className: resizeStyles.resizeHandleEast },
+  { direction: 'southEast', className: resizeStyles.resizeHandleSouthEast },
+  { direction: 'south', className: resizeStyles.resizeHandleSouth },
+  { direction: 'southWest', className: resizeStyles.resizeHandleSouthWest },
+  { direction: 'west', className: resizeStyles.resizeHandleWest },
+  { direction: 'northWest', className: resizeStyles.resizeHandleNorthWest },
 ]
-
 const DraggableTextBox: React.FC<Props> = ({ textbox }) => {
   const [isDragging, setIsDragging] = useState(false)
   const [dragStart, setDragStart] = useState<{ x: number; y: number } | null>(
