@@ -7,6 +7,7 @@ import {
   faItalic,
   faUnderline,
   faStrikethrough,
+  faListUl,
 } from '@fortawesome/free-solid-svg-icons'
 import type { TextBox } from '@/types/Slide'
 
@@ -103,6 +104,14 @@ const ToolBar: React.FC<Props> = ({ currentId, createTextbox, textboxes, createN
       <button
         onClick={() =>
           currentId !== null &&
+          textboxes[currentId]?.editor?.chain().focus().toggleBulletList().run()
+        }
+      >
+        <FontAwesomeIcon icon={faListUl} />
+      </button>
+      <button
+        onClick={() =>
+          currentId !== null &&
           textboxes[currentId]?.editor
             ?.chain()
             .focus()
@@ -112,6 +121,7 @@ const ToolBar: React.FC<Props> = ({ currentId, createTextbox, textboxes, createN
       >
         left
       </button>
+
       <button
         onClick={() =>
           currentId !== null &&

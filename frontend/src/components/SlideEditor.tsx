@@ -25,6 +25,8 @@ import { Text } from '@tiptap/extension-text'
 
 import { Document } from '@tiptap/extension-document'
 
+import { BulletList } from '@tiptap/extension-bullet-list'
+
 const SlideEditor = () => {
   const [slides, setSlides] = useAtom(slidesState)
   const [textboxes, setTextboxes] = useAtom(textBoxesState)
@@ -51,6 +53,7 @@ const SlideEditor = () => {
         Strike,
         FontFamily.configure({ types: ['textStyle'] }),
         Heading,
+        BulletList,
         TextAlign.configure({
           types: ['heading', 'paragraph'],
         }),

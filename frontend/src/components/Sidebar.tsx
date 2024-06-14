@@ -5,7 +5,7 @@ import styles from './Sidebar.module.css'
 import { useAtom } from 'jotai'
 
 const Sidebar = () => {
-  const [slides, setSlides] = useAtom(slidesState)
+  const [slides] = useAtom(slidesState)
   const router = useRouter()
   const { id } = router.query
 

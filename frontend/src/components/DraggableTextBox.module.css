@@ -1,10 +1,31 @@
 .textBox {
-  position: relative;
-  border: 1px solid #ccc;
+  border: 1px solid #d1d1d1;
+}
+
+.verticalLine {
+  position: absolute;
+  top: -1000px;
+  left: 50%;
+  width: 1px;
+  height: 3000px;
+  background-color: #e71515;
+}
+
+.horizontalLine {
+  position: absolute;
+  top: 50%;
+  left: -1000px;
+  width: 3000px;
+  height: 1px;
+  background-color: #e71515;
 }
 
 .editorContent {
   z-index: 1;
+}
+
+.editorContent > * > div {
+  outline: none;
 }
 
 .textBox:hover div {
