@@ -11,6 +11,7 @@ import { Bold } from '@tiptap/extension-bold'
 import { Italic } from '@tiptap/extension-italic'
 import { Underline } from '@tiptap/extension-underline'
 import { Strike } from '@tiptap/extension-strike'
+import { BulletList } from '@tiptap/extension-bullet-list'
 import FontFamily from '@tiptap/extension-font-family'
 import TextStyle from '@tiptap/extension-text-style'
 import Document from '@tiptap/extension-document'
@@ -48,6 +49,7 @@ const SlideEditor = () => {
         FontFamily.configure({ types: ['textStyle'] }),
         FontSize,
         Heading,
+        BulletList,
         TextAlign.configure({
           types: ['heading', 'paragraph'],
         }),
