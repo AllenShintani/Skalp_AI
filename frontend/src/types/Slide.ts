@@ -13,7 +13,7 @@ export type TextBox = SlideContentBase & {
   textBoxId: number
 }
 
-export type ImageBox = SlideContentBase & {
+export type SlideImage = SlideContentBase & {
   imageId: string
   src: string
 }

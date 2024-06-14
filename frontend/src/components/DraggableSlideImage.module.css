@@ -1,4 +1,4 @@
-.imageBox {
+.SlideImage {
   border: 1px solid #d1d1d1;
 }
 
@@ -20,7 +20,7 @@
   background-color: #e71515;
 }
 
-.imageBox:hover div {
+.SlideImage:hover div {
   display: block;
 }
 

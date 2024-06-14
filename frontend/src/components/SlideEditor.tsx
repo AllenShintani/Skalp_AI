@@ -5,7 +5,7 @@ import { Editor } from '@tiptap/react'
 import ToolBar from './ToolBar'
 import styles from './SlideEditor.module.css'
 import DraggableTextBox from './DraggableTextBox'
-import type { TextBox, ImageBox } from '@/types/Slide'
+import type { TextBox, SlideImage } from '@/types/Slide'
 import { Text } from '@tiptap/extension-text'
 import { Bold } from '@tiptap/extension-bold'
 import { Italic } from '@tiptap/extension-italic'
@@ -20,11 +20,11 @@ import { FontSize } from '@/components/extensions/FontSize'
 import Sidebar from './Sidebar'
 import Heading from '@tiptap/extension-heading'
 import TextAlign from '@tiptap/extension-text-align'
-import DraggableImageBox from './DraggableImageBox'
+import DraggableSlideImage from './DraggableSlideImage'
 
 const SlideEditor = () => {
   const [textboxes, setTextboxes] = useState<TextBox[]>([])
-  const [Images, setImages] = useState<ImageBox[]>([])
+  const [Images, setImages] = useState<SlideImage[]>([])
   const [countTextbox, setCountTextbox] = useState(0)
   const editorRef = useRef<HTMLDivElement>(null)
   const slideRef = useRef<HTMLDivElement>(null)
@@ -237,7 +237,7 @@ const SlideEditor = () => {
                   key={image.imageId}
                   onClick={() => selectImage(image.imageId)}
                 >
-                  <DraggableImageBox image={image} />
+                  <DraggableSlideImage image={image} />
                 </div>
               ))}
             </div>

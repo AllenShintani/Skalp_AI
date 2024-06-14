@@ -1,10 +1,10 @@
 import type React from 'react'
-import styles from './DraggableImageBox.module.css'
+import styles from './DraggableSlideImage.module.css'
 import { useState, useCallback, useEffect } from 'react'
-import type { ImageBox } from '@/types/Slide'
+import type { SlideImage } from '@/types/Slide'
 
 type Props = {
-  image: ImageBox
+  image: SlideImage
 }
 
 import type {
@@ -93,7 +93,7 @@ const handleResizeDivs: ResizeDivs[] = [
   { direction: 'northWest', className: styles.resizeHandleNorthWest },
 ]
 
-const DraggableImageBox: React.FC<Props> = ({ image }) => {
+const DraggableSlideImage: React.FC<Props> = ({ image }) => {
   const [isDragging, setIsDragging] = useState(false)
   const [dragStart, setDragStart] = useState<{ x: number; y: number } | null>(
     null,
@@ -213,7 +213,7 @@ const DraggableImageBox: React.FC<Props> = ({ image }) => {
     <div
       style={style}
       onMouseDown={handleDragMouseDown}
-      className={styles.imageBox}
+      className={styles.SlideImage}
     >
       <img
         src={image.src}
@@ -235,4 +235,4 @@ const DraggableImageBox: React.FC<Props> = ({ image }) => {
   )
 }
 
-export default DraggableImageBox
+export default DraggableSlideImage
