@@ -153,16 +153,16 @@ const SlideEditor = () => {
     const editorElement = editorRef.current
     if (!editorElement) return
     const items = event.clipboardData?.items
-    if (items) {
-      for (const item of items) {
-        if (item.type.startsWith('image/')) {
-          const file = item.getAsFile()
-          if (file) {
-            processImageFile(file, 0, 0)
-          }
+    if (!items) return
+
+    Array.from(items).map((item) => {
+      if (item.type.startsWith('image/')) {
+        const file = item.getAsFile()
+        if (file) {
+          processImageFile(file, 0, 0)
         }
       }
-    }
+    })
   }, [])
 
   const handleDrop = useCallback((event: React.DragEvent) => {

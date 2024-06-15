@@ -5,7 +5,6 @@ import { useState, useCallback, useEffect } from 'react'
 import type { TextBox } from '@/types/Slide'
 import resizeStyles from './ResizeHandles.module.css'
 
-
 type Props = {
   textbox: TextBox
 }
