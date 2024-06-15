@@ -1,4 +1,5 @@
 import type { AppProps } from 'next/app'
+import '../styles/globals.css'
 // import { getCookie } from 'cookies-next'
 // import { useRouter } from 'next/router'
 
