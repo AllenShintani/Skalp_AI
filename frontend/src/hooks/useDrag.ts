@@ -2,10 +2,15 @@ import { useState, useCallback } from 'react'
 
 type Position = { x: number; y: number }
 
-export const useDrag = (initialPosition: Position) => {
+export const useDrag = (
+  initialPosition: Position,
+  size: { width: number; height: number }
+) => {
   const [isDragging, setIsDragging] = useState(false)
   const [dragStart, setDragStart] = useState<Position | null>(null)
   const [position, setPosition] = useState(initialPosition)
+  const [isVerticalCenter, setIsVerticalCenter] = useState(false)
+  const [isHorizontalCenter, setIsHorizontalCenter] = useState(false)
 
   const handleDragMouseDown = useCallback(
     (e: React.MouseEvent) => {
@@ -15,25 +20,106 @@ export const useDrag = (initialPosition: Position) => {
     [position.x, position.y],
   )
 
+  const handleDragMouseUp = useCallback(() => {
+    if (!isDragging) return
+    setIsHorizontalCenter(false)
+    setIsVerticalCenter(false)
+    setIsDragging(false)
+    setDragStart(null)
+  }, [isDragging])
+
   const handleDragMouseMove = useCallback(
     (e: MouseEvent) => {
       if (!isDragging || !dragStart) return
+      //変数設定
+      const SLIDESIZE_HALF = {
+        width: 500,
+        height: 281.5,
+      }
+      const centerPositionOfTextBox = {
+        x: position.x + size.width / 2,
+        y: position.y + size.height / 2,
+      }
+      const movingDistance = {
+        x: Math.abs(e.clientX - dragStart.x - position.x),
+        y: Math.abs(e.clientY - dragStart.y - position.y),
+      }
+      //縦の座標を中央に寄せる処理
+      if (
+        centerPositionOfTextBox.y > SLIDESIZE_HALF.height - 2 &&
+        centerPositionOfTextBox.y < SLIDESIZE_HALF.height + 2 &&
+        !isHorizontalCenter
+      ) {
+        setPosition({
+          x: position.x,
+          y: SLIDESIZE_HALF.height - size.height / 2,
+        })
+        setIsHorizontalCenter(true)
+        return
+      }
+      //横の座標を中央に寄せる処理
+      if (
+        centerPositionOfTextBox.x > SLIDESIZE_HALF.width - 2 &&
+        centerPositionOfTextBox.x < SLIDESIZE_HALF.width + 2 &&
+        !isVerticalCenter
+      ) {
+        setPosition({
+          x: SLIDESIZE_HALF.width - size.width / 2,
+          y: position.y,
+        })
+        setIsVerticalCenter(true)
+        return
+      }
+      //引っ掛かりをもたせる処理->if-elseif-elseif
+      if (isHorizontalCenter && isVerticalCenter) {
+        if (movingDistance.x < 15 && movingDistance.y < 15) {
+          setPosition({
+            x: position.x,
+            y: position.y,
+          })
+          return
+        }
+        setIsHorizontalCenter(false)
+        setIsVerticalCenter(false)
+      } else if (isHorizontalCenter && !isVerticalCenter) {
+        if (movingDistance.y < 15) {
+          setPosition({
+            x: e.clientX - dragStart.x,
+            y: position.y,
+          })
+          return
+        }
+        setIsHorizontalCenter(false)
+      } else if (!isHorizontalCenter && isVerticalCenter) {
+        if (movingDistance.x < 15) {
+          setPosition({
+            x: position.x,
+            y: e.clientY - dragStart.y,
+          })
+          return
+        }
+        setIsVerticalCenter(false)
+      }
       setPosition({
         x: e.clientX - dragStart.x,
         y: e.clientY - dragStart.y,
       })
     },
-    [isDragging, dragStart],
+    [
+      isDragging,
+      dragStart,
+      size,
+      position,
+      isVerticalCenter,
+      isHorizontalCenter,
+    ],
   )
-
-  const handleDragMouseUp = useCallback(() => {
-    setIsDragging(false)
-    setDragStart(null)
-  }, [])
 
   return {
     isDragging,
     position,
+    isVerticalCenter,
+    isHorizontalCenter,
     handleDragMouseDown,
     handleDragMouseMove,
     handleDragMouseUp,

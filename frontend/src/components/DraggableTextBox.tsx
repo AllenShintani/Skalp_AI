@@ -28,7 +28,7 @@ const DraggableTextBox: React.FC<Props> = ({ textbox }) => {
     handleDragMouseDown,
     handleDragMouseMove,
     handleDragMouseUp,
-  } = useDrag({ x: textbox.x, y: textbox.y })
+  } = useDrag({ x: textbox.x, y: textbox.y }, { width: textbox.width, height: textbox.height })
 
   const {
     isResizing,
@@ -75,10 +75,11 @@ const DraggableTextBox: React.FC<Props> = ({ textbox }) => {
     <div
       style={style}
       onMouseDown={handleDragMouseDown}
+      onDoubleClick={() => textbox.editor.commands.focus()}
       className={styles.textBox}
     >
-      <div onMouseDown={(e) => e.stopPropagation()}>
-        <EditorContent editor={textbox.editor} />
+      <div onMouseDown={(e) => e.stopPropagation()} className={styles.editorContent}>
+        <EditorContent editor={textbox.editor}/>
       </div>
       <div
         className={styles.resizeHandles}
