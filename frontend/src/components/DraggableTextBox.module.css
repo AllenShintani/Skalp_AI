@@ -1,20 +1,39 @@
 .textBox {
-  position: relative;
-  border: 1px solid #ccc;
+  border: 1px solid #d1d1d1;
 }
 
-.textBox:hover .resizeHandles {
+.verticalLine {
+  position: absolute;
+  top: -1000px;
+  left: 50%;
+  width: 1px;
+  height: 3000px;
+  background-color: #e71515;
+}
+
+.horizontalLine {
+  position: absolute;
+  top: 50%;
+  left: -1000px;
+  width: 3000px;
+  height: 1px;
+  background-color: #e71515;
+}
+
+.editorContent {
+  z-index: 1;
+}
+
+.editorContent > * > div {
+  outline: none;
+}
+
+.textBox:hover div {
   display: block;
 }
 
-.resizeHandles {
-  z-index: -1;
-  display: none;
-  position: absolute;
-  inset: 0;
-}
-
 .resizeHandleSouthEast {
+  display: none;
   position: absolute;
   bottom: -5px;
   right: -5px;
@@ -25,6 +44,7 @@
 }
 
 .resizeHandleSouth {
+  display: none;
   position: absolute;
   bottom: -5px;
   left: 50%;
@@ -36,6 +56,7 @@
 }
 
 .resizeHandleSouthWest {
+  display: none;
   position: absolute;
   bottom: -5px;
   left: -5px;
@@ -46,6 +67,7 @@
 }
 
 .resizeHandleWest {
+  display: none;
   position: absolute;
   top: 50%;
   left: -5px;
@@ -57,6 +79,7 @@
 }
 
 .resizeHandleNorthWest {
+  display: none;
   position: absolute;
   top: -5px;
   left: -5px;
@@ -67,6 +90,7 @@
 }
 
 .resizeHandleNorth {
+  display: none;
   position: absolute;
   top: -5px;
   left: 50%;
@@ -78,6 +102,7 @@
 }
 
 .resizeHandleNorthEast {
+  display: none;
   position: absolute;
   top: -5px;
   right: -5px;
@@ -88,6 +113,7 @@
 }
 
 .resizeHandleEast {
+  display: none;
   position: absolute;
   top: 50%;
   right: -5px;

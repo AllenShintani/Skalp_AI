@@ -1,6 +1,6 @@
 import type { AppProps } from 'next/app'
+import '../styles/globals.css'
 // import { getCookie } from 'cookies-next'
-import { RecoilRoot } from 'recoil'
 // import { useRouter } from 'next/router'
 
 function MyApp({ Component, pageProps }: AppProps) {
@@ -32,11 +32,7 @@ function MyApp({ Component, pageProps }: AppProps) {
   //   }
   // }, [router])
 
-  return (
-    <RecoilRoot>
-      <Component {...pageProps} />
-    </RecoilRoot>
-  )
+  return <Component {...pageProps} />
 }
 
 export default MyApp

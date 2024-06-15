@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { DndContext } from '@dnd-kit/core'
 import StarterKit from '@tiptap/starter-kit'
 import { Editor } from '@tiptap/react'
@@ -11,17 +11,21 @@ import { Bold } from '@tiptap/extension-bold'
 import { Italic } from '@tiptap/extension-italic'
 import { Underline } from '@tiptap/extension-underline'
 import { Strike } from '@tiptap/extension-strike'
+import { BulletList } from '@tiptap/extension-bullet-list'
 import FontFamily from '@tiptap/extension-font-family'
 import TextStyle from '@tiptap/extension-text-style'
 import Document from '@tiptap/extension-document'
 import Paragraph from '@tiptap/extension-paragraph'
 import { FontSize } from '@/components/extensions/FontSize'
+import Sidebar from './Sidebar'
+import Heading from '@tiptap/extension-heading'
+import TextAlign from '@tiptap/extension-text-align'
 
 const SlideEditor = () => {
   const [textboxes, setTextboxes] = useState<TextBox[]>([])
   const [countTextbox, setCountTextbox] = useState(0)
-  const [currentId, setCurrentId] = useState(0)
-
+  const editorRef = useRef<HTMLDivElement>(null)
+  const slideRef = useRef<HTMLDivElement>(null)
   const createTextbox = () => {
     const editor = new Editor({
       content: `<p>Example Text</p>`,
@@ -33,10 +37,19 @@ const SlideEditor = () => {
         Paragraph,
         Bold,
         Italic,
+        Heading,
+        TextAlign.configure({
+          types: ['heading', 'paragraph'],
+        }),
         Underline,
         Strike,
         FontFamily.configure({ types: ['textStyle'] }),
         FontSize,
+        Heading,
+        BulletList,
+        TextAlign.configure({
+          types: ['heading', 'paragraph'],
+        }),
       ],
     })
     setTextboxes((prev) => [
@@ -46,8 +59,8 @@ const SlideEditor = () => {
         textBoxId: countTextbox,
         x: 0,
         y: 0,
-        width: 200,
-        height: 40,
+        width: 150,
+        height: 100,
         isSelected: false,
       },
     ])
@@ -55,31 +68,84 @@ const SlideEditor = () => {
   }
 
   const selectTextBox = (id: number) => {
-    console.log('select textbox', id)
-    setCurrentId(id)
+    setTextboxes((prev) => {
+      const newTextboxes = prev.map((textbox) =>
+        textbox.textBoxId === id
+          ? { ...textbox, isSelected: true }
+          : { ...textbox, isSelected: false },
+      )
+      return newTextboxes
+    })
   }
+
+  const getSelectedTextBoxId = () => {
+    const selectedTextBox = textboxes.find((textbox) => textbox.isSelected)
+    return selectedTextBox ? selectedTextBox.textBoxId : null
+  }
+
+  const handleResizeWindow = useCallback(() => {
+    const editorElement = editorRef.current
+    const slideElement = slideRef.current
+    if (!editorElement || !slideElement) return
+
+    const editorWidth = editorElement.offsetWidth
+    const editorHeight = editorElement.offsetHeight
+
+    const targetWidth = 1000
+    const targetHeight = 1000 * (9 / 16)
+
+    const widthScale = (editorWidth - 30) / targetWidth
+    const heightScale = editorHeight / targetHeight
+
+    const newScale = Math.min(widthScale, heightScale)
+    slideElement.style.transform = `scale(${newScale})`
+  }, [])
+
+  useEffect(() => {
+    handleResizeWindow()
+
+    window.addEventListener('resize', handleResizeWindow)
+    return () => {
+      window.removeEventListener('resize', handleResizeWindow)
+    }
+  }, [handleResizeWindow])
 
   return (
     <div className={styles.container}>
-      <h1>Edit Page</h1>
-      <ToolBar
-        currentId={currentId}
-        createTextbox={createTextbox}
-        textboxes={textboxes}
-      />
-
-      <DndContext>
-        <div className={styles.editSpace}>
-          {textboxes?.map((textbox) => (
-            <div
-              onClick={() => selectTextBox(textbox.textBoxId)}
-              key={textbox.textBoxId}
-            >
-              <DraggableTextBox textbox={textbox} />
-            </div>
-          ))}
+      <div className={styles.grid}>
+        <div className={styles.sidebar}>
+          <Sidebar />
         </div>
-      </DndContext>
+        <div className={styles.toolbar}>
+          <h1>Edit</h1>
+          <ToolBar
+            currentId={getSelectedTextBoxId()}
+            createTextbox={createTextbox}
+            textboxes={textboxes}
+          />
+        </div>
+
+        <div
+          className={styles.editor}
+          ref={editorRef}
+        >
+          <DndContext>
+            <div
+              className={styles.slide}
+              ref={slideRef}
+            >
+              {textboxes?.map((textbox) => (
+                <div
+                  onClick={() => selectTextBox(textbox.textBoxId)}
+                  key={textbox.textBoxId}
+                >
+                  <DraggableTextBox textbox={textbox} />
+                </div>
+              ))}
+            </div>
+          </DndContext>
+        </div>
+      </div>
     </div>
   )
 }

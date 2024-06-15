@@ -1,11 +1,11 @@
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { useRecoilValue } from 'recoil'
-import { slidesState } from '../recoil/atoms'
+import { slidesState } from '../jotai/atoms'
 import styles from './Sidebar.module.css'
+import { useAtom } from 'jotai'
 
-const DemoSidebar = () => {
-  const slides = useRecoilValue(slidesState)
+const Sidebar = () => {
+  const [slides] = useAtom(slidesState)
   const router = useRouter()
   const { id } = router.query
 
@@ -32,4 +32,4 @@ const DemoSidebar = () => {
   )
 }
 
-export default DemoSidebar
+export default Sidebar

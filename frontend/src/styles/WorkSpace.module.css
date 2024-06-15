@@ -1,0 +1,95 @@
+.container {
+  display: grid;
+  grid-template-columns: 80px 250px 1fr;
+  grid-template-rows: 80px 1fr;
+  grid-template-areas:
+    'workspaceselector header header'
+    'workspaceselector projectselector main';
+  height: 100vh;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.header {
+  display: flex;
+  position: relative;
+  align-items: center;
+  box-sizing: border-box;
+  grid-area: header;
+  background: #ffffff;
+  border-bottom: 1px solid rgba(29, 29, 29, 0.644);
+  border-top: 1px solid rgba(29, 29, 29, 0.644);
+}
+
+.header h2 {
+  padding: 0 40px;
+  color: #1d1d1d;
+}
+
+.headerItem {
+  right: 30px;
+  gap: 30px;
+  position: absolute;
+  display: flex;
+  align-items: center;
+  min-width: 200px;
+  background: #ffffff;
+}
+
+.headerItem .icon {
+  width: 35px;
+  height: 35px;
+  color: #22cd98;
+}
+
+.headerItem .iconFrame {
+  display: grid;
+  place-items: center;
+  width: 55px;
+  height: 55px;
+  background-color: #f2f2f2;
+  border-radius: 50%;
+}
+
+.headerItem button {
+  border: none;
+  background: #e9e8e8;
+  width: 120px;
+  height: 35px;
+  border-radius: 5px;
+  font-weight: 500;
+  transition: background 0.3s;
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+}
+
+.headerItem button:hover {
+  background: #d8d8d8;
+}
+
+.headerItem button:active {
+  scale: 0.98;
+}
+
+.headerItem :nth-child(2) {
+  background: #22cd98;
+}
+
+.headerItem :nth-child(2):hover {
+  background: #3fc097;
+}
+
+.workSpaceSelector {
+  grid-area: workspaceselector;
+  background: #f2f2f2;
+}
+
+.projectSelector {
+  grid-area: projectselector;
+  background: #ffffff;
+}
+
+.main {
+  grid-area: main;
+  background: #f2f2f2;
+}

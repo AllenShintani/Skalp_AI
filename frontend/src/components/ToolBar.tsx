@@ -1,6 +1,5 @@
 import type React from 'react'
 import { useRouter } from 'next/router'
-import type { Editor } from '@tiptap/react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faHome,
@@ -8,20 +7,12 @@ import {
   faItalic,
   faUnderline,
   faStrikethrough,
+  faListUl,
 } from '@fortawesome/free-solid-svg-icons'
-
-type TextBox = {
-  editor: Editor | null
-  textBoxId: number
-  x: number
-  y: number
-  isSelected: boolean
-  width: number
-  height: number
-}
+import type { TextBox } from '@/types/Slide'
 
 type Props = {
-  currentId: number
+  currentId: number | null
   createTextbox: () => void
   textboxes: TextBox[]
 }
@@ -37,6 +28,7 @@ const ToolBar: React.FC<Props> = ({ currentId, createTextbox, textboxes }) => {
       <button onClick={createTextbox}>Create textbox</button>
       <button
         onClick={() =>
+          currentId !== null &&
           textboxes[currentId]?.editor?.chain().focus().toggleBold().run()
         }
       >
@@ -44,6 +36,7 @@ const ToolBar: React.FC<Props> = ({ currentId, createTextbox, textboxes }) => {
       </button>
       <button
         onClick={() =>
+          currentId !== null &&
           textboxes[currentId]?.editor?.chain().focus().toggleItalic().run()
         }
       >
@@ -51,6 +44,7 @@ const ToolBar: React.FC<Props> = ({ currentId, createTextbox, textboxes }) => {
       </button>
       <button
         onClick={() =>
+          currentId !== null &&
           textboxes[currentId]?.editor?.chain().focus().toggleUnderline().run()
         }
       >
@@ -58,6 +52,7 @@ const ToolBar: React.FC<Props> = ({ currentId, createTextbox, textboxes }) => {
       </button>
       <select
         onChange={(e) =>
+          currentId !== null &&
           textboxes[currentId]?.editor
             ?.chain()
             .focus()
@@ -65,7 +60,10 @@ const ToolBar: React.FC<Props> = ({ currentId, createTextbox, textboxes }) => {
             .run()
         }
         value={
-          textboxes[currentId]?.editor?.getAttributes('textStyle').fontFamily
+          currentId !== null
+            ? textboxes[currentId]?.editor?.getAttributes('textStyle')
+                .fontFamily
+            : ''
         }
       >
         <option value="Arial">Arial</option>
@@ -74,13 +72,18 @@ const ToolBar: React.FC<Props> = ({ currentId, createTextbox, textboxes }) => {
       </select>
       <select
         onChange={(e) =>
+          currentId !== null &&
           textboxes[currentId]?.editor
             ?.chain()
             .focus()
             .setFontSize(e.target.value)
             .run()
         }
-        value={textboxes[currentId]?.editor?.getAttributes('fontSize').size}
+        value={
+          currentId !== null
+            ? textboxes[currentId]?.editor?.getAttributes('fontSize').size
+            : ''
+        }
       >
         <option value="12">12px</option>
         <option value="16">16px</option>
@@ -90,10 +93,56 @@ const ToolBar: React.FC<Props> = ({ currentId, createTextbox, textboxes }) => {
       </select>
       <button
         onClick={() =>
+          currentId !== null &&
           textboxes[currentId]?.editor?.chain().focus().toggleStrike().run()
         }
       >
         <FontAwesomeIcon icon={faStrikethrough} />
+      </button>
+      <button
+        onClick={() =>
+          currentId !== null &&
+          textboxes[currentId]?.editor?.chain().focus().toggleBulletList().run()
+        }
+      >
+        <FontAwesomeIcon icon={faListUl} />
+      </button>
+      <button
+        onClick={() =>
+          currentId !== null &&
+          textboxes[currentId]?.editor
+            ?.chain()
+            .focus()
+            .setTextAlign('left')
+            .run()
+        }
+      >
+        left
+      </button>
+
+      <button
+        onClick={() =>
+          currentId !== null &&
+          textboxes[currentId]?.editor
+            ?.chain()
+            .focus()
+            .setTextAlign('center')
+            .run()
+        }
+      >
+        center
+      </button>
+      <button
+        onClick={() =>
+          currentId !== null &&
+          textboxes[currentId]?.editor
+            ?.chain()
+            .focus()
+            .setTextAlign('right')
+            .run()
+        }
+      >
+        right
       </button>
     </div>
   )
