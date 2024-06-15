@@ -1,7 +1,7 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faUser } from '@fortawesome/free-solid-svg-icons'
 
-import styles from './WorkSpace.module.css'
+import styles from '../../styles/WorkSpace.module.css'
 const WorkSpace = () => {
   return (
     <div className={styles.container}>
