@@ -60,7 +60,7 @@
   border-radius: 5px;
   font-weight: 500;
   transition: background 0.3s;
-  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+  outline: 1px solid #00000013;
 }
 
 .headerItem button:hover {
@@ -73,10 +73,11 @@
 
 .headerItem :nth-child(2) {
   background: #22cd98;
+  color: #ffffff;
 }
 
 .headerItem :nth-child(2):hover {
-  background: #3fc097;
+  background: #3c9b7d;
 }
 
 .workSpaceSelector {
@@ -91,6 +92,58 @@
 }
 
 .main {
+  display: grid;
   grid-area: main;
   background: #f2f2f2;
+  grid-template-rows: 100px 1fr;
+  grid-template-areas:
+    'mainheader'
+    'maincontent';
+}
+
+.main .buttonBar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  grid-area: mainheader;
+}
+
+.main .buttonBar .icon {
+  width: 25px;
+  height: 25px;
+  margin-right: 5px;
+}
+
+.main .buttonBar button {
+  font-size: 17px;
+  width: 230px;
+  height: 45px;
+  margin: 10px;
+  border: none;
+  background: #22cd98;
+  color: #ffffff;
+  border-radius: 5px;
+  font-weight: bold;
+  transition: background 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  outline: 1px solid #00000013;
+}
+
+.main .buttonBar button:hover {
+  background: #3c9b7d;
+}
+
+.main .buttonBar :nth-child(2) {
+  color: #111;
+  background: #ffffff;
+}
+
+.main .buttonBar :nth-child(2):hover {
+  background: #e0e0e0;
+}
+
+.main .buttonBar button:active {
+  scale: 0.98;
 }
