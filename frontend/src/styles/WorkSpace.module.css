@@ -82,6 +82,7 @@
 .workSpaceSelector {
   grid-area: workspaceselector;
   background: #f2f2f2;
+  z-index: 1;
 }
 
 .projectSelector {
