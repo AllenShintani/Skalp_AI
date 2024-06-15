@@ -1,4 +1,4 @@
-.textBox {
+.SlideImage {
   border: 1px solid #d1d1d1;
 }
 
@@ -20,14 +20,6 @@
   background-color: #e71515;
 }
 
-.editorContent {
-  z-index: 1;
-}
-
-.editorContent > * > div {
-  outline: none;
-}
-
-.textBox:hover div {
+.SlideImage:hover div {
   display: block;
 }

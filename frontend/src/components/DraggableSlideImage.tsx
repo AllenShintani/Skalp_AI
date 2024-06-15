@@ -1,12 +1,11 @@
 import type React from 'react'
-import { EditorContent } from '@tiptap/react'
-import styles from './DraggableTextBox.module.css'
+import styles from './DraggableSlideImage.module.css'
 import { useState, useCallback, useEffect } from 'react'
-import type { TextBox } from '@/types/Slide'
+import type { SlideImage } from '@/types/Slide'
 import resizeStyles from './ResizeHandles.module.css'
 
 type Props = {
-  textbox: TextBox
+  image: SlideImage
 }
 
 import type {
@@ -14,6 +13,7 @@ import type {
   ResizeOptions,
   ResizeDivs,
 } from '@/types/DraggableTextBox'
+
 const handleResize = (
   e: MouseEvent,
   resizeStart: { x: number; y: number },
@@ -93,15 +93,16 @@ const handleResizeDivs: ResizeDivs[] = [
   { direction: 'west', className: resizeStyles.resizeHandleWest },
   { direction: 'northWest', className: resizeStyles.resizeHandleNorthWest },
 ]
-const DraggableTextBox: React.FC<Props> = ({ textbox }) => {
+
+const DraggableSlideImage: React.FC<Props> = ({ image }) => {
   const [isDragging, setIsDragging] = useState(false)
   const [dragStart, setDragStart] = useState<{ x: number; y: number } | null>(
     null,
   )
-  const [position, setPosition] = useState({ x: textbox.x, y: textbox.y })
+  const [position, setPosition] = useState({ x: image.x, y: image.y })
   const [size, setSize] = useState({
-    width: textbox.width,
-    height: textbox.height,
+    width: image.width,
+    height: image.height,
   })
   const [isResizing, setIsResizing] = useState(false)
   const [resizeDirection, setResizeDirection] = useState<Direction>('default')
@@ -110,16 +111,13 @@ const DraggableTextBox: React.FC<Props> = ({ textbox }) => {
     y: size.height,
   })
 
-  const [isVerticalCenter, setIsVerticalCenter] = useState(false)
-  const [isHorizontalCenter, setIsHorizontalCenter] = useState(false)
-
   const style: React.CSSProperties = {
     transform: `translate3d(${position.x}px, ${position.y}px, 0)`,
     position: 'absolute',
     width: `${size.width}px`,
     height: `${size.height}px`,
     boxSizing: 'border-box',
-    outline: textbox.isSelected ? 'solid 1px blue' : 'none',
+    outline: image.isSelected ? 'solid 1px blue' : 'none',
     userSelect: 'none', // Prevent text selection(入力の無効化はtiptapにメソッドが存在する為、注意が必要)
   }
 
@@ -131,100 +129,23 @@ const DraggableTextBox: React.FC<Props> = ({ textbox }) => {
     [position.x, position.y],
   )
 
-  const handleDragMouseUp = useCallback(() => {
-    if (!isDragging) return
-    setIsHorizontalCenter(false)
-    setIsVerticalCenter(false)
-    setIsDragging(false)
-    setDragStart(null)
-  }, [isDragging])
-
   const handleDragMouseMove = useCallback(
     (e: MouseEvent) => {
       if (!isDragging || !dragStart) return
-      //変数設定
-      const SLIDESIZE_HALF = {
-        width: 500,
-        height: 281.5,
-      }
-      const centerPositionOfTextBox = {
-        x: position.x + size.width / 2,
-        y: position.y + size.height / 2,
-      }
-      const movingDistance = {
-        x: Math.abs(e.clientX - dragStart.x - position.x),
-        y: Math.abs(e.clientY - dragStart.y - position.y),
-      }
-      //縦の座標を中央に寄せる処理
-      if (
-        centerPositionOfTextBox.y > SLIDESIZE_HALF.height - 2 &&
-        centerPositionOfTextBox.y < SLIDESIZE_HALF.height + 2 &&
-        !isHorizontalCenter
-      ) {
-        setPosition({
-          x: position.x,
-          y: SLIDESIZE_HALF.height - size.height / 2,
-        })
-        setIsHorizontalCenter(true)
-        return
-      }
-      //横の座標を中央に寄せる処理
-      if (
-        centerPositionOfTextBox.x > SLIDESIZE_HALF.width - 2 &&
-        centerPositionOfTextBox.x < SLIDESIZE_HALF.width + 2 &&
-        !isVerticalCenter
-      ) {
-        setPosition({
-          x: SLIDESIZE_HALF.width - size.width / 2,
-          y: position.y,
-        })
-        setIsVerticalCenter(true)
-        return
-      }
-      //引っ掛かりをもたせる処理->if-elseif-elseif
-      if (isHorizontalCenter && isVerticalCenter) {
-        if (movingDistance.x < 15 && movingDistance.y < 15) {
-          setPosition({
-            x: position.x,
-            y: position.y,
-          })
-          return
-        }
-        setIsHorizontalCenter(false)
-        setIsVerticalCenter(false)
-      } else if (isHorizontalCenter && !isVerticalCenter) {
-        if (movingDistance.y < 15) {
-          setPosition({
-            x: e.clientX - dragStart.x,
-            y: position.y,
-          })
-          return
-        }
-        setIsHorizontalCenter(false)
-      } else if (!isHorizontalCenter && isVerticalCenter) {
-        if (movingDistance.x < 15) {
-          setPosition({
-            x: position.x,
-            y: e.clientY - dragStart.y,
-          })
-          return
-        }
-        setIsVerticalCenter(false)
-      }
       setPosition({
         x: e.clientX - dragStart.x,
         y: e.clientY - dragStart.y,
       })
     },
-    [
-      isDragging,
-      dragStart,
-      size,
-      position,
-      isVerticalCenter,
-      isHorizontalCenter,
-    ],
+    [isDragging, dragStart],
   )
+
+  const handleDragMouseUp = useCallback(() => {
+    if (!isDragging) return
+    setIsDragging(false)
+    setDragStart(null)
+  }, [isDragging])
+
   const handleResizeMouseDown = useCallback(
     (e: React.MouseEvent, direction: Direction) => {
       e.stopPropagation()
@@ -293,22 +214,16 @@ const DraggableTextBox: React.FC<Props> = ({ textbox }) => {
     <div
       style={style}
       onMouseDown={handleDragMouseDown}
-      onDoubleClick={() => textbox.editor.commands.focus()}
-      className={styles.textBox}
+      className={styles.SlideImage}
     >
-      {isVerticalCenter && isDragging && (
-        <div className={styles.verticalLine} />
-      )}
-      {isHorizontalCenter && isDragging && (
-        <div className={styles.horizontalLine} />
-      )}
-
-      <div
-        onMouseDown={(e) => e.stopPropagation()}
-        className={styles.editorContent}
-      >
-        <EditorContent editor={textbox.editor} />
-      </div>
+      <img
+        src={image.src}
+        alt="image"
+        onMouseDown={handleDragMouseDown}
+        onDragStart={(e) => e.preventDefault()}
+        width={size.width}
+        height={size.height}
+      />
 
       {handleResizeDivs.map((div) => (
         <div
@@ -321,4 +236,4 @@ const DraggableTextBox: React.FC<Props> = ({ textbox }) => {
   )
 }
 
-export default DraggableTextBox
+export default DraggableSlideImage
