@@ -14,6 +14,8 @@ import type {
   ResizeOptions,
   ResizeDivs,
 } from '@/types/DraggableTextBox'
+import { useAtom } from 'jotai'
+import { slidesState } from '@/jotai/atoms'
 const handleResize = (
   e: MouseEvent,
   resizeStart: { x: number; y: number },
@@ -112,6 +114,7 @@ const DraggableTextBox: React.FC<Props> = ({ textbox }) => {
 
   const [isVerticalCenter, setIsVerticalCenter] = useState(false)
   const [isHorizontalCenter, setIsHorizontalCenter] = useState(false)
+  const [slide, setSlides] = useAtom(slidesState)
 
   const style: React.CSSProperties = {
     transform: `translate3d(${position.x}px, ${position.y}px, 0)`,
@@ -137,7 +140,19 @@ const DraggableTextBox: React.FC<Props> = ({ textbox }) => {
     setIsVerticalCenter(false)
     setIsDragging(false)
     setDragStart(null)
-  }, [isDragging])
+    setSlides((prev) =>
+      prev.map((slide) => {
+        slide.slideContent = slide.slideContent.map((content) => {
+          if (content.id === textbox.id) {
+            content.x = position.x
+            content.y = position.y
+          }
+          return content
+        })
+        return slide
+      }),
+    )
+  }, [isDragging, position.x, position.y, setSlides, textbox.id])
 
   const handleDragMouseMove = useCallback(
     (e: MouseEvent) => {
