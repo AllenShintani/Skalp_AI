@@ -1,53 +1,265 @@
 import type React from 'react'
 import { EditorContent } from '@tiptap/react'
 import styles from './DraggableTextBox.module.css'
-import { useEffect, useCallback } from 'react'
-import { useDrag } from '@/hooks/useDrag'
-import { useResize } from '@/hooks/useResize'
+import { useState, useCallback, useEffect } from 'react'
 import type { TextBox } from '@/types/Slide'
-import type { ResizeDivs } from '@/types/DraggableTextBox'
+import resizeStyles from './ResizeHandles.module.css'
 
 type Props = {
   textbox: TextBox
 }
 
+import type {
+  Direction,
+  ResizeOptions,
+  ResizeDivs,
+} from '@/types/DraggableTextBox'
+const handleResize = (
+  e: MouseEvent,
+  resizeStart: { x: number; y: number },
+  size: { width: number; height: number },
+  position: { x: number; y: number },
+  direction: Direction,
+): ResizeOptions => {
+  const deltaX = e.clientX - resizeStart.x
+  const deltaY = e.clientY - resizeStart.y
+
+  const options: { [key in Direction]: ResizeOptions } = {
+    north: {
+      width: size.width,
+      height: size.height - deltaY,
+      x: position.x,
+      y: position.y + deltaY,
+    },
+    northEast: {
+      width: size.width + deltaX,
+      height: size.height - deltaY,
+      x: position.x,
+      y: position.y + deltaY,
+    },
+    east: {
+      width: size.width + deltaX,
+      height: size.height,
+      x: position.x,
+      y: position.y,
+    },
+    southEast: {
+      width: size.width + deltaX,
+      height: size.height + deltaY,
+      x: position.x,
+      y: position.y,
+    },
+    south: {
+      width: size.width,
+      height: size.height + deltaY,
+      x: position.x,
+      y: position.y,
+    },
+    southWest: {
+      width: size.width - deltaX,
+      height: size.height + deltaY,
+      x: position.x + deltaX,
+      y: position.y,
+    },
+    west: {
+      width: size.width - deltaX,
+      height: size.height,
+      x: position.x + deltaX,
+      y: position.y,
+    },
+    northWest: {
+      width: size.width - deltaX,
+      height: size.height - deltaY,
+      x: position.x + deltaX,
+      y: position.y + deltaY,
+    },
+    default: {
+      width: size.width,
+      height: size.height,
+      x: position.x,
+      y: position.y,
+    },
+  }
+
+  return options[direction]
+}
 const handleResizeDivs: ResizeDivs[] = [
-  { direction: 'north', className: styles.resizeHandleNorth },
-  { direction: 'northEast', className: styles.resizeHandleNorthEast },
-  { direction: 'east', className: styles.resizeHandleEast },
-  { direction: 'southEast', className: styles.resizeHandleSouthEast },
-  { direction: 'south', className: styles.resizeHandleSouth },
-  { direction: 'southWest', className: styles.resizeHandleSouthWest },
-  { direction: 'west', className: styles.resizeHandleWest },
-  { direction: 'northWest', className: styles.resizeHandleNorthWest },
+  { direction: 'north', className: resizeStyles.resizeHandleNorth },
+  { direction: 'northEast', className: resizeStyles.resizeHandleNorthEast },
+  { direction: 'east', className: resizeStyles.resizeHandleEast },
+  { direction: 'southEast', className: resizeStyles.resizeHandleSouthEast },
+  { direction: 'south', className: resizeStyles.resizeHandleSouth },
+  { direction: 'southWest', className: resizeStyles.resizeHandleSouthWest },
+  { direction: 'west', className: resizeStyles.resizeHandleWest },
+  { direction: 'northWest', className: resizeStyles.resizeHandleNorthWest },
 ]
-
 const DraggableTextBox: React.FC<Props> = ({ textbox }) => {
-  const {
-    position: dragPosition,
-    handleDragMouseDown,
-    handleDragMouseMove,
-    handleDragMouseUp,
-  } = useDrag({ x: textbox.x, y: textbox.y }, { width: textbox.width, height: textbox.height })
+  const [isDragging, setIsDragging] = useState(false)
+  const [dragStart, setDragStart] = useState<{ x: number; y: number } | null>(
+    null,
+  )
+  const [position, setPosition] = useState({ x: textbox.x, y: textbox.y })
+  const [size, setSize] = useState({
+    width: textbox.width,
+    height: textbox.height,
+  })
+  const [isResizing, setIsResizing] = useState(false)
+  const [resizeDirection, setResizeDirection] = useState<Direction>('default')
+  const [resizeStart, setResizeStart] = useState<{ x: number; y: number }>({
+    x: size.width,
+    y: size.height,
+  })
 
-  const {
-    isResizing,
-    size,
-    position: resizePosition,
-    handleResizeMouseDown,
-    handleResizeMouseMove,
-    handleResizeMouseUp,
-  } = useResize({ width: textbox.width, height: textbox.height }, dragPosition)
+  const [isVerticalCenter, setIsVerticalCenter] = useState(false)
+  const [isHorizontalCenter, setIsHorizontalCenter] = useState(false)
 
   const style: React.CSSProperties = {
-    transform: `translate3d(${resizePosition.x}px, ${resizePosition.y}px, 0)`,
+    transform: `translate3d(${position.x}px, ${position.y}px, 0)`,
     position: 'absolute',
     width: `${size.width}px`,
     height: `${size.height}px`,
     boxSizing: 'border-box',
     outline: textbox.isSelected ? 'solid 1px blue' : 'none',
-    userSelect: 'none',
+    userSelect: 'none', // Prevent text selection(入力の無効化はtiptapにメソッドが存在する為、注意が必要)
   }
+
+  const handleDragMouseDown = useCallback(
+    (e: React.MouseEvent) => {
+      setDragStart({ x: e.clientX - position.x, y: e.clientY - position.y })
+      setIsDragging(true)
+    },
+    [position.x, position.y],
+  )
+
+  const handleDragMouseUp = useCallback(() => {
+    if (!isDragging) return
+    setIsHorizontalCenter(false)
+    setIsVerticalCenter(false)
+    setIsDragging(false)
+    setDragStart(null)
+  }, [isDragging])
+
+  const handleDragMouseMove = useCallback(
+    (e: MouseEvent) => {
+      if (!isDragging || !dragStart) return
+      //変数設定
+      const SLIDESIZE_HALF = {
+        width: 500,
+        height: 281.5,
+      }
+      const centerPositionOfTextBox = {
+        x: position.x + size.width / 2,
+        y: position.y + size.height / 2,
+      }
+      const movingDistance = {
+        x: Math.abs(e.clientX - dragStart.x - position.x),
+        y: Math.abs(e.clientY - dragStart.y - position.y),
+      }
+      //縦の座標を中央に寄せる処理
+      if (
+        centerPositionOfTextBox.y > SLIDESIZE_HALF.height - 2 &&
+        centerPositionOfTextBox.y < SLIDESIZE_HALF.height + 2 &&
+        !isHorizontalCenter
+      ) {
+        setPosition({
+          x: position.x,
+          y: SLIDESIZE_HALF.height - size.height / 2,
+        })
+        setIsHorizontalCenter(true)
+        return
+      }
+      //横の座標を中央に寄せる処理
+      if (
+        centerPositionOfTextBox.x > SLIDESIZE_HALF.width - 2 &&
+        centerPositionOfTextBox.x < SLIDESIZE_HALF.width + 2 &&
+        !isVerticalCenter
+      ) {
+        setPosition({
+          x: SLIDESIZE_HALF.width - size.width / 2,
+          y: position.y,
+        })
+        setIsVerticalCenter(true)
+        return
+      }
+      //引っ掛かりをもたせる処理->if-elseif-elseif
+      if (isHorizontalCenter && isVerticalCenter) {
+        if (movingDistance.x < 15 && movingDistance.y < 15) {
+          setPosition({
+            x: position.x,
+            y: position.y,
+          })
+          return
+        }
+        setIsHorizontalCenter(false)
+        setIsVerticalCenter(false)
+      } else if (isHorizontalCenter && !isVerticalCenter) {
+        if (movingDistance.y < 15) {
+          setPosition({
+            x: e.clientX - dragStart.x,
+            y: position.y,
+          })
+          return
+        }
+        setIsHorizontalCenter(false)
+      } else if (!isHorizontalCenter && isVerticalCenter) {
+        if (movingDistance.x < 15) {
+          setPosition({
+            x: position.x,
+            y: e.clientY - dragStart.y,
+          })
+          return
+        }
+        setIsVerticalCenter(false)
+      }
+      setPosition({
+        x: e.clientX - dragStart.x,
+        y: e.clientY - dragStart.y,
+      })
+    },
+    [
+      isDragging,
+      dragStart,
+      size,
+      position,
+      isVerticalCenter,
+      isHorizontalCenter,
+    ],
+  )
+  const handleResizeMouseDown = useCallback(
+    (e: React.MouseEvent, direction: Direction) => {
+      e.stopPropagation()
+      setResizeDirection(direction)
+      setIsResizing(true)
+      setResizeStart({ x: e.clientX, y: e.clientY })
+    },
+    [],
+  )
+  const handleResizeMouseMove = useCallback(
+    (e: MouseEvent) => {
+      if (!isResizing) return
+      const newOptions = handleResize(
+        e,
+        resizeStart,
+        size,
+        position,
+        resizeDirection,
+      )
+      if (newOptions.width < -10 || newOptions.height < -10) return
+
+      setPosition({ x: newOptions.x, y: newOptions.y })
+      setSize({
+        width: newOptions.width,
+        height: newOptions.height,
+      })
+      setResizeStart({ x: e.clientX, y: e.clientY })
+    },
+    [isResizing, resizeStart, size, position, resizeDirection],
+  )
+  const handleResizeMouseUp = useCallback(() => {
+    if (!isResizing) return
+    setIsResizing(false)
+    setResizeDirection('default')
+  }, [isResizing])
 
   const handleMouseMove = useCallback(
     (e: MouseEvent) => {
@@ -56,7 +268,6 @@ const DraggableTextBox: React.FC<Props> = ({ textbox }) => {
     },
     [handleDragMouseMove, handleResizeMouseMove],
   )
-
   const handleMouseUp = useCallback(() => {
     handleDragMouseUp()
     handleResizeMouseUp()
@@ -69,7 +280,14 @@ const DraggableTextBox: React.FC<Props> = ({ textbox }) => {
       document.removeEventListener('mousemove', handleMouseMove)
       document.removeEventListener('mouseup', handleMouseUp)
     }
-  }, [handleMouseMove, handleMouseUp])
+  }, [
+    handleDragMouseMove,
+    handleDragMouseUp,
+    handleMouseMove,
+    handleMouseUp,
+    handleResizeMouseMove,
+    handleResizeMouseUp,
+  ])
 
   return (
     <div
@@ -78,21 +296,27 @@ const DraggableTextBox: React.FC<Props> = ({ textbox }) => {
       onDoubleClick={() => textbox.editor.commands.focus()}
       className={styles.textBox}
     >
-      <div onMouseDown={(e) => e.stopPropagation()} className={styles.editorContent}>
-        <EditorContent editor={textbox.editor}/>
-      </div>
+      {isVerticalCenter && isDragging && (
+        <div className={styles.verticalLine} />
+      )}
+      {isHorizontalCenter && isDragging && (
+        <div className={styles.horizontalLine} />
+      )}
+
       <div
-        className={styles.resizeHandles}
-        style={{ display: isResizing ? 'block' : '' }}
+        onMouseDown={(e) => e.stopPropagation()}
+        className={styles.editorContent}
       >
-        {handleResizeDivs.map((div) => (
-          <div
-            key={div.direction}
-            className={div.className}
-            onMouseDown={(e) => handleResizeMouseDown(e, div.direction)}
-          />
-        ))}
+        <EditorContent editor={textbox.editor} />
       </div>
+
+      {handleResizeDivs.map((div) => (
+        <div
+          key={div.direction}
+          className={div.className}
+          onMouseDown={(e) => handleResizeMouseDown(e, div.direction)}
+        />
+      ))}
     </div>
   )
 }
