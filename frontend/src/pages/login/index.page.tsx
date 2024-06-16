@@ -49,7 +49,7 @@ const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
   //--------user情報をserverに送信
   try {
     const userUuid = await trpc.login.mutate({ loginData })
-    router.push(`/home/${userUuid}`)
+    router.push(`/slide/${userUuid}`)
   } catch (error) {
     console.error(error)
   }

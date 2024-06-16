@@ -47,7 +47,7 @@ const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
 
   try {
     const { userUuid } = await trpc.signup.mutate({ userData })
-    router.push(`/home/${userUuid}`)
+    router.push(`/slide/${userUuid}`)
   } catch (error) {
     console.error(error)
   }
