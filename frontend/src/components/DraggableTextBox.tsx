@@ -274,7 +274,19 @@ const DraggableTextBox: React.FC<Props> = ({ textbox }) => {
     if (!isResizing) return
     setIsResizing(false)
     setResizeDirection('default')
-  }, [isResizing])
+    setSlides((prev) =>
+      prev.map((slide) => {
+        slide.slideContent = slide.slideContent.map((content) => {
+          if (content.id === textbox.id) {
+            content.width = size.width
+            content.height = size.height
+          }
+          return content
+        })
+        return slide
+      }),
+    )
+  }, [isResizing, setSlides, size.height, size.width, textbox.id])
 
   const handleMouseMove = useCallback(
     (e: MouseEvent) => {
