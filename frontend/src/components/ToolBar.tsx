@@ -26,11 +26,9 @@ const ToolBar: React.FC<Props> = ({
 }) => {
   const router = useRouter()
 
-  const selectedContent = content.find((c) => c.id === currentId)
-
-  const isTextBox = (content: TextBox | SlideImage): content is TextBox => {
-    return 'editor' in content
-  }
+  const selectedTextBox = content.find(
+    (c): c is TextBox => c.id === currentId && 'editor' in c,
+  )
 
   return (
     <div>
@@ -41,44 +39,40 @@ const ToolBar: React.FC<Props> = ({
       <button onClick={createTextbox}>Create textbox</button>
       <button
         onClick={() =>
-          selectedContent &&
-          isTextBox(selectedContent) &&
-          selectedContent?.editor?.chain().focus().toggleBold().run()
+          selectedTextBox &&
+          selectedTextBox.editor?.chain().focus().toggleBold().run()
         }
       >
         <FontAwesomeIcon icon={faBold} />
       </button>
       <button
         onClick={() =>
-          selectedContent &&
-          isTextBox(selectedContent) &&
-          selectedContent.editor?.chain().focus().toggleItalic().run()
+          selectedTextBox &&
+          selectedTextBox.editor?.chain().focus().toggleItalic().run()
         }
       >
         <FontAwesomeIcon icon={faItalic} />
       </button>
       <button
         onClick={() =>
-          selectedContent &&
-          isTextBox(selectedContent) &&
-          selectedContent.editor?.chain().focus().toggleUnderline().run()
+          selectedTextBox &&
+          selectedTextBox.editor?.chain().focus().toggleUnderline().run()
         }
       >
         <FontAwesomeIcon icon={faUnderline} />
       </button>
       <select
         onChange={(e) =>
-          selectedContent &&
-          isTextBox(selectedContent) &&
-          selectedContent.editor
+          selectedTextBox &&
+          selectedTextBox.editor
             .chain()
             .focus()
             .setFontFamily(e.target.value)
             .run()
         }
         value={
-          selectedContent && isTextBox(selectedContent)
-            ? selectedContent.editor?.getAttributes('fontFamily').family
+          selectedTextBox
+            ? selectedTextBox.editor?.getAttributes('fontFamily').family
             : ''
         }
       >
@@ -88,17 +82,16 @@ const ToolBar: React.FC<Props> = ({
       </select>
       <select
         onChange={(e) =>
-          selectedContent &&
-          isTextBox(selectedContent) &&
-          selectedContent.editor
+          selectedTextBox &&
+          selectedTextBox.editor
             ?.chain()
             .focus()
             .setFontSize(e.target.value)
             .run()
         }
         value={
-          selectedContent && isTextBox(selectedContent)
-            ? selectedContent.editor?.getAttributes('fontSize').fontSize
+          selectedTextBox
+            ? selectedTextBox.editor?.getAttributes('fontSize').fontSize
             : ''
         }
       >
@@ -110,46 +103,40 @@ const ToolBar: React.FC<Props> = ({
       </select>
       <button
         onClick={() =>
-          selectedContent &&
-          isTextBox(selectedContent) &&
-          selectedContent.editor?.chain().focus().toggleStrike().run()
+          selectedTextBox &&
+          selectedTextBox.editor?.chain().focus().toggleStrike().run()
         }
       >
         <FontAwesomeIcon icon={faStrikethrough} />
       </button>
       <button
         onClick={() =>
-          selectedContent &&
-          isTextBox(selectedContent) &&
-          selectedContent.editor?.chain().focus().toggleBulletList().run()
+          selectedTextBox &&
+          selectedTextBox.editor?.chain().focus().toggleBulletList().run()
         }
       >
         <FontAwesomeIcon icon={faListUl} />
       </button>
       <button
         onClick={() =>
-          selectedContent &&
-          isTextBox(selectedContent) &&
-          selectedContent.editor?.chain().focus().setTextAlign('left').run()
+          selectedTextBox &&
+          selectedTextBox.editor?.chain().focus().setTextAlign('left').run()
         }
       >
         left
       </button>
-
       <button
         onClick={() =>
-          selectedContent &&
-          isTextBox(selectedContent) &&
-          selectedContent.editor?.chain().focus().setTextAlign('center').run()
+          selectedTextBox &&
+          selectedTextBox.editor?.chain().focus().setTextAlign('center').run()
         }
       >
         center
       </button>
       <button
         onClick={() =>
-          selectedContent &&
-          isTextBox(selectedContent) &&
-          selectedContent.editor?.chain().focus().setTextAlign('right').run()
+          selectedTextBox &&
+          selectedTextBox.editor?.chain().focus().setTextAlign('right').run()
         }
       >
         right
