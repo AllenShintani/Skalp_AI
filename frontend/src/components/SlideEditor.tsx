@@ -75,8 +75,8 @@ const SlideEditor = () => {
         id: crypto.randomUUID(),
         x: 0,
         y: 0,
-        width: 300,
-        height: 200,
+        width: 150,
+        height: 100,
         isSelected: false,
       })
       return [...prev]
