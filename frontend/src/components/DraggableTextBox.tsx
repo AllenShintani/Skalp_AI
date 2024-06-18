@@ -142,7 +142,7 @@ const DraggableTextBox: React.FC<Props> = ({ textbox }) => {
     setDragStart(null)
     setSlides((prev) =>
       prev.map((slide) => {
-        slide.slideContent = slide.slideContent.map((content) => {
+        slide.textboxes = slide.textboxes.map((content) => {
           if (content.id === textbox.id) {
             content.x = position.x
             content.y = position.y
@@ -276,7 +276,7 @@ const DraggableTextBox: React.FC<Props> = ({ textbox }) => {
     setResizeDirection('default')
     setSlides((prev) =>
       prev.map((slide) => {
-        slide.slideContent = slide.slideContent.map((content) => {
+        slide.textboxes = slide.textboxes.map((content) => {
           if (content.id === textbox.id) {
             content.width = size.width
             content.height = size.height

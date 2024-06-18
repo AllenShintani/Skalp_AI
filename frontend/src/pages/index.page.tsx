@@ -12,7 +12,8 @@ const Home = () => {
     const newSlide: Slide = {
       title: 'New Slide',
       slideId: '0',
-      slideContent: [],
+      images: [],
+      textboxes: [],
     }
     setSlides([newSlide])
     router.push(`/slide/0`)

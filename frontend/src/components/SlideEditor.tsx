@@ -27,6 +27,7 @@ import { useRouter } from 'next/router'
 const SlideEditor = () => {
   const [slides, setSlides] = useAtom(slidesState)
   const [currentSlide, setCurrentSlide] = useAtom(currentSlideIdState)
+
   const router = useRouter()
   const { id } = router.query
 
@@ -69,7 +70,7 @@ const SlideEditor = () => {
       ],
     })
     setSlides((prev) => {
-      prev[currentSlide].slideContent.push({
+      prev[currentSlide].textboxes.push({
         editor,
         id: crypto.randomUUID(),
         x: 0,
@@ -86,7 +87,8 @@ const SlideEditor = () => {
     const newSlide = {
       title: 'New Slide',
       slideId: slides.length.toString(),
-      slideContent: [],
+      textboxes: [],
+      images: [],
     }
     setSlides([...slides, newSlide])
   }
@@ -94,7 +96,8 @@ const SlideEditor = () => {
   const selectContent = (id: string) => {
     setSlides((prev) =>
       prev.map((slide) => {
-        slide.slideContent = slide.slideContent.map((content) => {
+        const allContents = [...slide.images, ...slide.textboxes]
+        allContents.map((content) => {
           content.isSelected = content.id === id
           return content
         })
@@ -104,9 +107,9 @@ const SlideEditor = () => {
   }
 
   const getSelectedContentId = () => {
-    const selectedContent = slides[currentSlide].slideContent.find(
-      (content) => content.isSelected,
-    )
+    const selectedSlide = slides[currentSlide]
+    const SlideContent = [...selectedSlide.textboxes, ...selectedSlide.images]
+    const selectedContent = SlideContent.find((content) => content.isSelected)
     return selectedContent ? selectedContent.id : null
   }
 
@@ -148,8 +151,8 @@ const SlideEditor = () => {
         if (typeof src === 'string') {
           const { width, height } = await getImageSize(src)
           setSlides((prev) => {
-            prev[currentSlide].slideContent.push({
-              id: `image-${prev[currentSlide].slideContent.length}`,
+            prev[currentSlide].images.push({
+              id: `image-${prev[currentSlide].images.length}`,
               src,
               x,
               y,
@@ -233,7 +236,10 @@ const SlideEditor = () => {
             currentId={getSelectedContentId()}
             createTextbox={createTextbox}
             createNewSlide={createNewSlide}
-            content={slides[currentSlide].slideContent}
+            content={[
+              ...slides[currentSlide].textboxes,
+              ...slides[currentSlide].images,
+            ]}
           />
         </div>
 
@@ -248,33 +254,28 @@ const SlideEditor = () => {
               onDragOver={(e) => e.preventDefault()}
               onDrop={handleDrop}
             >
-              {slides[currentSlide].slideContent.map((content) => {
-                if ('editor' in content) {
-                  return (
-                    <div
-                      onClick={() => selectContent(content.id)}
-                      key={content.id}
-                    >
-                      <DraggableTextBox
-                        key={content.id}
-                        textbox={content}
-                      />
-                    </div>
-                  )
-                } else {
-                  return (
-                    <div
-                      onClick={() => selectContent(content.id)}
-                      key={content.id}
-                    >
-                      <DraggableSlideImage
-                        key={content.id}
-                        image={content}
-                      />
-                    </div>
-                  )
-                }
-              })}
+              {slides[currentSlide].textboxes.map((textbox) => (
+                <div
+                  onClick={() => selectContent(textbox.id)}
+                  key={textbox.id}
+                >
+                  <DraggableTextBox
+                    key={textbox.id}
+                    textbox={textbox}
+                  />
+                </div>
+              ))}
+              {slides[currentSlide].images.map((image) => (
+                <div
+                  onClick={() => selectContent(image.id)}
+                  key={image.id}
+                >
+                  <DraggableSlideImage
+                    key={image.id}
+                    image={image}
+                  />
+                </div>
+              ))}
             </div>
           </DndContext>
         </div>

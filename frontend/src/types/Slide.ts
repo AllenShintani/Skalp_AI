@@ -20,5 +20,6 @@ export type SlideImage = SlideContentBase & {
 export type Slide = {
   slideId: string
   title: string
-  slideContent: (TextBox | SlideImage)[]
+  textboxes: TextBox[]
+  images: SlideImage[]
 }
