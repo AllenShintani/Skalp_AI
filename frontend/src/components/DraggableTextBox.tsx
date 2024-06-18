@@ -114,7 +114,7 @@ const DraggableTextBox: React.FC<Props> = ({ textbox }) => {
 
   const [isVerticalCenter, setIsVerticalCenter] = useState(false)
   const [isHorizontalCenter, setIsHorizontalCenter] = useState(false)
-  const [slide, setSlides] = useAtom(slidesState)
+  const [, setSlides] = useAtom(slidesState)
 
   const style: React.CSSProperties = {
     transform: `translate3d(${position.x}px, ${position.y}px, 0)`,

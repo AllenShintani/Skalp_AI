@@ -13,6 +13,8 @@ import type {
   ResizeOptions,
   ResizeDivs,
 } from '@/types/DraggableTextBox'
+import { useAtom } from 'jotai'
+import { slidesState } from '@/jotai/atoms'
 
 const handleResize = (
   e: MouseEvent,
@@ -110,6 +112,7 @@ const DraggableSlideImage: React.FC<Props> = ({ image }) => {
     x: size.width,
     y: size.height,
   })
+  const [, setSlides] = useAtom(slidesState)
 
   const style: React.CSSProperties = {
     transform: `translate3d(${position.x}px, ${position.y}px, 0)`,
@@ -144,7 +147,19 @@ const DraggableSlideImage: React.FC<Props> = ({ image }) => {
     if (!isDragging) return
     setIsDragging(false)
     setDragStart(null)
-  }, [isDragging])
+    setSlides((prev) =>
+      prev.map((slide) => {
+        slide.images = slide.images.map((content) => {
+          if (content.id === image.id) {
+            content.x = position.x
+            content.y = position.y
+          }
+          return content
+        })
+        return slide
+      }),
+    )
+  }, [image.id, isDragging, position.x, position.y, setSlides])
 
   const handleResizeMouseDown = useCallback(
     (e: React.MouseEvent, direction: Direction) => {
@@ -180,7 +195,19 @@ const DraggableSlideImage: React.FC<Props> = ({ image }) => {
     if (!isResizing) return
     setIsResizing(false)
     setResizeDirection('default')
-  }, [isResizing])
+    setSlides((prev) =>
+      prev.map((slide) => {
+        slide.images = slide.images.map((content) => {
+          if (content.id === image.id) {
+            content.width = size.width
+            content.height = size.height
+          }
+          return content
+        })
+        return slide
+      }),
+    )
+  }, [isResizing, setSlides, size.height, size.width, image.id])
 
   const handleMouseMove = useCallback(
     (e: MouseEvent) => {
