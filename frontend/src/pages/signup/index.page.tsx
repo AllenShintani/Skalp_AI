@@ -10,17 +10,18 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined'
 import Typography from '@mui/material/Typography'
 import Container from '@mui/material/Container'
 import { createTheme, ThemeProvider } from '@mui/material/styles'
-import type { FormEvent } from 'react'
+import React, { FormEvent, useState } from 'react'
 import 'firebase/compat/auth'
 import { createTRPCProxyClient, httpBatchLink } from '@trpc/client'
 import type { AppRouter } from '@skalp_ai/backend/routers'
 import { userSchema } from '@/schemas'
 import router from 'next/router'
+import { ZodError, ZodIssue } from 'zod'
+import { TRPCClientError } from '@trpc/client'
 
 const theme = createTheme()
 const API_HOST = `${process.env.NEXT_PUBLIC_API_HOST}`
 
-// tRPCクライアントの作成
 const trpc = createTRPCProxyClient<AppRouter>({
   links: [
     httpBatchLink({
@@ -28,31 +29,64 @@ const trpc = createTRPCProxyClient<AppRouter>({
       fetch: (url, options) => {
         return fetch(url, {
           ...options,
-          credentials: 'include', //これ設定しないとcookieが送信されてもsetされない。バックエンドもだっけ？
+          credentials: 'include',
         })
       },
     }),
   ],
 })
-const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+
+const translateZodError = (error: ZodIssue) => {
+  switch (error.code) {
+    case 'too_small':
+      if (error.path.includes('password')) {
+        return 'パスワードは8文字以上でなければなりません。'
+      }
+      return '入力値が短すぎます。'
+    case 'invalid_type':
+      return '値が不正です'
+    default:
+      return '無効な入力が含まれています。'
+  }
+}
+
+const handleSubmit = async (
+  e: FormEvent<HTMLFormElement>,
+  setError: (message: string) => void,
+) => {
   e.preventDefault()
   const formData = new FormData(e.currentTarget)
 
-  const userData = userSchema.parse({
+  const userData = {
     email: formData.get('email')?.toString() || '',
     password: formData.get('password')?.toString() || '',
-    firstName: formData.get('firstName')?.toString(),
-    lastName: formData.get('lastName')?.toString(),
-  })
+    firstName: formData.get('firstName')?.toString() || '',
+    lastName: formData.get('lastName')?.toString() || '',
+  }
 
   try {
+    userSchema.parse(userData)
     const { userUuid } = await trpc.signup.mutate({ userData })
-    router.push(`/slide/${userUuid}`)
+    router.push(`/workspace`)
   } catch (error) {
-    console.error(error)
+    if (error instanceof ZodError) {
+      const translatedError = translateZodError(error.errors[0])
+      setError(translatedError)
+    } else if (
+      error instanceof TRPCClientError &&
+      error.data?.code === 'CONFLICT'
+    ) {
+      setError('このメールアドレスは既に使用されています')
+    } else {
+      console.error(error)
+      setError('登録に失敗しました。もう一度お試しください。')
+    }
   }
 }
+
 export default function SignUp() {
+  const [error, setError] = useState('')
+
   return (
     <ThemeProvider theme={theme}>
       <Container
@@ -77,10 +111,18 @@ export default function SignUp() {
           >
             Sign up
           </Typography>
+          {error && (
+            <Typography
+              color="error"
+              variant="body2"
+            >
+              {error}
+            </Typography>
+          )}
           <Box
             component="form"
             noValidate
-            onSubmit={handleSubmit}
+            onSubmit={(e) => handleSubmit(e, setError)}
             sx={{ mt: 3 }}
           >
             <Grid

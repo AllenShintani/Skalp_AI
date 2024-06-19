@@ -6,6 +6,7 @@ import { adminInit, auth } from "../components/lib/firebase/firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import * as admin from "firebase-admin";
 import { prisma } from "../../prisma/client";
+import { TRPCError } from "@trpc/server";
 
 const createContext = ({ req, res }: CreateFastifyContextOptions) => ({
   fastify: req.server,
@@ -29,13 +30,36 @@ export const loginRouter = t.router({
       try {
         adminInit();
         if (!email || !password) {
-          throw new Error("Email and password are required");
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "Email and password are required",
+          });
         }
+
         const userCredential = await signInWithEmailAndPassword(
           auth,
           email,
           password
-        );
+        ).catch((error) => {
+          if (error.code === "auth/invalid-credential") {
+            throw new TRPCError({
+              code: "UNAUTHORIZED",
+              message: "Invalid email or password",
+            });
+          }
+          if (error.code === "auth/too-many-requests") {
+            throw new TRPCError({
+              code: "TOO_MANY_REQUESTS",
+              message:
+                "Access to this account has been temporarily disabled due to many failed login attempts. Please try again later.",
+            });
+          }
+          throw new TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+            message: "An unexpected error occurred",
+          });
+        });
+
         const firebaseToken = await userCredential.user.getIdToken();
         const firebaseUid = (await admin.auth().verifyIdToken(firebaseToken))
           .uid;
@@ -44,7 +68,10 @@ export const loginRouter = t.router({
           where: { firebaseUid },
         });
         if (!prismaUser) {
-          throw new Error("User not found");
+          throw new TRPCError({
+            code: "UNAUTHORIZED",
+            message: "User not found",
+          });
         }
         const token = ctx.fastify.jwt.sign({ userId: prismaUser.id });
         ctx.reply.setCookie("token", token, {
@@ -58,6 +85,13 @@ export const loginRouter = t.router({
         return userUuid;
       } catch (error) {
         console.error(error);
+        if (error instanceof TRPCError) {
+          throw error;
+        }
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "An unexpected error occurred",
+        });
       }
     }),
 });

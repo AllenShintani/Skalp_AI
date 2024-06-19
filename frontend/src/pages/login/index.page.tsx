@@ -10,15 +10,14 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined'
 import Typography from '@mui/material/Typography'
 import Container from '@mui/material/Container'
 import { createTheme, ThemeProvider } from '@mui/material/styles'
-import type { FormEvent } from 'react'
+import React, { FormEvent, useState } from 'react'
 import 'firebase/compat/auth'
-import dotenv from 'dotenv'
 import { createTRPCProxyClient, httpBatchLink } from '@trpc/client'
 import type { AppRouter } from '@skalp_ai/backend/routers'
 import router from 'next/router'
 import type { LoginInput } from '@skalp_ai/backend/schemas'
+import { TRPCClientError } from '@trpc/client'
 
-dotenv.config()
 const theme = createTheme()
 const API_HOST = `${process.env.NEXT_PUBLIC_API_HOST}`
 
@@ -36,9 +35,11 @@ const trpc = createTRPCProxyClient<AppRouter>({
   ],
 })
 
-const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+const handleSubmit = async (
+  e: FormEvent<HTMLFormElement>,
+  setError: (message: string) => void,
+) => {
   e.preventDefault()
-  //----------formのデータを取り出す
   const formData = new FormData(e.currentTarget)
 
   const loginData: LoginInput = {
@@ -46,15 +47,32 @@ const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     password: formData.get('password')?.toString() || '',
   }
 
-  //--------user情報をserverに送信
   try {
     const userUuid = await trpc.login.mutate({ loginData })
     router.push(`/workspace`)
   } catch (error) {
     console.error(error)
+    if (
+      error instanceof TRPCClientError &&
+      error.data?.code === 'UNAUTHORIZED'
+    ) {
+      setError('パスワードが間違っています')
+    } else if (
+      error instanceof TRPCClientError &&
+      error.data?.code === 'TOO_MANY_REQUESTS'
+    ) {
+      setError(
+        'パスワードを間違えすぎました。しばらくしてから再試行してください。',
+      )
+    } else {
+      setError('ログインに失敗しました。もう一度お試しください。')
+    }
   }
 }
+
 export default function SignIn() {
+  const [error, setError] = useState('')
+
   return (
     <ThemeProvider theme={theme}>
       <Container
@@ -79,10 +97,18 @@ export default function SignIn() {
           >
             Sign in
           </Typography>
+          {error && (
+            <Typography
+              color="error"
+              variant="body2"
+            >
+              {error}
+            </Typography>
+          )}
           <Box
             component="form"
             noValidate
-            onSubmit={handleSubmit}
+            onSubmit={(e) => handleSubmit(e, setError)}
             sx={{ mt: 3 }}
           >
             <Grid
