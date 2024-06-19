@@ -81,11 +81,9 @@ export const useResize = (
   const [isResizing, setIsResizing] = useState(false)
   const [resizeDirection, setResizeDirection] = useState<Direction>('default')
   const [resizeStart, setResizeStart] = useState<{ x: number; y: number }>({
-    x: initialSize.width,
-    y: initialSize.height,
+    x: 0,
+    y: 0,
   })
-  const [size, setSize] = useState(initialSize)
-  const [position, setPosition] = useState(initialPosition)
   const [, setSlides] = useAtom(slidesState)
 
   const handleResizeMouseDown = useCallback(
@@ -101,48 +99,53 @@ export const useResize = (
   const handleResizeMouseMove = useCallback(
     (e: MouseEvent) => {
       if (!isResizing) return
-      const newOptions = handleResize(
-        e,
-        resizeStart,
-        size,
-        position,
-        resizeDirection,
-      )
-      if (newOptions.width < -10 || newOptions.height < -10) return
 
-      setPosition({ x: newOptions.x, y: newOptions.y })
-      setSize({
-        width: newOptions.width,
-        height: newOptions.height,
-      })
-      setResizeStart({ x: e.clientX, y: e.clientY })
+      setSlides((prevSlides) =>
+        prevSlides.map((slide) => {
+          const updateContentSize = (content) => {
+            if (content.id === contentId) {
+              const newOptions = handleResize(
+                e,
+                resizeStart,
+                { width: content.width, height: content.height },
+                { x: content.x, y: content.y },
+                resizeDirection,
+              )
+              if (newOptions.width < 10 || newOptions.height < 10)
+                return content
+
+              setResizeStart({ x: e.clientX, y: e.clientY }) // Update resize start
+
+              return {
+                ...content,
+                width: newOptions.width,
+                height: newOptions.height,
+                x: newOptions.x,
+                y: newOptions.y,
+              }
+            }
+            return content
+          }
+
+          return {
+            ...slide,
+            textboxes: slide.textboxes.map(updateContentSize),
+            images: slide.images.map(updateContentSize),
+          }
+        }),
+      )
     },
-    [isResizing, resizeStart, size, position, resizeDirection],
+    [isResizing, resizeStart, resizeDirection, contentId, setSlides],
   )
 
   const handleResizeMouseUp = useCallback(() => {
     if (!isResizing) return
     setIsResizing(false)
     setResizeDirection('default')
-    setSlides((prev) =>
-      prev.map((slide) => {
-        const allcontent = [...slide.textboxes, ...slide.images]
-        allcontent.map((content) => {
-          if (content.id === contentId) {
-            content.width = size.width
-            content.height = size.height
-          }
-          return content
-        })
-        return slide
-      }),
-    )
-  }, [contentId, isResizing, setSlides, size.height, size.width])
+  }, [isResizing])
 
   return {
     isResizing,
-    size,
-    position,
     handleResizeMouseDown,
     handleResizeMouseMove,
     handleResizeMouseUp,
