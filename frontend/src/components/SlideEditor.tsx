@@ -1,11 +1,10 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef } from 'react'
 import { DndContext } from '@dnd-kit/core'
 import StarterKit from '@tiptap/starter-kit'
 import { Editor } from '@tiptap/react'
 import ToolBar from './ToolBar'
 import styles from './SlideEditor.module.css'
 import DraggableTextBox from './DraggableTextBox'
-import type { TextBox, SlideImage } from '@/types/Slide'
 import { Text } from '@tiptap/extension-text'
 import { Bold } from '@tiptap/extension-bold'
 import { Italic } from '@tiptap/extension-italic'
@@ -21,13 +20,28 @@ import Sidebar from './Sidebar'
 import Heading from '@tiptap/extension-heading'
 import TextAlign from '@tiptap/extension-text-align'
 import DraggableSlideImage from './DraggableSlideImage'
+import { useAtom } from 'jotai'
+import { currentSlideIdState, slidesState } from '@/jotai/atoms'
+import { useRouter } from 'next/router'
 
 const SlideEditor = () => {
-  const [textboxes, setTextboxes] = useState<TextBox[]>([])
-  const [Images, setImages] = useState<SlideImage[]>([])
-  const [countTextbox, setCountTextbox] = useState(0)
+  const [slides, setSlides] = useAtom(slidesState)
+  const [currentSlide, setCurrentSlide] = useAtom(currentSlideIdState)
+
+  const router = useRouter()
+  const { id } = router.query
+
   const editorRef = useRef<HTMLDivElement>(null)
   const slideRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (id && typeof id === 'string') {
+      const slideIndex = parseInt(id, 10)
+      if (!isNaN(slideIndex) && slideIndex >= 0 && slideIndex < slides.length) {
+        setCurrentSlide(slideIndex)
+      }
+    }
+  }, [id, setCurrentSlide, slides.length])
 
   const createTextbox = () => {
     const editor = new Editor({
@@ -55,45 +69,48 @@ const SlideEditor = () => {
         }),
       ],
     })
-    setTextboxes((prev) => [
-      ...prev,
-      {
-        editor: editor,
-        textBoxId: countTextbox,
+    setSlides((prev) => {
+      prev[currentSlide].textboxes.push({
+        editor,
+        id: crypto.randomUUID(),
         x: 0,
         y: 0,
         width: 150,
         height: 100,
         isSelected: false,
-      },
-    ])
-    setCountTextbox((prev) => prev + 1)
-  }
-
-  const selectTextBox = (id: number) => {
-    setTextboxes((prev) => {
-      const newTextboxes = prev.map((textbox) =>
-        textbox.textBoxId === id
-          ? { ...textbox, isSelected: true }
-          : { ...textbox, isSelected: false },
-      )
-      return newTextboxes
-    })
-  }
-  const selectImage = (id: string) => {
-    setImages((prev) => {
-      const newImages = prev.map((image) =>
-        image.imageId === id
-          ? { ...image, isSelected: true }
-          : { ...image, isSelected: false },
-      )
-      return newImages
+      })
+      return [...prev]
     })
   }
 
-  const getSelectedTextBoxId = () => {
-    const selectedTextBox = textboxes.find((textbox) => textbox.isSelected)
-    return selectedTextBox ? selectedTextBox.textBoxId : null
+  const createNewSlide = () => {
+    const newSlide = {
+      title: 'New Slide',
+      slideId: slides.length.toString(),
+      textboxes: [],
+      images: [],
+    }
+    setSlides([...slides, newSlide])
+  }
+
+  const selectContent = (id: string) => {
+    setSlides((prev) =>
+      prev.map((slide) => {
+        const allContents = [...slide.images, ...slide.textboxes]
+        allContents.map((content) => {
+          content.isSelected = content.id === id
+          return content
+        })
+        return slide
+      }),
+    )
+  }
+
+  const getSelectedContentId = () => {
+    const selectedSlide = slides[currentSlide]
+    const SlideContent = [...selectedSlide.textboxes, ...selectedSlide.images]
+    const selectedContent = SlideContent.find((content) => content.isSelected)
+    return selectedContent ? selectedContent.id : null
   }
 
   const handleResizeWindow = useCallback(() => {
@@ -114,74 +131,83 @@ const SlideEditor = () => {
     slideElement.style.transform = `scale(${newScale})`
   }, [])
 
-  const processImageFile = async (file: File, x: number, y: number) => {
-    const getImageSize = (
-      src: string,
-    ): Promise<{ width: number; height: number }> => {
-      return new Promise((resolve) => {
-        const img = new Image()
-        img.onload = () => {
-          resolve({ width: img.width, height: img.height })
+  const processImageFile = useCallback(
+    async (file: File, x: number, y: number) => {
+      const getImageSize = (
+        src: string,
+      ): Promise<{ width: number; height: number }> => {
+        return new Promise((resolve) => {
+          const img = new Image()
+          img.onload = () => {
+            resolve({ width: img.width, height: img.height })
+          }
+          img.src = src
+        })
+      }
+      const reader = new FileReader()
+      //TODO: バックエンドの保存を実装する？
+      reader.onload = async (loadEvent) => {
+        const src = loadEvent.target?.result
+        if (typeof src === 'string') {
+          const { width, height } = await getImageSize(src)
+          setSlides((prev) => {
+            prev[currentSlide].images.push({
+              id: `image-${prev[currentSlide].images.length}`,
+              src,
+              x,
+              y,
+              width,
+              height,
+              isSelected: false,
+            })
+            return [...prev]
+          })
         }
-        img.src = src
+      }
+      reader.readAsDataURL(file)
+    },
+    [currentSlide, setSlides],
+  )
+
+  const handlePaste = useCallback(
+    (event: ClipboardEvent) => {
+      const editorElement = editorRef.current
+      if (!editorElement) return
+      const items = event.clipboardData?.items
+      if (!items) return
+
+      Array.from(items).map((item) => {
+        if (item.type.startsWith('image/')) {
+          const file = item.getAsFile()
+          if (file) {
+            processImageFile(file, 0, 0)
+          }
+        }
       })
-    }
-    const reader = new FileReader()
-    //TODO: バックエンドの保存を実装する？
-    reader.onload = async (loadEvent) => {
-      const src = loadEvent.target?.result
-      if (typeof src === 'string') {
-        const { width, height } = await getImageSize(src)
-        setImages((prev) => [
-          ...prev,
-          {
-            imageId: `image-${prev.length}`,
-            src,
-            x,
-            y,
-            width,
-            height,
-            isSelected: false,
-          },
-        ])
-      }
-    }
-    reader.readAsDataURL(file)
-  }
+    },
+    [processImageFile],
+  )
 
-  const handlePaste = useCallback((event: ClipboardEvent) => {
-    const editorElement = editorRef.current
-    if (!editorElement) return
-    const items = event.clipboardData?.items
-    if (!items) return
+  const handleDrop = useCallback(
+    (event: React.DragEvent) => {
+      event.preventDefault()
+      const slideElement = slideRef.current
+      if (!slideElement) return
 
-    Array.from(items).map((item) => {
-      if (item.type.startsWith('image/')) {
-        const file = item.getAsFile()
-        if (file) {
-          processImageFile(file, 0, 0)
+      //スライド要素内の座標に変換
+      const rect = slideElement.getBoundingClientRect()
+      const x = event.clientX - rect.left
+      const y = event.clientY - rect.top
+
+      const files = Array.from(event.dataTransfer.files)
+      files.forEach((file) => {
+        if (file.type.startsWith('image/')) {
+          processImageFile(file, x, y)
         }
-      }
-    })
-  }, [])
-
-  const handleDrop = useCallback((event: React.DragEvent) => {
-    event.preventDefault()
-    const slideElement = slideRef.current
-    if (!slideElement) return
-
-    //スライド要素内の座標に変換
-    const rect = slideElement.getBoundingClientRect()
-    const x = event.clientX - rect.left
-    const y = event.clientY - rect.top
-
-    const files = Array.from(event.dataTransfer.files)
-    files.forEach((file) => {
-      if (file.type.startsWith('image/')) {
-        processImageFile(file, x, y)
-      }
-    })
-  }, [])
+      })
+    },
+    [processImageFile],
+  )
 
   useEffect(() => {
     handleResizeWindow()
@@ -207,9 +233,13 @@ const SlideEditor = () => {
         <div className={styles.toolbar}>
           <h1>Edit</h1>
           <ToolBar
-            currentId={getSelectedTextBoxId()}
+            currentId={getSelectedContentId()}
             createTextbox={createTextbox}
-            textboxes={textboxes}
+            createNewSlide={createNewSlide}
+            content={[
+              ...slides[currentSlide].textboxes,
+              ...slides[currentSlide].images,
+            ]}
           />
         </div>
 
@@ -224,20 +254,26 @@ const SlideEditor = () => {
               onDragOver={(e) => e.preventDefault()}
               onDrop={handleDrop}
             >
-              {textboxes?.map((textbox) => (
+              {slides[currentSlide].textboxes.map((textbox) => (
                 <div
-                  onClick={() => selectTextBox(textbox.textBoxId)}
-                  key={textbox.textBoxId}
+                  onClick={() => selectContent(textbox.id)}
+                  key={textbox.id}
                 >
-                  <DraggableTextBox textbox={textbox} />
+                  <DraggableTextBox
+                    key={textbox.id}
+                    textbox={textbox}
+                  />
                 </div>
               ))}
-              {Images?.map((image) => (
+              {slides[currentSlide].images.map((image) => (
                 <div
-                  key={image.imageId}
-                  onClick={() => selectImage(image.imageId)}
+                  onClick={() => selectContent(image.id)}
+                  key={image.id}
                 >
-                  <DraggableSlideImage image={image} />
+                  <DraggableSlideImage
+                    key={image.id}
+                    image={image}
+                  />
                 </div>
               ))}
             </div>

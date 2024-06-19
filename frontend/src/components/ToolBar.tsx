@@ -9,60 +9,70 @@ import {
   faStrikethrough,
   faListUl,
 } from '@fortawesome/free-solid-svg-icons'
-import type { TextBox } from '@/types/Slide'
+import type { SlideImage, TextBox } from '@/types/Slide'
 
 type Props = {
-  currentId: number | null
+  currentId: string | null
   createTextbox: () => void
-  textboxes: TextBox[]
+  createNewSlide: () => void
+  content: (TextBox | SlideImage)[]
 }
 
-const ToolBar: React.FC<Props> = ({ currentId, createTextbox, textboxes }) => {
+const ToolBar: React.FC<Props> = ({
+  currentId,
+  createTextbox,
+  createNewSlide,
+  content,
+}) => {
   const router = useRouter()
+
+  const selectedTextBox = content.find(
+    (c): c is TextBox => c.id === currentId && 'editor' in c,
+  )
 
   return (
     <div>
       <button onClick={() => router.push('/')}>
         <FontAwesomeIcon icon={faHome} />
       </button>
+      <button onClick={createNewSlide}>Create Slide Page</button>
       <button onClick={createTextbox}>Create textbox</button>
       <button
         onClick={() =>
-          currentId !== null &&
-          textboxes[currentId]?.editor?.chain().focus().toggleBold().run()
+          selectedTextBox &&
+          selectedTextBox.editor?.chain().focus().toggleBold().run()
         }
       >
         <FontAwesomeIcon icon={faBold} />
       </button>
       <button
         onClick={() =>
-          currentId !== null &&
-          textboxes[currentId]?.editor?.chain().focus().toggleItalic().run()
+          selectedTextBox &&
+          selectedTextBox.editor?.chain().focus().toggleItalic().run()
         }
       >
         <FontAwesomeIcon icon={faItalic} />
       </button>
       <button
         onClick={() =>
-          currentId !== null &&
-          textboxes[currentId]?.editor?.chain().focus().toggleUnderline().run()
+          selectedTextBox &&
+          selectedTextBox.editor?.chain().focus().toggleUnderline().run()
         }
       >
         <FontAwesomeIcon icon={faUnderline} />
       </button>
       <select
         onChange={(e) =>
-          currentId !== null &&
-          textboxes[currentId]?.editor
-            ?.chain()
+          selectedTextBox &&
+          selectedTextBox.editor
+            .chain()
             .focus()
             .setFontFamily(e.target.value)
             .run()
         }
         value={
-          currentId !== null
-            ? textboxes[currentId]?.editor?.getAttributes('textStyle')
-                .fontFamily
+          selectedTextBox
+            ? selectedTextBox.editor?.getAttributes('fontFamily').family
             : ''
         }
       >
@@ -72,16 +82,16 @@ const ToolBar: React.FC<Props> = ({ currentId, createTextbox, textboxes }) => {
       </select>
       <select
         onChange={(e) =>
-          currentId !== null &&
-          textboxes[currentId]?.editor
+          selectedTextBox &&
+          selectedTextBox.editor
             ?.chain()
             .focus()
             .setFontSize(e.target.value)
             .run()
         }
         value={
-          currentId !== null
-            ? textboxes[currentId]?.editor?.getAttributes('fontSize').size
+          selectedTextBox
+            ? selectedTextBox.editor?.getAttributes('fontSize').fontSize
             : ''
         }
       >
@@ -93,53 +103,40 @@ const ToolBar: React.FC<Props> = ({ currentId, createTextbox, textboxes }) => {
       </select>
       <button
         onClick={() =>
-          currentId !== null &&
-          textboxes[currentId]?.editor?.chain().focus().toggleStrike().run()
+          selectedTextBox &&
+          selectedTextBox.editor?.chain().focus().toggleStrike().run()
         }
       >
         <FontAwesomeIcon icon={faStrikethrough} />
       </button>
       <button
         onClick={() =>
-          currentId !== null &&
-          textboxes[currentId]?.editor?.chain().focus().toggleBulletList().run()
+          selectedTextBox &&
+          selectedTextBox.editor?.chain().focus().toggleBulletList().run()
         }
       >
         <FontAwesomeIcon icon={faListUl} />
       </button>
       <button
         onClick={() =>
-          currentId !== null &&
-          textboxes[currentId]?.editor
-            ?.chain()
-            .focus()
-            .setTextAlign('left')
-            .run()
+          selectedTextBox &&
+          selectedTextBox.editor?.chain().focus().setTextAlign('left').run()
         }
       >
         left
       </button>
-
       <button
         onClick={() =>
-          currentId !== null &&
-          textboxes[currentId]?.editor
-            ?.chain()
-            .focus()
-            .setTextAlign('center')
-            .run()
+          selectedTextBox &&
+          selectedTextBox.editor?.chain().focus().setTextAlign('center').run()
         }
       >
         center
       </button>
       <button
         onClick={() =>
-          currentId !== null &&
-          textboxes[currentId]?.editor
-            ?.chain()
-            .focus()
-            .setTextAlign('right')
-            .run()
+          selectedTextBox &&
+          selectedTextBox.editor?.chain().focus().setTextAlign('right').run()
         }
       >
         right

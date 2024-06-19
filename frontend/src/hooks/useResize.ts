@@ -1,5 +1,7 @@
 import { useState, useCallback } from 'react'
 import type { Direction, ResizeOptions } from '@/types/DraggableTextBox'
+import { slidesState } from '@/jotai/atoms'
+import { useAtom } from 'jotai'
 
 const handleResize = (
   e: MouseEvent,
@@ -74,6 +76,7 @@ const handleResize = (
 export const useResize = (
   initialSize: { width: number; height: number },
   initialPosition: { x: number; y: number },
+  contentId: string,
 ) => {
   const [isResizing, setIsResizing] = useState(false)
   const [resizeDirection, setResizeDirection] = useState<Direction>('default')
@@ -83,6 +86,7 @@ export const useResize = (
   })
   const [size, setSize] = useState(initialSize)
   const [position, setPosition] = useState(initialPosition)
+  const [, setSlides] = useAtom(slidesState)
 
   const handleResizeMouseDown = useCallback(
     (e: React.MouseEvent, direction: Direction) => {
@@ -120,7 +124,20 @@ export const useResize = (
     if (!isResizing) return
     setIsResizing(false)
     setResizeDirection('default')
-  }, [isResizing])
+    setSlides((prev) =>
+      prev.map((slide) => {
+        const allcontent = [...slide.textboxes, ...slide.images]
+        allcontent.map((content) => {
+          if (content.id === contentId) {
+            content.width = size.width
+            content.height = size.height
+          }
+          return content
+        })
+        return slide
+      }),
+    )
+  }, [contentId, isResizing, setSlides, size.height, size.width])
 
   return {
     isResizing,

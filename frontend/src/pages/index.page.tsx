@@ -1,11 +1,22 @@
 import { useRouter } from 'next/router'
 import styles from '../styles/Home.module.css'
+import { currentSlideIdState, slidesState } from '@/jotai/atoms'
+import { useAtom } from 'jotai'
+import type { Slide } from '@/types/Slide'
 
 const Home = () => {
+  const [slides, setSlides] = useAtom(slidesState)
   const router = useRouter()
 
   const createNewSlide = () => {
-    router.push(`/slide/1`)
+    const newSlide: Slide = {
+      title: 'New Slide',
+      slideId: '0',
+      images: [],
+      textboxes: [],
+    }
+    setSlides([newSlide])
+    router.push(`/slide/0`)
   }
 
   return (

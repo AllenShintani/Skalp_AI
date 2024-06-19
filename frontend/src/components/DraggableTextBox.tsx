@@ -32,7 +32,7 @@ const DraggableTextBox: React.FC<Props> = ({ textbox }) => {
     handleDragMouseDown,
     handleDragMouseUp,
     handleDragMouseMove,
-  } = useDrag({ x: textbox.x, y: textbox.y })
+  } = useDrag({ x: textbox.x, y: textbox.y }, textbox.id)
 
   const {
     isResizing,
@@ -43,6 +43,7 @@ const DraggableTextBox: React.FC<Props> = ({ textbox }) => {
   } = useResize(
     { width: textbox.width, height: textbox.height },
     { x: textbox.x, y: textbox.y },
+    textbox.id,
   )
 
   const handleMouseMove = useCallback(

@@ -1,6 +1,11 @@
+import { slidesState } from '@/jotai/atoms'
+import { useAtom } from 'jotai'
 import { useState, useCallback } from 'react'
 
-export const useDrag = (initialPosition: { x: number; y: number }) => {
+export const useDrag = (
+  initialPosition: { x: number; y: number },
+  contentId: string,
+) => {
   const [isDragging, setIsDragging] = useState(false)
   const [dragStart, setDragStart] = useState<{ x: number; y: number } | null>(
     null,
@@ -8,6 +13,7 @@ export const useDrag = (initialPosition: { x: number; y: number }) => {
   const [position, setPosition] = useState(initialPosition)
   const [isVerticalCenter, setIsVerticalCenter] = useState(false)
   const [isHorizontalCenter, setIsHorizontalCenter] = useState(false)
+  const [, setSlides] = useAtom(slidesState)
 
   const handleDragMouseDown = useCallback(
     (e: React.MouseEvent) => {
@@ -23,7 +29,20 @@ export const useDrag = (initialPosition: { x: number; y: number }) => {
     setIsVerticalCenter(false)
     setIsDragging(false)
     setDragStart(null)
-  }, [isDragging])
+    setSlides((prev) =>
+      prev.map((slide) => {
+        const allcontent = [...slide.textboxes, ...slide.images]
+        allcontent.map((content) => {
+          if (content.id === contentId) {
+            content.x = position.x
+            content.y = position.y
+          }
+          return content
+        })
+        return slide
+      }),
+    )
+  }, [contentId, isDragging, position.x, position.y, setSlides])
 
   const handleDragMouseMove = useCallback(
     (e: MouseEvent) => {
