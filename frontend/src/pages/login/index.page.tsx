@@ -10,13 +10,14 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined'
 import Typography from '@mui/material/Typography'
 import Container from '@mui/material/Container'
 import { createTheme, ThemeProvider } from '@mui/material/styles'
-import React, { FormEvent, useState } from 'react'
 import 'firebase/compat/auth'
 import { createTRPCProxyClient, httpBatchLink } from '@trpc/client'
 import type { AppRouter } from '@skalp_ai/backend/routers'
 import router from 'next/router'
 import type { LoginInput } from '@skalp_ai/backend/schemas'
 import { TRPCClientError } from '@trpc/client'
+import { useState } from 'react'
+import type { FormEvent } from 'react'
 
 const theme = createTheme()
 const API_HOST = `${process.env.NEXT_PUBLIC_API_HOST}`

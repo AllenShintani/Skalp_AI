@@ -1,6 +1,6 @@
-import { AppProps } from 'next/app'
 import '../styles/globals.css'
 import { getCookie, deleteCookie } from 'cookies-next'
+import type { AppProps } from 'next/app'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 
@@ -37,7 +37,7 @@ function MyApp({ Component, pageProps }: AppProps) {
     }
 
     handleRouteChange()
-  }, [router.pathname])
+  }, [router])
 
   if (loading) {
     return <div>Loading...</div>
