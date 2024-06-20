@@ -9,6 +9,7 @@ import type { ResizeDivs } from '@/types/DraggableTextBox'
 
 type Props = {
   image: SlideImage
+  scale: number
 }
 
 const handleResizeDivs: ResizeDivs[] = [
@@ -22,7 +23,7 @@ const handleResizeDivs: ResizeDivs[] = [
   { direction: 'northWest', className: resizeStyles.resizeHandleNorthWest },
 ]
 
-const DraggableSlideImage: React.FC<Props> = ({ image }) => {
+const DraggableSlideImage: React.FC<Props> = ({ image, scale }) => {
   const {
     isDragging,
     isVerticalCenter,
@@ -30,10 +31,15 @@ const DraggableSlideImage: React.FC<Props> = ({ image }) => {
     handleDragMouseDown,
     handleDragMouseUp,
     handleDragMouseMove,
-  } = useDrag({ x: image.x, y: image.y }, image.id, {
-    width: image.width,
-    height: image.height,
-  })
+  } = useDrag(
+    { x: image.x, y: image.y },
+    image.id,
+    {
+      width: image.width,
+      height: image.height,
+    },
+    scale,
+  )
 
   const {
     isResizing,
@@ -44,6 +50,7 @@ const DraggableSlideImage: React.FC<Props> = ({ image }) => {
     { width: image.width, height: image.height },
     { x: image.x, y: image.y },
     image.id,
+    scale,
   )
 
   const handleMouseMove = useCallback(

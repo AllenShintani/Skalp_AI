@@ -7,11 +7,10 @@ import { useDrag } from '@/hooks/useDrag'
 import { useResize } from '@/hooks/useResize'
 import type { TextBox } from '@/types/Slide'
 import type { ResizeDivs } from '@/types/DraggableTextBox'
-import { slidesState } from '@/jotai/atoms'
-import { useAtom } from 'jotai'
 
 type Props = {
   textbox: TextBox
+  scale: number
 }
 
 const handleResizeDivs: ResizeDivs[] = [
@@ -25,9 +24,7 @@ const handleResizeDivs: ResizeDivs[] = [
   { direction: 'northWest', className: resizeStyles.resizeHandleNorthWest },
 ]
 
-const DraggableTextBox: React.FC<Props> = ({ textbox }) => {
-  const [slides, setSlides] = useAtom(slidesState)
-
+const DraggableTextBox: React.FC<Props> = ({ textbox, scale }) => {
   const {
     isResizing,
     handleResizeMouseDown,
@@ -37,6 +34,7 @@ const DraggableTextBox: React.FC<Props> = ({ textbox }) => {
     { width: textbox.width, height: textbox.height },
     { x: textbox.x, y: textbox.y },
     textbox.id,
+    scale,
   )
 
   const {
@@ -46,15 +44,21 @@ const DraggableTextBox: React.FC<Props> = ({ textbox }) => {
     handleDragMouseDown,
     handleDragMouseUp,
     handleDragMouseMove,
-  } = useDrag({ x: textbox.x, y: textbox.y }, textbox.id, {
-    width: textbox.width,
-    height: textbox.height,
-  })
+  } = useDrag(
+    { x: textbox.x, y: textbox.y },
+    textbox.id,
+    {
+      width: textbox.width,
+      height: textbox.height,
+    },
+    scale,
+  )
 
   const handleMouseMove = useCallback(
     (e: MouseEvent) => {
       handleDragMouseMove(e)
       handleResizeMouseMove(e)
+      // console.log(scale)
     },
     [handleDragMouseMove, handleResizeMouseMove],
   )

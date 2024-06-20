@@ -1,11 +1,13 @@
 import { slidesState } from '@/jotai/atoms'
 import { useAtom } from 'jotai'
 import { useState, useCallback } from 'react'
+import type { Slide, TextBox, SlideImage } from '@/types/Slide'
 
 export const useDrag = (
   initialPosition: { x: number; y: number },
   contentId: string,
   size: { width: number; height: number },
+  scale: number, // 新しい引数
 ) => {
   const [isDragging, setIsDragging] = useState(false)
   const [dragStart, setDragStart] = useState<{ x: number; y: number } | null>(
@@ -22,13 +24,13 @@ export const useDrag = (
         .find((content) => content.id === contentId)
       if (content) {
         setDragStart({
-          x: e.clientX - content.x,
-          y: e.clientY - content.y,
+          x: (e.clientX - content.x * scale) / scale, 
+          y: (e.clientY - content.y * scale) / scale, 
         })
         setIsDragging(true)
       }
     },
-    [slides, contentId],
+    [slides, contentId, scale],
   )
 
   const handleDragMouseUp = useCallback(() => {
@@ -50,16 +52,17 @@ export const useDrag = (
       }
 
       setSlides((prevSlides) =>
-        prevSlides.map((slide) => {
-          const updateContentPosition = (content) => {
+        prevSlides.map((slide: Slide) => {
+          const updateContentPosition = (content: TextBox | SlideImage) => {
+
             if (content.id === contentId) {
               const centerPositionOfTextBox = {
                 x: content.x + size.width / 2,
                 y: content.y + size.height / 2,
               }
               const movingDistance = {
-                x: Math.abs(e.clientX - dragStart.x - content.x),
-                y: Math.abs(e.clientY - dragStart.y - content.y),
+                x: Math.abs(e.clientX / scale - dragStart.x - content.x),
+                y: Math.abs(e.clientY / scale - dragStart.y - content.y),
               }
 
               // 縦の座標を中央に寄せる処理
@@ -94,20 +97,20 @@ export const useDrag = (
                 setIsVerticalCenter(false)
               } else if (isHorizontalCenter && !isVerticalCenter) {
                 if (movingDistance.y < 15) {
-                  return { ...content, x: e.clientX - dragStart.x }
+                  return { ...content, x: e.clientX / scale - dragStart.x }
                 }
                 setIsHorizontalCenter(false)
               } else if (!isHorizontalCenter && isVerticalCenter) {
                 if (movingDistance.x < 15) {
-                  return { ...content, y: e.clientY - dragStart.y }
+                  return { ...content, y: e.clientY / scale - dragStart.y }
                 }
                 setIsVerticalCenter(false)
               }
 
               return {
                 ...content,
-                x: e.clientX - dragStart.x,
-                y: e.clientY - dragStart.y,
+                x: e.clientX / scale - dragStart.x, 
+                y: e.clientY / scale - dragStart.y, 
               }
             }
             return content
@@ -115,8 +118,12 @@ export const useDrag = (
 
           return {
             ...slide,
-            textboxes: slide.textboxes.map(updateContentPosition),
-            images: slide.images.map(updateContentPosition),
+            textboxes: slide.textboxes.map(
+              updateContentPosition as (content: TextBox) => TextBox,
+            ),
+            images: slide.images.map(
+              updateContentPosition as (content: SlideImage) => SlideImage,
+            ),
           }
         }),
       )
@@ -129,6 +136,7 @@ export const useDrag = (
       isVerticalCenter,
       contentId,
       setSlides,
+      scale,
     ],
   )
 

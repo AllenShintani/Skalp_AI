@@ -2,6 +2,7 @@ import { useState, useCallback } from 'react'
 import type { Direction, ResizeOptions } from '@/types/DraggableTextBox'
 import { slidesState } from '@/jotai/atoms'
 import { useAtom } from 'jotai'
+import type { TextBox, Slide, SlideImage } from '@/types/Slide'
 
 const handleResize = (
   e: MouseEvent,
@@ -9,9 +10,10 @@ const handleResize = (
   size: { width: number; height: number },
   position: { x: number; y: number },
   direction: Direction,
+  scale: number,
 ): ResizeOptions => {
-  const deltaX = e.clientX - resizeStart.x
-  const deltaY = e.clientY - resizeStart.y
+  const deltaX = (e.clientX - resizeStart.x) / scale
+  const deltaY = (e.clientY - resizeStart.y) / scale
 
   const options: { [key in Direction]: ResizeOptions } = {
     north: {
@@ -77,6 +79,7 @@ export const useResize = (
   initialSize: { width: number; height: number },
   initialPosition: { x: number; y: number },
   contentId: string,
+  scale: number,
 ) => {
   const [isResizing, setIsResizing] = useState(false)
   const [resizeDirection, setResizeDirection] = useState<Direction>('default')
@@ -101,8 +104,8 @@ export const useResize = (
       if (!isResizing) return
 
       setSlides((prevSlides) =>
-        prevSlides.map((slide) => {
-          const updateContentSize = (content) => {
+        prevSlides.map((slide: Slide) => {
+          const updateContentSize = (content: TextBox | SlideImage) => {
             if (content.id === contentId) {
               const newOptions = handleResize(
                 e,
@@ -110,11 +113,12 @@ export const useResize = (
                 { width: content.width, height: content.height },
                 { x: content.x, y: content.y },
                 resizeDirection,
+                scale,
               )
               if (newOptions.width < 10 || newOptions.height < 10)
                 return content
 
-              setResizeStart({ x: e.clientX, y: e.clientY }) // Update resize start
+              setResizeStart({ x: e.clientX, y: e.clientY })
 
               return {
                 ...content,
@@ -129,13 +133,17 @@ export const useResize = (
 
           return {
             ...slide,
-            textboxes: slide.textboxes.map(updateContentSize),
-            images: slide.images.map(updateContentSize),
+            textboxes: slide.textboxes.map(
+              updateContentSize as (content: TextBox) => TextBox,
+            ),
+            images: slide.images.map(
+              updateContentSize as (content: SlideImage) => SlideImage,
+            ),
           }
         }),
       )
     },
-    [isResizing, resizeStart, resizeDirection, contentId, setSlides],
+    [isResizing, resizeStart, resizeDirection, contentId, setSlides, scale],
   )
 
   const handleResizeMouseUp = useCallback(() => {
