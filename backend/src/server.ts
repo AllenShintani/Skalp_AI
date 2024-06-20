@@ -8,11 +8,12 @@ import { appRouter } from "./routers";
 import { prisma } from "../prisma/client";
 import type { CreateFastifyContextOptions } from "@trpc/server/adapters/fastify";
 import verifyToken from "./middlewares/verifyToken";
+import dotenv from "dotenv";
 
 const server: FastifyInstance = Fastify();
 
 server.register(fastifyJwt, {
-  secret: "supersecret",
+  secret: process.env.JWT_SECRET as string,
 });
 
 server.register(fastifyCookie);

@@ -7,6 +7,9 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import * as admin from "firebase-admin";
 import { prisma } from "../../prisma/client";
 import { TRPCError } from "@trpc/server";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const createContext = ({ req, res }: CreateFastifyContextOptions) => ({
   fastify: req.server,
@@ -76,7 +79,7 @@ export const loginRouter = t.router({
         const token = ctx.fastify.jwt.sign({ userId: prismaUser.id });
         ctx.reply.setCookie("token", token, {
           httpOnly: false,
-          secure: false, // 本番環境ではtrueにする
+          secure: process.env.NODE_ENV === "production",
           sameSite: "strict",
           path: "/",
           maxAge: 60 * 60 * 24 * 7,

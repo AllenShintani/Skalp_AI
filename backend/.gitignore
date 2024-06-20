@@ -4,3 +4,4 @@ dist
 mysql_data
 sql
 **-firebase-adminsdk.json
+.env.production

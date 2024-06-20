@@ -1,5 +1,8 @@
 import { FastifyReply, FastifyRequest } from "fastify";
 import { verify, JsonWebTokenError } from "jsonwebtoken";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const verifyToken = (req: FastifyRequest, reply: FastifyReply, next: any) => {
   const token = req.cookies.token;
@@ -16,12 +19,11 @@ const verifyToken = (req: FastifyRequest, reply: FastifyReply, next: any) => {
   }
 
   try {
-    const decoded = verify(token, "supersecret");
+    const decoded = verify(token, process.env.JWT_SECRET as string);
     req.user = decoded;
     next();
   } catch (err) {
     if (err instanceof JsonWebTokenError) {
-      // JWTのエラーが発生した場合、クッキーを削除し、401エラーを返す
       reply.clearCookie("token");
       reply.code(401).send({ error: "Unauthorized" });
     } else {

@@ -70,7 +70,7 @@ export const signupRouter = t.router({
         const token = ctx.fastify.jwt.sign({ userId: prismaUser.id });
         ctx.reply.setCookie("token", token, {
           httpOnly: false,
-          secure: false, // 本番環境ではtrueにする
+          secure: process.env.NODE_ENV === "production",
           sameSite: "strict",
           path: "/",
           maxAge: 60 * 60 * 24 * 7,
