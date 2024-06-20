@@ -3,4 +3,5 @@ dist
 .env
 mysql_data
 sql
-oinori-firebaseadmin.json
+**-firebase-adminsdk.json
+.env.production
