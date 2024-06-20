@@ -10,6 +10,7 @@ import type { CreateFastifyContextOptions } from "@trpc/server/adapters/fastify"
 import verifyToken from "./middlewares/verifyToken";
 import dotenv from "dotenv";
 
+dotenv.config();
 const server: FastifyInstance = Fastify();
 
 server.register(fastifyJwt, {
