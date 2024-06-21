@@ -3,14 +3,14 @@ import styles from './DraggableSlideImage.module.css'
 import { useCallback, useEffect } from 'react'
 import type { SlideImage } from '@/types/Slide'
 import resizeStyles from './ResizeHandles.module.css'
-
-type Props = {
-  image: SlideImage
-}
-
 import { useDrag } from '@/hooks/useDrag'
 import { useResize } from '@/hooks/useResize'
 import type { ResizeDivs } from '@/types/DraggableTextBox'
+
+type Props = {
+  image: SlideImage
+  scale: number
+}
 
 const handleResizeDivs: ResizeDivs[] = [
   { direction: 'north', className: resizeStyles.resizeHandleNorth },
@@ -23,20 +23,26 @@ const handleResizeDivs: ResizeDivs[] = [
   { direction: 'northWest', className: resizeStyles.resizeHandleNorthWest },
 ]
 
-const DraggableSlideImage: React.FC<Props> = ({ image }) => {
+const DraggableSlideImage: React.FC<Props> = ({ image, scale }) => {
   const {
     isDragging,
-    position,
     isVerticalCenter,
     isHorizontalCenter,
     handleDragMouseDown,
     handleDragMouseUp,
     handleDragMouseMove,
-  } = useDrag({ x: image.x, y: image.y }, image.id)
+  } = useDrag(
+    { x: image.x, y: image.y },
+    image.id,
+    {
+      width: image.width,
+      height: image.height,
+    },
+    scale,
+  )
 
   const {
     isResizing,
-    size,
     handleResizeMouseDown,
     handleResizeMouseMove,
     handleResizeMouseUp,
@@ -44,17 +50,8 @@ const DraggableSlideImage: React.FC<Props> = ({ image }) => {
     { width: image.width, height: image.height },
     { x: image.x, y: image.y },
     image.id,
+    scale,
   )
-
-  const style: React.CSSProperties = {
-    transform: `translate3d(${position.x}px, ${position.y}px, 0)`,
-    position: 'absolute',
-    width: `${size.width}px`,
-    height: `${size.height}px`,
-    boxSizing: 'border-box',
-    outline: image.isSelected ? 'solid 1px blue' : 'none',
-    userSelect: 'none', // Prevent text selection(入力の無効化はtiptapにメソッドが存在する為、注意が必要)
-  }
 
   const handleMouseMove = useCallback(
     (e: MouseEvent) => {
@@ -63,6 +60,7 @@ const DraggableSlideImage: React.FC<Props> = ({ image }) => {
     },
     [handleDragMouseMove, handleResizeMouseMove],
   )
+
   const handleMouseUp = useCallback(() => {
     handleDragMouseUp()
     handleResizeMouseUp()
@@ -75,14 +73,17 @@ const DraggableSlideImage: React.FC<Props> = ({ image }) => {
       document.removeEventListener('mousemove', handleMouseMove)
       document.removeEventListener('mouseup', handleMouseUp)
     }
-  }, [
-    handleDragMouseMove,
-    handleDragMouseUp,
-    handleMouseMove,
-    handleMouseUp,
-    handleResizeMouseMove,
-    handleResizeMouseUp,
-  ])
+  }, [handleMouseMove, handleMouseUp])
+
+  const style: React.CSSProperties = {
+    transform: `translate3d(${image.x}px, ${image.y}px, 0)`,
+    position: 'absolute',
+    width: `${image.width}px`,
+    height: `${image.height}px`,
+    boxSizing: 'border-box',
+    outline: image.isSelected ? 'solid 1px blue' : 'none',
+    userSelect: 'none', // Prevent text selection
+  }
 
   return (
     <div
@@ -101,8 +102,8 @@ const DraggableSlideImage: React.FC<Props> = ({ image }) => {
         alt="image"
         onMouseDown={handleDragMouseDown}
         onDragStart={(e) => e.preventDefault()}
-        width={size.width}
-        height={size.height}
+        width={image.width}
+        height={image.height}
       />
       <div
         className={styles.resizeHandles}

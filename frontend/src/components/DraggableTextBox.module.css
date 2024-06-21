@@ -1,5 +1,6 @@
 .textBox {
   border: 1px solid #d1d1d1;
+  z-index: 0;
 }
 
 .verticalLine {
@@ -9,6 +10,7 @@
   width: 1px;
   height: 3000px;
   background-color: #e71515;
+  z-index: 3;
 }
 
 .horizontalLine {
@@ -18,6 +20,7 @@
   width: 3000px;
   height: 1px;
   background-color: #e71515;
+  z-index: 3;
 }
 
 .editorContent {

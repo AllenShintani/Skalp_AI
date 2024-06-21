@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { DndContext } from '@dnd-kit/core'
 import StarterKit from '@tiptap/starter-kit'
 import { Editor } from '@tiptap/react'
@@ -27,6 +27,7 @@ import { useRouter } from 'next/router'
 const SlideEditor = () => {
   const [slides, setSlides] = useAtom(slidesState)
   const [currentSlide, setCurrentSlide] = useAtom(currentSlideIdState)
+  const [scale, setScale] = useState(1)
 
   const router = useRouter()
   const { id } = router.query
@@ -128,6 +129,7 @@ const SlideEditor = () => {
     const heightScale = editorHeight / targetHeight
 
     const newScale = Math.min(widthScale, heightScale)
+    setScale(newScale)
     slideElement.style.transform = `scale(${newScale})`
   }, [])
 
@@ -262,6 +264,7 @@ const SlideEditor = () => {
                   <DraggableTextBox
                     key={textbox.id}
                     textbox={textbox}
+                    scale={scale}
                   />
                 </div>
               ))}
@@ -273,6 +276,7 @@ const SlideEditor = () => {
                   <DraggableSlideImage
                     key={image.id}
                     image={image}
+                    scale={scale}
                   />
                 </div>
               ))}

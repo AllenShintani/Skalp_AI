@@ -10,6 +10,7 @@ import type { ResizeDivs } from '@/types/DraggableTextBox'
 
 type Props = {
   textbox: TextBox
+  scale: number
 }
 
 const handleResizeDivs: ResizeDivs[] = [
@@ -23,20 +24,9 @@ const handleResizeDivs: ResizeDivs[] = [
   { direction: 'northWest', className: resizeStyles.resizeHandleNorthWest },
 ]
 
-const DraggableTextBox: React.FC<Props> = ({ textbox }) => {
-  const {
-    isDragging,
-    position,
-    isVerticalCenter,
-    isHorizontalCenter,
-    handleDragMouseDown,
-    handleDragMouseUp,
-    handleDragMouseMove,
-  } = useDrag({ x: textbox.x, y: textbox.y }, textbox.id)
-
+const DraggableTextBox: React.FC<Props> = ({ textbox, scale }) => {
   const {
     isResizing,
-    size,
     handleResizeMouseDown,
     handleResizeMouseMove,
     handleResizeMouseUp,
@@ -44,12 +34,31 @@ const DraggableTextBox: React.FC<Props> = ({ textbox }) => {
     { width: textbox.width, height: textbox.height },
     { x: textbox.x, y: textbox.y },
     textbox.id,
+    scale,
+  )
+
+  const {
+    isDragging,
+    isVerticalCenter,
+    isHorizontalCenter,
+    handleDragMouseDown,
+    handleDragMouseUp,
+    handleDragMouseMove,
+  } = useDrag(
+    { x: textbox.x, y: textbox.y },
+    textbox.id,
+    {
+      width: textbox.width,
+      height: textbox.height,
+    },
+    scale,
   )
 
   const handleMouseMove = useCallback(
     (e: MouseEvent) => {
       handleDragMouseMove(e)
       handleResizeMouseMove(e)
+      // console.log(scale)
     },
     [handleDragMouseMove, handleResizeMouseMove],
   )
@@ -69,10 +78,10 @@ const DraggableTextBox: React.FC<Props> = ({ textbox }) => {
   }, [handleMouseMove, handleMouseUp])
 
   const style: React.CSSProperties = {
-    transform: `translate3d(${position.x}px, ${position.y}px, 0)`,
+    transform: `translate3d(${textbox.x}px, ${textbox.y}px, 0)`,
     position: 'absolute',
-    width: `${size.width}px`,
-    height: `${size.height}px`,
+    width: `${textbox.width}px`,
+    height: `${textbox.height}px`,
     boxSizing: 'border-box',
     outline: textbox.isSelected ? 'solid 1px blue' : 'none',
     userSelect: 'none', // Prevent text selection(入力の無効化はtiptapにメソッドが存在する為、注意が必要)
