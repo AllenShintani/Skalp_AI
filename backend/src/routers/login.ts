@@ -78,7 +78,7 @@ export const loginRouter = t.router({
         }
         const token = ctx.fastify.jwt.sign({ userId: prismaUser.id });
         ctx.reply.setCookie("token", token, {
-          httpOnly: false,
+          httpOnly: true,
           secure: process.env.NODE_ENV === "production",
           sameSite: "strict",
           path: "/",
