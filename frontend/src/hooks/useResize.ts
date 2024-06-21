@@ -118,15 +118,15 @@ export const useResize = (
               if (newOptions.width < 10 || newOptions.height < 10)
                 return content
 
-              setResizeStart({ x: e.clientX, y: e.clientY })
-
-              return {
+              const updatedContent = {
                 ...content,
                 width: newOptions.width,
                 height: newOptions.height,
                 x: newOptions.x,
                 y: newOptions.y,
               }
+
+              return updatedContent
             }
             return content
           }
@@ -142,6 +142,8 @@ export const useResize = (
           }
         }),
       )
+
+      setResizeStart({ x: e.clientX, y: e.clientY })
     },
     [isResizing, resizeStart, resizeDirection, contentId, setSlides, scale],
   )
