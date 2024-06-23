@@ -75,8 +75,11 @@ const DraggableTextBox: React.FC<Props> = ({ textbox }) => {
     boxSizing: 'border-box',
     outline: textbox.isSelected ? 'solid 1px blue' : 'none',
     userSelect: 'none', // Prevent text selection(入力の無効化はtiptapにメソッドが存在する為、注意が必要)
+    ...((textbox.editor.getText() === 'Example Text' ||
+      textbox.editor.getText() === '') && {
+      border: '1px solid #d1d1d1',
+    }),
   }
-
   return (
     <div
       style={style}

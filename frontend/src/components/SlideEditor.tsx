@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { DndContext } from '@dnd-kit/core'
 import StarterKit from '@tiptap/starter-kit'
-import { Editor } from '@tiptap/react'
+import { Editor, EditorContent } from '@tiptap/react'
 import ToolBar from './ToolBar'
 import styles from './SlideEditor.module.css'
 import DraggableTextBox from './DraggableTextBox'
@@ -70,16 +70,20 @@ const SlideEditor = () => {
     setCountTextbox((prev) => prev + 1)
   }
 
-  const selectTextBox = (id: number) => {
+  const selectTextBox = (id: number | null) => {
     setTextboxes((prev) => {
-      const newTextboxes = prev.map((textbox) =>
-        textbox.textBoxId === id
-          ? { ...textbox, isSelected: true }
-          : { ...textbox, isSelected: false },
-      )
-      return newTextboxes
+      if (id === null) {
+        return prev.map((textbox) => ({ ...textbox, isSelected: false }))
+      } else {
+        return prev.map((textbox) =>
+          textbox.textBoxId === id
+            ? { ...textbox, isSelected: true }
+            : { ...textbox, isSelected: false },
+        )
+      }
     })
   }
+
   const selectImage = (id: string) => {
     setImages((prev) => {
       const newImages = prev.map((image) =>
@@ -199,9 +203,15 @@ const SlideEditor = () => {
   }, [handleResizeWindow, handlePaste])
 
   return (
-    <div className={styles.container}>
+    <div
+      className={styles.container}
+      onClick={() => selectTextBox(null)}
+    >
       <div className={styles.grid}>
-        <div className={styles.sidebar}>
+        <div
+          className={styles.sidebar}
+          onClick={() => selectTextBox(null)}
+        >
           <Sidebar />
         </div>
         <div className={styles.toolbar}>
@@ -216,6 +226,7 @@ const SlideEditor = () => {
         <div
           className={styles.editor}
           ref={editorRef}
+          onClick={() => selectTextBox(null)}
         >
           <DndContext>
             <div
@@ -226,7 +237,10 @@ const SlideEditor = () => {
             >
               {textboxes?.map((textbox) => (
                 <div
-                  onClick={() => selectTextBox(textbox.textBoxId)}
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    selectTextBox(textbox.textBoxId)
+                  }}
                   key={textbox.textBoxId}
                 >
                   <DraggableTextBox textbox={textbox} />
