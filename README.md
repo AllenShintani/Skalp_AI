@@ -39,6 +39,7 @@ cp skalpai-firebase-adminsdk.json.example skalpai-firebase-adminsdk.json
 docker-compose up -d
 npx prisma generate
 npx prisma migrate dev
+npm run seed
 npm run dev
 ```
 
