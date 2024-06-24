@@ -5,7 +5,7 @@ const Home = () => {
   const router = useRouter()
 
   const createNewSlide = () => {
-    router.push(`/slide/1`)
+    router.push(`/slide/0`)
   }
 
   return (

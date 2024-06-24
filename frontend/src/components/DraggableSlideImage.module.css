@@ -1,5 +1,6 @@
 .SlideImage {
   border: 1px solid #d1d1d1;
+  z-index: -1;
 }
 
 .verticalLine {

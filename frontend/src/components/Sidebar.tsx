@@ -6,6 +6,7 @@ import { useAtom } from 'jotai'
 
 const Sidebar = () => {
   const [slides] = useAtom(slidesState)
+
   const router = useRouter()
   const { id } = router.query
 

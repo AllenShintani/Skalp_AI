@@ -1,8 +1,8 @@
 import { atom } from 'jotai'
-import type { SlideImage, Slide, TextBox } from '../types/Slide'
+import type { Slide } from '../types/Slide'
 
-export const slidesState = atom<Slide[]>([])
+export const slidesState = atom<Slide[]>([
+  { title: 'New Slide', slideId: '0', images: [], textboxes: [] },
+])
 
-export const textBoxesState = atom<TextBox[]>([])
-
-export const imagesState = atom<SlideImage[]>([])
+export const currentSlideIdState = atom<number>(0)
