@@ -1,7 +1,3 @@
-.textBox {
-  border: 1px solid #d1d1d1;
-}
-
 .verticalLine {
   position: absolute;
   top: -1000px;
@@ -28,6 +24,6 @@
   outline: none;
 }
 
-.textBox:hover div {
+.resizeHandles[style*='display: block;'] > div {
   display: block;
 }
