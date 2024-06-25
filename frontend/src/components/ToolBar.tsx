@@ -91,7 +91,7 @@ const ToolBar: React.FC<Props> = ({
         }
         value={
           selectedTextBox
-            ? selectedTextBox.editor?.getAttributes('fontSize').fontSize
+            ? selectedTextBox.editor?.getAttributes('fontSize').size
             : ''
         }
       >
