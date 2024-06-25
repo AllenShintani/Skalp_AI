@@ -94,7 +94,7 @@ const SlideEditor = () => {
     setSlides([...slides, newSlide])
   }
 
-  const selectContent = (id: string) => {
+  const selectContent = (id: string | null) => {
     setSlides((prev) =>
       prev.map((slide) => {
         const allContents = [...slide.images, ...slide.textboxes]
@@ -229,7 +229,10 @@ const SlideEditor = () => {
   return (
     <div className={styles.container}>
       <div className={styles.grid}>
-        <div className={styles.sidebar}>
+        <div
+          className={styles.sidebar}
+          onClick={() => selectContent(null)}
+        >
           <Sidebar />
         </div>
         <div className={styles.toolbar}>
@@ -248,6 +251,7 @@ const SlideEditor = () => {
         <div
           className={styles.editor}
           ref={editorRef}
+          onClick={() => selectContent(null)}
         >
           <DndContext>
             <div
@@ -258,7 +262,10 @@ const SlideEditor = () => {
             >
               {slides[currentSlide].textboxes.map((textbox) => (
                 <div
-                  onClick={() => selectContent(textbox.id)}
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    selectContent(textbox.id)
+                  }}
                   key={textbox.id}
                 >
                   <DraggableTextBox
