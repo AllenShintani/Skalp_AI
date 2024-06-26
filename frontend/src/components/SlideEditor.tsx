@@ -42,9 +42,7 @@ const SlideEditor = () => {
     const editor = new Editor({
       content: `<p>Example Text</p>`,
       extensions: [
-        StarterKit.configure({
-          // StarterKit options
-        }),
+        StarterKit.configure({}),
         Underline,
         Strike,
         FontFamily.configure({ types: ['textStyle'] }),
