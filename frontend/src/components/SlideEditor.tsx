@@ -5,16 +5,10 @@ import { Editor } from '@tiptap/react'
 import ToolBar from './ToolBar'
 import styles from './SlideEditor.module.css'
 import DraggableTextBox from './DraggableTextBox'
-import { Text } from '@tiptap/extension-text'
-import { Bold } from '@tiptap/extension-bold'
-import { Italic } from '@tiptap/extension-italic'
 import { Underline } from '@tiptap/extension-underline'
 import { Strike } from '@tiptap/extension-strike'
 import { BulletList } from '@tiptap/extension-bullet-list'
 import FontFamily from '@tiptap/extension-font-family'
-import TextStyle from '@tiptap/extension-text-style'
-import Document from '@tiptap/extension-document'
-import Paragraph from '@tiptap/extension-paragraph'
 import { FontSize } from '@/components/extensions/FontSize'
 import Sidebar from './Sidebar'
 import Heading from '@tiptap/extension-heading'
@@ -48,16 +42,8 @@ const SlideEditor = () => {
     const editor = new Editor({
       content: `<p>Example Text</p>`,
       extensions: [
-        StarterKit,
-        Text,
-        TextStyle,
-        Document,
-        Paragraph,
-        Bold,
-        Italic,
-        Heading,
-        TextAlign.configure({
-          types: ['heading', 'paragraph'],
+        StarterKit.configure({
+          // StarterKit options
         }),
         Underline,
         Strike,
