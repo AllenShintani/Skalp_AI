@@ -3,6 +3,7 @@ import styles from './SlidePreview.module.css'
 import type { Slide, SlideImage, TextBox } from '@/types/Slide'
 import DOMPurify from 'dompurify'
 import parse from 'html-react-parser'
+import { useRef } from 'react'
 
 type SlideImagePreviewProps = {
   image: SlideImage
@@ -15,7 +16,7 @@ const PREVIEW_SCALE = 0.2
 
 const SlideImagePreview: React.FC<SlideImagePreviewProps> = ({ image }) => {
   const style: React.CSSProperties = {
-    transform: `translate3d(${image.x * PREVIEW_SCALE}px, ${image.y * PREVIEW_SCALE}px, 0) scale(${PREVIEW_SCALE})`,
+    transform: `translate(${image.x * PREVIEW_SCALE}px, ${image.y * PREVIEW_SCALE}px) `,
     position: 'absolute',
     width: `${image.width * PREVIEW_SCALE}px`,
     height: `${image.height * PREVIEW_SCALE}px`,
@@ -24,26 +25,25 @@ const SlideImagePreview: React.FC<SlideImagePreviewProps> = ({ image }) => {
   }
 
   return (
-    <div style={style}>
-      <img
-        src={image.src}
-        alt="image"
-        width={image.width}
-        height={image.height}
-        style={{ width: '100%', height: '100%' }}
-      />
-    </div>
+    <img
+      src={image.src}
+      alt="image"
+      width={image.width}
+      height={image.height}
+      style={style}
+    />
   )
 }
 
 const TextBoxPreview: React.FC<TextBoxPreviewProps> = ({ textbox }) => {
   const style: React.CSSProperties = {
-    transform: `translate3d(${textbox.x * PREVIEW_SCALE}px, ${textbox.y * PREVIEW_SCALE}px, 0) scale(${PREVIEW_SCALE})`,
+    transform: `translate(${textbox.x * PREVIEW_SCALE}px, ${textbox.y * PREVIEW_SCALE}px) scale(${PREVIEW_SCALE})`,
     position: 'absolute',
-    width: `${textbox.width * PREVIEW_SCALE}px`,
-    height: `${textbox.height * PREVIEW_SCALE}px`,
     boxSizing: 'border-box',
-    fontSize: `${textbox.editor.getAttributes('fontSize').size * PREVIEW_SCALE}px`,
+    textWrap: 'nowrap',
+    width: '0',
+    height: '0',
+    fontSize: `${textbox.editor.getAttributes('fontSize').size}px`,
     userSelect: 'none',
   }
 
