@@ -1,4 +1,5 @@
 import type React from 'react'
+import { useState } from 'react'
 import { useRouter } from 'next/router'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
@@ -8,13 +9,18 @@ import {
   faUnderline,
   faStrikethrough,
   faListUl,
+  faPalette,
 } from '@fortawesome/free-solid-svg-icons'
 import type { SlideImage, TextBox } from '@/types/Slide'
+import type { ColorResult } from 'react-color'
+import { ChromePicker } from 'react-color'
 
 type Props = {
   currentId: string | null
   createTextbox: () => void
   createNewSlide: () => void
+  changeBackgroundColor: (color: ColorResult) => void
+  backgroundColor: string
   content: (TextBox | SlideImage)[]
 }
 
@@ -22,9 +28,12 @@ const ToolBar: React.FC<Props> = ({
   currentId,
   createTextbox,
   createNewSlide,
+  changeBackgroundColor,
+  backgroundColor,
   content,
 }) => {
   const router = useRouter()
+  const [showColorPicker, setShowColorPicker] = useState(false)
 
   const selectedTextBox = content.find(
     (c): c is TextBox => c.id === currentId && 'editor' in c,
@@ -141,6 +150,20 @@ const ToolBar: React.FC<Props> = ({
       >
         right
       </button>
+      <button onClick={() => setShowColorPicker(!showColorPicker)}>
+        <FontAwesomeIcon icon={faPalette} />
+      </button>
+      {showColorPicker && (
+        <div style={{ position: 'absolute', zIndex: 1000 }}>
+          <ChromePicker
+            color={backgroundColor}
+            onChange={(color) => {
+              changeBackgroundColor(color)
+            }}
+          />
+          <button onClick={() => setShowColorPicker(false)}>Close</button>
+        </div>
+      )}
     </div>
   )
 }

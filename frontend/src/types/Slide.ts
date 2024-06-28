@@ -22,4 +22,5 @@ export type Slide = {
   title: string
   textboxes: TextBox[]
   images: SlideImage[]
+  backgroundColor: string
 }
