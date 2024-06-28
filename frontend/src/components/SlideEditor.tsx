@@ -25,7 +25,8 @@ const SlideEditor = () => {
   const [slides, setSlides] = useAtom(slidesState)
   const [currentSlide, setCurrentSlide] = useAtom(currentSlideIdState)
   const [scale, setScale] = useState(1)
-  const [selectedRange, setSelectedRange] = useState<{
+  ///Tiptapのメソッドではテキスト選択が解除されるため
+  const [selectedTextRange, setSelectedRange] = useState<{
     from: number
     to: number
   } | null>(null)
@@ -222,16 +223,16 @@ const SlideEditor = () => {
       const selectedTextBox = slides[currentSlide].textboxes.find(
         (textbox) => textbox.isSelected,
       )
-      if (selectedTextBox && selectedTextBox.editor && selectedRange) {
+      if (selectedTextBox && selectedTextBox.editor && selectedTextRange) {
         selectedTextBox.editor
           .chain()
           .focus()
-          .setTextSelection(selectedRange)
+          .setTextSelection(selectedTextRange)
           .setColor(color)
           .run()
       }
     },
-    [currentSlide, slides, selectedRange],
+    [currentSlide, slides, selectedTextRange],
   )
 
   const saveSelection = useCallback(() => {
