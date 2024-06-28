@@ -35,11 +35,19 @@ backendディレクトリでコマンドを打ってください。
 cd ../backend
 cp .env.example .env
 cp .env.local.example .env.local
-cp skalp.json.example skalp.json
+cp skalpai-firebase-adminsdk.json.example skalpai-firebase-adminsdk.json
 docker-compose up -d
 npx prisma generate
 npx prisma migrate dev
+npm run seed
 npm run dev
 ```
 
 起動はそれぞれのディレクトリで`npm run dev`
+
+
+## PRを出す時
+・ISSUEテンプレートを参考にしてください。
+
+
+・手元でQA.mdのテスト項目を試してからPRを出してください

@@ -5,16 +5,10 @@ import { Editor } from '@tiptap/react'
 import ToolBar from './ToolBar'
 import styles from './SlideEditor.module.css'
 import DraggableTextBox from './DraggableTextBox'
-import { Text } from '@tiptap/extension-text'
-import { Bold } from '@tiptap/extension-bold'
-import { Italic } from '@tiptap/extension-italic'
 import { Underline } from '@tiptap/extension-underline'
 import { Strike } from '@tiptap/extension-strike'
 import { BulletList } from '@tiptap/extension-bullet-list'
 import FontFamily from '@tiptap/extension-font-family'
-import TextStyle from '@tiptap/extension-text-style'
-import Document from '@tiptap/extension-document'
-import Paragraph from '@tiptap/extension-paragraph'
 import { FontSize } from '@/components/extensions/FontSize'
 import Sidebar from './Sidebar'
 import Heading from '@tiptap/extension-heading'
@@ -23,6 +17,7 @@ import DraggableSlideImage from './DraggableSlideImage'
 import { useAtom } from 'jotai'
 import { currentSlideIdState, slidesState } from '@/jotai/atoms'
 import { useRouter } from 'next/router'
+import type { ColorResult } from 'react-color'
 
 const SlideEditor = () => {
   const [slides, setSlides] = useAtom(slidesState)
@@ -48,17 +43,7 @@ const SlideEditor = () => {
     const editor = new Editor({
       content: `<p>Example Text</p>`,
       extensions: [
-        StarterKit,
-        Text,
-        TextStyle,
-        Document,
-        Paragraph,
-        Bold,
-        Italic,
-        Heading,
-        TextAlign.configure({
-          types: ['heading', 'paragraph'],
-        }),
+        StarterKit.configure({}),
         Underline,
         Strike,
         FontFamily.configure({ types: ['textStyle'] }),
@@ -90,11 +75,12 @@ const SlideEditor = () => {
       slideId: slides.length.toString(),
       textboxes: [],
       images: [],
+      backgroundColor: '#ffffff',
     }
     setSlides([...slides, newSlide])
   }
 
-  const selectContent = (id: string) => {
+  const selectContent = (id: string | null) => {
     setSlides((prev) =>
       prev.map((slide) => {
         const allContents = [...slide.images, ...slide.textboxes]
@@ -211,6 +197,18 @@ const SlideEditor = () => {
     [processImageFile],
   )
 
+  const changeBackgroundColor = (color: ColorResult) => {
+    const newColor = color.hex
+    setSlides((prevSlides) => {
+      return prevSlides.map((slide, index) => {
+        if (index === currentSlide) {
+          return { ...slide, backgroundColor: newColor }
+        }
+        return slide
+      })
+    })
+  }
+
   useEffect(() => {
     handleResizeWindow()
     const editorElement = editorRef.current
@@ -229,7 +227,10 @@ const SlideEditor = () => {
   return (
     <div className={styles.container}>
       <div className={styles.grid}>
-        <div className={styles.sidebar}>
+        <div
+          className={styles.sidebar}
+          onClick={() => selectContent(null)}
+        >
           <Sidebar />
         </div>
         <div className={styles.toolbar}>
@@ -238,16 +239,19 @@ const SlideEditor = () => {
             currentId={getSelectedContentId()}
             createTextbox={createTextbox}
             createNewSlide={createNewSlide}
+            changeBackgroundColor={changeBackgroundColor}
             content={[
               ...slides[currentSlide].textboxes,
               ...slides[currentSlide].images,
             ]}
+            backgroundColor={slides[currentSlide].backgroundColor || '#ffffff'}
           />
         </div>
 
         <div
           className={styles.editor}
           ref={editorRef}
+          onClick={() => selectContent(null)}
         >
           <DndContext>
             <div
@@ -255,10 +259,17 @@ const SlideEditor = () => {
               ref={slideRef}
               onDragOver={(e) => e.preventDefault()}
               onDrop={handleDrop}
+              style={{
+                backgroundColor:
+                  slides[currentSlide].backgroundColor || '#ffffff',
+              }}
             >
               {slides[currentSlide].textboxes.map((textbox) => (
                 <div
-                  onClick={() => selectContent(textbox.id)}
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    selectContent(textbox.id)
+                  }}
                   key={textbox.id}
                 >
                   <DraggableTextBox

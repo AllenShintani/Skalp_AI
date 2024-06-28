@@ -1,36 +1,13 @@
-import type { AppProps } from 'next/app'
 import '../styles/globals.css'
-// import { getCookie } from 'cookies-next'
-// import { useRouter } from 'next/router'
+import type { AppProps } from 'next/app'
+import useAuthCheck from '../hooks/useAuthCheck'
 
 function MyApp({ Component, pageProps }: AppProps) {
-  // const router = useRouter()
+  const { loading } = useAuthCheck()
 
-  // useEffect(() => {
-  //   const token = getCookie('token')
-
-  //   if (
-  //     !token &&
-  //     (router.pathname === '/signup' || router.pathname === '/login')
-  //   ) {
-  //     return
-  //   }
-
-  //   if (!token) {
-  //     router.push('/login')
-  //     return
-  //   }
-
-  //   const userId = JSON.parse(atob(token.split('.')[1])).userId
-
-  //   if (
-  //     token &&
-  //     (router.pathname === '/login' || router.pathname === '/signup')
-  //   ) {
-  //     router.push(`/home/${userId}`)
-  //     return
-  //   }
-  // }, [router])
+  if (loading) {
+    return <div>Loading...</div>
+  }
 
   return <Component {...pageProps} />
 }

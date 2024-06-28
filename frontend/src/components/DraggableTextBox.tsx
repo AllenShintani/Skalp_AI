@@ -26,7 +26,6 @@ const handleResizeDivs: ResizeDivs[] = [
 
 const DraggableTextBox: React.FC<Props> = ({ textbox, scale }) => {
   const {
-    isResizing,
     handleResizeMouseDown,
     handleResizeMouseMove,
     handleResizeMouseUp,
@@ -85,6 +84,10 @@ const DraggableTextBox: React.FC<Props> = ({ textbox, scale }) => {
     boxSizing: 'border-box',
     outline: textbox.isSelected ? 'solid 1px blue' : 'none',
     userSelect: 'none', // Prevent text selection(入力の無効化はtiptapにメソッドが存在する為、注意が必要)
+    ...((textbox.editor.getText() === 'Example Text' ||
+      textbox.editor.getText() === '') && {
+      border: '1px solid #d1d1d1',
+    }),
   }
 
   return (
@@ -92,7 +95,6 @@ const DraggableTextBox: React.FC<Props> = ({ textbox, scale }) => {
       style={style}
       onMouseDown={handleDragMouseDown}
       onDoubleClick={() => textbox.editor.commands.focus()}
-      className={styles.textBox}
     >
       {isVerticalCenter && isDragging && (
         <div className={styles.verticalLine} />
@@ -109,7 +111,7 @@ const DraggableTextBox: React.FC<Props> = ({ textbox, scale }) => {
       </div>
       <div
         className={styles.resizeHandles}
-        style={{ display: isResizing ? 'block' : '' }}
+        style={{ display: textbox.isSelected ? 'block' : 'none' }}
       >
         {handleResizeDivs.map((div) => (
           <div
