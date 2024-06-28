@@ -17,6 +17,7 @@ import DraggableSlideImage from './DraggableSlideImage'
 import { useAtom } from 'jotai'
 import { currentSlideIdState, slidesState } from '@/jotai/atoms'
 import { useRouter } from 'next/router'
+import type { ColorResult } from 'react-color'
 
 const SlideEditor = () => {
   const [slides, setSlides] = useAtom(slidesState)
@@ -74,6 +75,7 @@ const SlideEditor = () => {
       slideId: slides.length.toString(),
       textboxes: [],
       images: [],
+      backgroundColor: '#ffffff',
     }
     setSlides([...slides, newSlide])
   }
@@ -195,6 +197,18 @@ const SlideEditor = () => {
     [processImageFile],
   )
 
+  const changeBackgroundColor = (color: ColorResult) => {
+    const newColor = color.hex
+    setSlides((prevSlides) => {
+      return prevSlides.map((slide, index) => {
+        if (index === currentSlide) {
+          return { ...slide, backgroundColor: newColor }
+        }
+        return slide
+      })
+    })
+  }
+
   useEffect(() => {
     handleResizeWindow()
     const editorElement = editorRef.current
@@ -225,10 +239,12 @@ const SlideEditor = () => {
             currentId={getSelectedContentId()}
             createTextbox={createTextbox}
             createNewSlide={createNewSlide}
+            changeBackgroundColor={changeBackgroundColor}
             content={[
               ...slides[currentSlide].textboxes,
               ...slides[currentSlide].images,
             ]}
+            backgroundColor={slides[currentSlide].backgroundColor || '#ffffff'}
           />
         </div>
 
@@ -243,6 +259,10 @@ const SlideEditor = () => {
               ref={slideRef}
               onDragOver={(e) => e.preventDefault()}
               onDrop={handleDrop}
+              style={{
+                backgroundColor:
+                  slides[currentSlide].backgroundColor || '#ffffff',
+              }}
             >
               {slides[currentSlide].textboxes.map((textbox) => (
                 <div
