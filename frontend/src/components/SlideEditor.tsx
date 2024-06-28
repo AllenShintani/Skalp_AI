@@ -9,6 +9,8 @@ import { Underline } from '@tiptap/extension-underline'
 import { Strike } from '@tiptap/extension-strike'
 import { BulletList } from '@tiptap/extension-bullet-list'
 import FontFamily from '@tiptap/extension-font-family'
+import Color from '@tiptap/extension-color'
+import TextStyle from '@tiptap/extension-text-style'
 import { FontSize } from '@/components/extensions/FontSize'
 import Sidebar from './Sidebar'
 import Heading from '@tiptap/extension-heading'
@@ -23,6 +25,10 @@ const SlideEditor = () => {
   const [slides, setSlides] = useAtom(slidesState)
   const [currentSlide, setCurrentSlide] = useAtom(currentSlideIdState)
   const [scale, setScale] = useState(1)
+  const [selectedRange, setSelectedRange] = useState<{
+    from: number
+    to: number
+  } | null>(null)
 
   const router = useRouter()
   const { id } = router.query
@@ -53,6 +59,8 @@ const SlideEditor = () => {
         TextAlign.configure({
           types: ['heading', 'paragraph'],
         }),
+        TextStyle,
+        Color,
       ],
     })
     setSlides((prev) => {
@@ -209,6 +217,33 @@ const SlideEditor = () => {
     })
   }
 
+  const setTextColor = useCallback(
+    (color: string) => {
+      const selectedTextBox = slides[currentSlide].textboxes.find(
+        (textbox) => textbox.isSelected,
+      )
+      if (selectedTextBox && selectedTextBox.editor && selectedRange) {
+        selectedTextBox.editor
+          .chain()
+          .focus()
+          .setTextSelection(selectedRange)
+          .setColor(color)
+          .run()
+      }
+    },
+    [currentSlide, slides, selectedRange],
+  )
+
+  const saveSelection = useCallback(() => {
+    const selectedTextBox = slides[currentSlide].textboxes.find(
+      (textbox) => textbox.isSelected,
+    )
+    if (selectedTextBox && selectedTextBox.editor) {
+      const { from, to } = selectedTextBox.editor.state.selection
+      setSelectedRange({ from, to })
+    }
+  }, [currentSlide, slides])
+
   useEffect(() => {
     handleResizeWindow()
     const editorElement = editorRef.current
@@ -240,6 +275,8 @@ const SlideEditor = () => {
             createTextbox={createTextbox}
             createNewSlide={createNewSlide}
             changeBackgroundColor={changeBackgroundColor}
+            setTextColor={setTextColor}
+            saveSelection={saveSelection}
             content={[
               ...slides[currentSlide].textboxes,
               ...slides[currentSlide].images,

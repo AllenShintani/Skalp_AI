@@ -1,5 +1,5 @@
 import type React from 'react'
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
@@ -10,6 +10,7 @@ import {
   faStrikethrough,
   faListUl,
   faPalette,
+  faFont,
 } from '@fortawesome/free-solid-svg-icons'
 import type { SlideImage, TextBox } from '@/types/Slide'
 import type { ColorResult } from 'react-color'
@@ -22,6 +23,8 @@ type Props = {
   changeBackgroundColor: (color: ColorResult) => void
   backgroundColor: string
   content: (TextBox | SlideImage)[]
+  setTextColor: (color: string) => void
+  saveSelection: () => void
 }
 
 const ToolBar: React.FC<Props> = ({
@@ -31,9 +34,43 @@ const ToolBar: React.FC<Props> = ({
   changeBackgroundColor,
   backgroundColor,
   content,
+  saveSelection,
+  setTextColor,
 }) => {
   const router = useRouter()
+  const [showTextColorPicker, setShowTextColorPicker] = useState(false)
   const [showColorPicker, setShowColorPicker] = useState(false)
+  const colorPickerRef = useRef<HTMLDivElement>(null)
+  const buttonRef = useRef<HTMLButtonElement>(null)
+
+  const handleTextColorChange = (color: ColorResult) => {
+    setTextColor(color.hex)
+  }
+
+  const handleColorPickerToggle = () => {
+    if (!showTextColorPicker) {
+      saveSelection()
+    }
+    setShowTextColorPicker(!showTextColorPicker)
+  }
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        colorPickerRef.current &&
+        !colorPickerRef.current.contains(event.target as Node) &&
+        buttonRef.current &&
+        !buttonRef.current.contains(event.target as Node)
+      ) {
+        setShowTextColorPicker(false)
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [])
 
   const selectedTextBox = content.find(
     (c): c is TextBox => c.id === currentId && 'editor' in c,
@@ -70,6 +107,25 @@ const ToolBar: React.FC<Props> = ({
       >
         <FontAwesomeIcon icon={faUnderline} />
       </button>
+      <button
+        ref={buttonRef}
+        onClick={handleColorPickerToggle}
+      >
+        <FontAwesomeIcon icon={faFont} />
+      </button>
+      {showTextColorPicker && (
+        <div
+          ref={colorPickerRef}
+          style={{ position: 'absolute', zIndex: 1000 }}
+        >
+          <ChromePicker
+            color="#FFFFFF"
+            onChange={handleTextColorChange}
+          />
+          <button onClick={() => setShowTextColorPicker(false)}>Close</button>
+        </div>
+      )}
+
       <select
         onChange={(e) =>
           selectedTextBox &&
