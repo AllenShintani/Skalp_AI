@@ -1,5 +1,5 @@
 import type React from 'react'
-import { useState, useRef, useEffect } from 'react'
+import { useState } from 'react'
 import { useRouter } from 'next/router'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
@@ -15,6 +15,7 @@ import {
 import type { SlideImage, TextBox } from '@/types/Slide'
 import type { ColorResult } from 'react-color'
 import { ChromePicker } from 'react-color'
+import { useClickOutside } from '@/hooks/useClickOutside'
 
 type Props = {
   currentId: string | null
@@ -40,8 +41,6 @@ const ToolBar: React.FC<Props> = ({
   const router = useRouter()
   const [showTextColorPicker, setShowTextColorPicker] = useState(false)
   const [showColorPicker, setShowColorPicker] = useState(false)
-  const colorPickerRef = useRef<HTMLDivElement>(null)
-  const buttonRef = useRef<HTMLButtonElement>(null)
 
   const handleTextColorChange = (color: ColorResult) => {
     setTextColor(color.hex)
@@ -54,27 +53,17 @@ const ToolBar: React.FC<Props> = ({
     setShowTextColorPicker(!showTextColorPicker)
   }
 
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        colorPickerRef.current &&
-        !colorPickerRef.current.contains(event.target as Node) &&
-        buttonRef.current &&
-        !buttonRef.current.contains(event.target as Node)
-      ) {
-        setShowTextColorPicker(false)
-      }
-    }
-
-    document.addEventListener('mousedown', handleClickOutside)
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside)
-    }
-  }, [])
-
   const selectedTextBox = content.find(
     (c): c is TextBox => c.id === currentId && 'editor' in c,
   )
+
+  const textColorPickerRef = useClickOutside<HTMLDivElement>(() => {
+    setShowTextColorPicker(false)
+  })
+
+  const backgroundColorPickerRef = useClickOutside<HTMLDivElement>(() => {
+    setShowColorPicker(false)
+  })
 
   return (
     <div>
@@ -108,14 +97,16 @@ const ToolBar: React.FC<Props> = ({
         <FontAwesomeIcon icon={faUnderline} />
       </button>
       <button
-        ref={buttonRef}
-        onClick={handleColorPickerToggle}
+        onClick={(e) => {
+          e.stopPropagation()
+          handleColorPickerToggle()
+        }}
       >
         <FontAwesomeIcon icon={faFont} />
       </button>
       {showTextColorPicker && (
         <div
-          ref={colorPickerRef}
+          ref={textColorPickerRef}
           style={{ position: 'absolute', zIndex: 1000 }}
         >
           <ChromePicker
@@ -206,11 +197,19 @@ const ToolBar: React.FC<Props> = ({
       >
         right
       </button>
-      <button onClick={() => setShowColorPicker(!showColorPicker)}>
+      <button
+        onClick={(e) => {
+          e.stopPropagation()
+          setShowColorPicker(true)
+        }}
+      >
         <FontAwesomeIcon icon={faPalette} />
       </button>
       {showColorPicker && (
-        <div style={{ position: 'absolute', zIndex: 1000 }}>
+        <div
+          ref={backgroundColorPickerRef}
+          style={{ position: 'absolute', zIndex: 1000 }}
+        >
           <ChromePicker
             color={backgroundColor}
             onChange={(color) => {
