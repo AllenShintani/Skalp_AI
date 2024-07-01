@@ -52,7 +52,6 @@ const TextBoxPreview: React.FC<TextBoxPreviewProps> = ({ textbox }) => {
 }
 
 const slideBackgroundColor = (slide: Slide) => {
-  console.log(slide.backgroundColor)
   return slide.backgroundColor
 }
 
