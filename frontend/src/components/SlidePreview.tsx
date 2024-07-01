@@ -3,7 +3,6 @@ import styles from './SlidePreview.module.css'
 import type { Slide, SlideImage, TextBox } from '@/types/Slide'
 import DOMPurify from 'dompurify'
 import parse from 'html-react-parser'
-import { useRef } from 'react'
 
 type SlideImagePreviewProps = {
   image: SlideImage
@@ -52,9 +51,16 @@ const TextBoxPreview: React.FC<TextBoxPreviewProps> = ({ textbox }) => {
   return <div style={style}>{parse(sanitizedTextBoxHTML)}</div>
 }
 
+const slideBackgroundColor = (slide: Slide) => {
+  return slide.backgroundColor
+}
+
 const SlidePreview: React.FC<{ slide: Slide }> = ({ slide }) => {
   return (
-    <div className={styles.slidePreview}>
+    <div
+      style={{ backgroundColor: slideBackgroundColor(slide) }}
+      className={styles.slidePreview}
+    >
       {slide.textboxes.map((textbox) => (
         <TextBoxPreview
           key={textbox.id}
